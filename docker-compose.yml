@@ -1,0 +1,21 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: cyberkids-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: cyberkids
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
+
+
