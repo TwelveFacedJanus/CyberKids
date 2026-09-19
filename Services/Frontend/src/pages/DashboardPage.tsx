@@ -25,6 +25,7 @@ import { useAuth } from "../context/AuthContext";
 import { ageGroupLabels, topicColors, topicLabels } from "../theme";
 import { topicIcons, taskTypeIcons, ageGroupIcons } from "../icons";
 import type { Result, Task } from "../types";
+import WelcomeAnimation from "../components/WelcomeAnimation";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -33,6 +34,9 @@ export default function DashboardPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // 🎉 Приветственная анимация
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -49,6 +53,20 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // 🎉 Показываем приветствие только при первом заходе
+  useEffect(() => {
+    if (!user) return;
+    const seen = localStorage.getItem("cyberkids_welcome_seen");
+    if (!seen) {
+      setShowWelcome(true);
+    }
+  }, [user]);
+
+  const handleWelcomeDone = () => {
+    localStorage.setItem("cyberkids_welcome_seen", "1");
+    setShowWelcome(false);
+  };
+
   const bestByTask = useMemo(() => {
     const map = new Map<string, Result>();
     for (const r of results) {
@@ -57,19 +75,19 @@ export default function DashboardPage() {
     }
     return map;
   }, [results]);
-  
+
   const greeting = useMemo(() => {
     const name = user?.full_name?.split(" ")[0] || user?.username || "друг";
 
     const phrases = [
-    `Вау, у тебя отлично получается, ${name}! 🌟`,
-    `Привет, ${name}! Готов покорять новые вершины? 🚀`,
-    `С возвращением, ${name}! Продолжаем учиться? 📚`,
-    `Класс, ${name}, ты сегодня на высоте! 🔥`,
-    `Привет, ${name}! Сегодня отличный день для новых знаний ✨`,
-    `О, снова ты, ${name}! Покажи, на что способен 💪`,
-    `Здорово, что ты вернулся, ${name}! 🎉`,
-    `Ты становишься настоящим кибергероем, ${name}! 🛡️`,
+      `Вау, у тебя отлично получается, ${name}! 🌟`,
+      `Привет, ${name}! Готов покорять новые вершины? 🚀`,
+      `С возвращением, ${name}! Продолжаем учиться? 📚`,
+      `Класс, ${name}, ты сегодня на высоте! 🔥`,
+      `Привет, ${name}! Сегодня отличный день для новых знаний ✨`,
+      `О, снова ты, ${name}! Покажи, на что способен 💪`,
+      `Здорово, что ты вернулся, ${name}! 🎉`,
+      `Ты становишься настоящим кибергероем, ${name}! 🛡️`,
     ];
 
     return phrases[Math.floor(Math.random() * phrases.length)];
@@ -97,15 +115,12 @@ export default function DashboardPage() {
 
   // 🆕 Функция проверки доступности задания для пользователя
   const isTaskAvailable = (task: Task): boolean => {
-    // Если у задания нет ограничений по группам — доступно всем
     if (!task.forbidden_groups || task.forbidden_groups.length === 0) {
       return true;
     }
-    // Если у пользователя нет групп — задание недоступно
     if (!user?.groups || user.groups.length === 0) {
       return false;
     }
-    // Проверяем пересечение групп
     return task.forbidden_groups.some((groupId) =>
       user.groups.includes(groupId),
     );
@@ -139,11 +154,17 @@ export default function DashboardPage() {
   const AgeIcon = user
     ? (ageGroupIcons[user.age_group] ?? ageGroupIcons.junior)
     : ageGroupIcons.junior;
-  
-
 
   return (
     <Layout>
+      {/* 🎉 Приветственная анимация */}
+      {showWelcome && (
+        <WelcomeAnimation
+          userName={user?.full_name?.split(" ")[0]}
+          onDone={handleWelcomeDone}
+        />
+      )}
+
       <Box sx={{ position: "relative", zIndex: 1 }}>
         {/* Приветственная секция */}
         <Box sx={{ mb: 4 }}>
@@ -367,257 +388,261 @@ export default function DashboardPage() {
               </Stack>
 
               {/* Карточки заданий */}
-<Grid container spacing={2}>
-  {list.map((task) => {
-    const best = bestByTask.get(task.id);
-    const done = best !== undefined;
-    const stars = done
-      ? Math.round((best!.score / best!.max_score) * 3)
-      : 0;
-    const TypeIcon =
-      taskTypeIcons[task.task_type] ?? taskTypeIcons.quiz;
-    const available = isTaskAvailable(task);
-    const forbiddenGroupsLabel = getForbiddenGroupsLabel(task);
+              <Grid container spacing={2}>
+                {list.map((task) => {
+                  const best = bestByTask.get(task.id);
+                  const done = best !== undefined;
+                  const stars = done
+                    ? Math.round((best!.score / best!.max_score) * 3)
+                    : 0;
+                  const TypeIcon =
+                    taskTypeIcons[task.task_type] ?? taskTypeIcons.quiz;
+                  const available = isTaskAvailable(task);
+                  const forbiddenGroupsLabel = getForbiddenGroupsLabel(task);
 
-    return (
-      <Grid item xs={12} sm={6} md={4} key={task.id}>
-        <Tooltip
-          title={
-            !available
-              ? `⛔ Задание доступно только для групп: ${forbiddenGroupsLabel}`
-              : done
-                ? `⭐ ${stars}/3 звёзд`
-                : "Нажми, чтобы начать"
-          }
-          placement="top"
-          arrow
-        >
-          <Paper
-            onClick={() => {
-              if (available) {
-                navigate(`/task/${task.id}`);
-              }
-            }}
-            sx={{
-              position: "relative",
-              cursor: available ? "pointer" : "not-allowed",
-              height: 220,                 // 🆕 фиксированная высота карточки
-              borderRadius: "16px",
-              overflow: "hidden",          // 🆕 обрезаем всё по скруглению
-              borderTop: `6px solid ${task.color || color}`,
-              opacity: available ? 1 : 0.85,
-              transition: "all 0.3s ease",
-              "&:hover": available
-                ? {
-                    transform: "translateY(-5px)",
-                    boxShadow: "0 16px 40px rgba(124,77,255,0.35)",
-                  }
-                : {},
-              pointerEvents: available ? "auto" : "none",
-              backgroundColor: "#1A1A2E", // фолбэк, если нет картинки
-            }}
-          >
-            {/* 🖼️ ФОН — картинка на всю карточку */}
-            {task.imageB64 && (
-              <Box
-                component="img"
-                src={task.imageB64}
-                alt={task.title}
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",     // 🆕 заполняет всю площадь
-                  objectPosition: "center",
-                  filter: available
-                    ? "none"
-                    : "grayscale(0.7) brightness(0.9)",
-                  userSelect: "none",
-                  zIndex: 0,
-                }}
-              />
-            )}
+                  return (
+                    <Grid item xs={12} sm={6} md={4} key={task.id}>
+                      <Tooltip
+                        title={
+                          !available
+                            ? `⛔ Задание доступно только для групп: ${forbiddenGroupsLabel}`
+                            : done
+                              ? `⭐ ${stars}/3 звёзд`
+                              : "Нажми, чтобы начать"
+                        }
+                        placement="top"
+                        arrow
+                      >
+                        <Paper
+                          onClick={() => {
+                            if (available) {
+                              navigate(`/task/${task.id}`);
+                            }
+                          }}
+                          sx={{
+                            position: "relative",
+                            cursor: available ? "pointer" : "not-allowed",
+                            height: 220,
+                            borderRadius: "16px",
+                            overflow: "hidden",
+                            borderTop: `6px solid ${task.color || color}`,
+                            opacity: available ? 1 : 0.85,
+                            transition: "all 0.3s ease",
+                            "&:hover": available
+                              ? {
+                                  transform: "translateY(-5px)",
+                                  boxShadow:
+                                    "0 16px 40px rgba(124,77,255,0.35)",
+                                }
+                              : {},
+                            pointerEvents: available ? "auto" : "none",
+                            backgroundColor: "#1A1A2E",
+                          }}
+                        >
+                          {/* 🖼️ ФОН — картинка на всю карточку */}
+                          {task.imageB64 && (
+                            <Box
+                              component="img"
+                              src={task.imageB64}
+                              alt={task.title}
+                              sx={{
+                                position: "absolute",
+                                inset: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                                filter: available
+                                  ? "none"
+                                  : "grayscale(0.7) brightness(0.9)",
+                                userSelect: "none",
+                                zIndex: 0,
+                              }}
+                            />
+                          )}
 
-            {/* 🌈 Затемнение снизу для читаемости текста */}
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background: `
-                  linear-gradient(
-                    to top,
-                    rgba(0, 0, 0, 0.85) 0%,
-                    rgba(0, 0, 0, 0.65) 25%,
-                    rgba(0, 0, 0, 0.35) 45%,
-                    rgba(0, 0, 0, 0) 65%
-                  )
-                `,
-                zIndex: 1,
-                pointerEvents: "none",
-              }}
-            />
+                          {/* 🌈 Затемнение снизу для читаемости текста */}
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              inset: 0,
+                              background: `
+                                linear-gradient(
+                                  to top,
+                                  rgba(0, 0, 0, 0.85) 0%,
+                                  rgba(0, 0, 0, 0.65) 25%,
+                                  rgba(0, 0, 0, 0.35) 45%,
+                                  rgba(0, 0, 0, 0) 65%
+                                )
+                              `,
+                              zIndex: 1,
+                              pointerEvents: "none",
+                            }}
+                          />
 
-            {/* 🚫 Бейдж "Заблокировано" */}
-            {!available && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  backgroundColor: "#EF4444",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  px: 1.5,
-                  py: 0.5,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  zIndex: 3,
-                }}
-              >
-                <LockIcon sx={{ fontSize: 14 }} />
-                Заблокировано
-              </Box>
-            )}
+                          {/* 🚫 Бейдж "Заблокировано" */}
+                          {!available && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: 12,
+                                right: 12,
+                                backgroundColor: "#EF4444",
+                                color: "#fff",
+                                borderRadius: "8px",
+                                px: 1.5,
+                                py: 0.5,
+                                fontSize: 11,
+                                fontWeight: 700,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 0.5,
+                                zIndex: 3,
+                              }}
+                            >
+                              <LockIcon sx={{ fontSize: 14 }} />
+                              Заблокировано
+                            </Box>
+                          )}
 
-            {/* ⭐ Звёзды (сверху слева) */}
-            {available && (
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{
-                  position: "absolute",
-                  top: 12,
-                  left: 12,
-                  zIndex: 3,
-                  backgroundColor: "rgba(0,0,0,0.35)",
-                  backdropFilter: "blur(6px)",
-                  borderRadius: "10px",
-                  px: 1,
-                  py: 0.5,
-                }}
-              >
-                {[0, 1, 2].map((i) =>
-                  i < stars ? (
-                    <Star
-                      key={i}
-                      sx={{ fontSize: 18, color: "#FFCA28" }}
-                    />
-                  ) : (
-                    <StarBorder
-                      key={i}
-                      sx={{ fontSize: 18, color: "rgba(255,255,255,0.5)" }}
-                    />
-                  ),
-                )}
-              </Stack>
-            )}
+                          {/* ⭐ Звёзды (сверху слева) */}
+                          {available && (
+                            <Stack
+                              direction="row"
+                              spacing={0.5}
+                              sx={{
+                                position: "absolute",
+                                top: 12,
+                                left: 12,
+                                zIndex: 3,
+                                backgroundColor: "rgba(0,0,0,0.35)",
+                                backdropFilter: "blur(6px)",
+                                borderRadius: "10px",
+                                px: 1,
+                                py: 0.5,
+                              }}
+                            >
+                              {[0, 1, 2].map((i) =>
+                                i < stars ? (
+                                  <Star
+                                    key={i}
+                                    sx={{ fontSize: 18, color: "#FFCA28" }}
+                                  />
+                                ) : (
+                                  <StarBorder
+                                    key={i}
+                                    sx={{
+                                      fontSize: 18,
+                                      color: "rgba(255,255,255,0.5)",
+                                    }}
+                                  />
+                                ),
+                              )}
+                            </Stack>
+                          )}
 
-            {/* 📝 ТЕКСТ поверх картинки */}
-            <Box
-              sx={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                p: 2,
-                zIndex: 2,
-                color: "#fff",
-              }}
-            >
-              <Typography
-                variant="h6"
-                fontWeight={700}
-                sx={{
-                  mb: 0.5,
-                  color: "#fff",
-                  textShadow: "0 2px 8px rgba(0,0,0,0.6)",
-                  lineHeight: 1.25,
-                }}
-              >
-                {task.title}
-              </Typography>
+                          {/* 📝 ТЕКСТ поверх картинки */}
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              p: 2,
+                              zIndex: 2,
+                              color: "#fff",
+                            }}
+                          >
+                            <Typography
+                              variant="h6"
+                              fontWeight={700}
+                              sx={{
+                                mb: 0.5,
+                                color: "#fff",
+                                textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+                                lineHeight: 1.25,
+                              }}
+                            >
+                              {task.title}
+                            </Typography>
 
-              <Typography
-                variant="body2"
-                sx={{
-                  mb: 1.5,
-                  color: "rgba(255,255,255,0.85)",
-                  textShadow: "0 1px 4px rgba(0,0,0,0.6)",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {task.description}
-              </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                mb: 1.5,
+                                color: "rgba(255,255,255,0.85)",
+                                textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }}
+                            >
+                              {task.description}
+                            </Typography>
 
-              <Stack
-                direction="row"
-                spacing={1}
-                flexWrap="wrap"
-                sx={{ gap: 1 }}
-              >
-                <Chip
-                  label={`+${task.points} очков`}
-                  size="small"
-                  sx={{
-                    bgcolor: "rgba(255,243,224,0.95)",
-                    fontWeight: 600,
-                    color: "#7C4DFF",
-                  }}
-                />
-                <Chip
-                  label={task.task_type}
-                  size="small"
-                  sx={{
-                    bgcolor: "rgba(255,255,255,0.9)",
-                    fontWeight: 600,
-                    color: "#1A1A2E",
-                  }}
-                />
-                {task.forbidden_groups &&
-                  task.forbidden_groups.length > 0 && (
-                    <Chip
-                      label={`👥 ${task.forbidden_groups
-                        .map((g) => g.toUpperCase())
-                        .join(", ")}`}
-                      size="small"
-                      sx={{
-                        bgcolor: "rgba(224,242,254,0.95)",
-                        fontWeight: 600,
-                        color: "#0369A1",
-                        fontSize: 10,
-                      }}
-                    />
-                  )}
-              </Stack>
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              flexWrap="wrap"
+                              sx={{ gap: 1 }}
+                            >
+                              <Chip
+                                label={`+${task.points} очков`}
+                                size="small"
+                                sx={{
+                                  bgcolor: "rgba(255,243,224,0.95)",
+                                  fontWeight: 600,
+                                  color: "#7C4DFF",
+                                }}
+                              />
+                              <Chip
+                                label={task.task_type}
+                                size="small"
+                                sx={{
+                                  bgcolor: "rgba(255,255,255,0.9)",
+                                  fontWeight: 600,
+                                  color: "#1A1A2E",
+                                }}
+                              />
+                              {task.forbidden_groups &&
+                                task.forbidden_groups.length > 0 && (
+                                  <Chip
+                                    label={`👥 ${task.forbidden_groups
+                                      .map((g) => g.toUpperCase())
+                                      .join(", ")}`}
+                                    size="small"
+                                    sx={{
+                                      bgcolor: "rgba(224,242,254,0.95)",
+                                      fontWeight: 600,
+                                      color: "#0369A1",
+                                      fontSize: 10,
+                                    }}
+                                  />
+                                )}
+                            </Stack>
 
-              {!available && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    mt: 1.5,
-                    display: "block",
-                    color: "#FCA5A5",
-                    fontWeight: 600,
-                    textShadow: "0 1px 4px rgba(0,0,0,0.6)",
-                  }}
-                >
-                  ⛔ Доступно для групп: {forbiddenGroupsLabel}
-                </Typography>
-              )}
-            </Box>
-          </Paper>
-        </Tooltip>
-      </Grid>
-    );
-  })}
-</Grid>
+                            {!available && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  mt: 1.5,
+                                  display: "block",
+                                  color: "#FCA5A5",
+                                  fontWeight: 600,
+                                  textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                                }}
+                              >
+                                ⛔ Доступно для групп: {forbiddenGroupsLabel}
+                              </Typography>
+                            )}
+                          </Box>
+                        </Paper>
+                      </Tooltip>
+                    </Grid>
+                  );
+                })}
+              </Grid>
             </Box>
           );
         })}
