@@ -41,7 +41,8 @@ export interface Task {
   description: string
   instructions: string
   topic: string
-  imagePath: string
+  imagePath?: string | null
+  imageB64?: string | null
   task_type: TaskType
   age_groups: AgeGroup[]
   forbidden_groups: string[]

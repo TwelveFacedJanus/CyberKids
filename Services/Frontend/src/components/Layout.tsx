@@ -173,6 +173,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   }
 
   return (
+    
     <Box sx={{ display: "flex", minHeight: "100vh", background: t.pageBg}}>
       {/* Сайдбар */}
       <Box
@@ -191,39 +192,18 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           transition: "all 0.3s ease",
         }}
       >
-        {/* Логотип */}
         <Box
+          component="img"
+          src="/logo.png"
+          alt="CyberKids"
           sx={{
-            p: 3,
             cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            // borderBottom: `1px solid ${t.sidebarBorder}`,
-            boxShadow: `0 0px 160px ${t.divider}`,
+            width: "100%",
+            height: 250,
+            objectFit: "contain",
           }}
           onClick={() => navigate("/")}
-        >
-          <Box
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: "12px",
-              background: t.logoBg,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontWeight: 900,
-              fontSize: 20,
-            }}
-          >
-            🚀
-          </Box>
-          <Typography variant="h6" fontWeight={800} sx={{ color: t.textColor }}>
-            CyberKids
-          </Typography>
-        </Box>
+        />
 
         {/* Навигация */}
         <List sx={{ flexGrow: 1, px: 2, py: 2 }}>

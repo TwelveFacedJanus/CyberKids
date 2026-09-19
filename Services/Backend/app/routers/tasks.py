@@ -7,12 +7,36 @@ from dependencies import get_current_user
 from models import Task, User
 from schemas import TaskFullOut, TaskOut
 import constants
+import base64
+from pathlib import Path
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
 
 def _task_out(t: Task) -> TaskOut:
-    return TaskOut(**t.model_dump())
+    data = t.model_dump()
+    
+    if not data.get("imageB64") and data.get("imagePath"):
+        image_path = Path(data["imagePath"])
+        if image_path.is_file():
+            try:
+                raw = image_path.read_bytes()
+                encoded = base64.b64encode(raw).decode("ascii")
+                # Определяем MIME по расширению
+                ext = image_path.suffix.lower().lstrip(".")
+                mime = {
+                    "png": "image/png",
+                    "jpg": "image/jpeg",
+                    "jpeg": "image/jpeg",
+                    "gif": "image/gif",
+                    "webp": "image/webp",
+                    "svg": "image/svg+xml",
+                }.get(ext, "application/octet-stream")
+                data["imageB64"] = f"data:{mime};base64,{encoded}"
+            except OSError:
+                data["imageB64"] = None
+    
+    return TaskOut(**data)
 
 
 @router.get("", response_model=list[TaskOut])

@@ -56,6 +56,7 @@ class Task(BaseModel):
     description: str
     instructions: str
     imagePath: Optional[str] = Field(default=None)
+    imageB64: Optional[str] = Field(default=None)
     topic: str
     task_type: str
     age_groups: list[str]

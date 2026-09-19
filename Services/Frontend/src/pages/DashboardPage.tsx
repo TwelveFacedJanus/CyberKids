@@ -367,201 +367,257 @@ export default function DashboardPage() {
               </Stack>
 
               {/* Карточки заданий */}
-              <Grid container spacing={2}>
-                {list.map((task) => {
-                  const best = bestByTask.get(task.id);
-                  const done = best !== undefined;
-                  const stars = done
-                    ? Math.round((best!.score / best!.max_score) * 3)
-                    : 0;
-                  const TypeIcon =
-                    taskTypeIcons[task.task_type] ?? taskTypeIcons.quiz;
-                  const available = isTaskAvailable(task);
-                  const forbiddenGroupsLabel = getForbiddenGroupsLabel(task);
+<Grid container spacing={2}>
+  {list.map((task) => {
+    const best = bestByTask.get(task.id);
+    const done = best !== undefined;
+    const stars = done
+      ? Math.round((best!.score / best!.max_score) * 3)
+      : 0;
+    const TypeIcon =
+      taskTypeIcons[task.task_type] ?? taskTypeIcons.quiz;
+    const available = isTaskAvailable(task);
+    const forbiddenGroupsLabel = getForbiddenGroupsLabel(task);
 
-                  return (
-                    <Grid item xs={12} sm={6} md={4} key={task.id}>
-                      <Tooltip
-                        title={
-                          !available
-                            ? `⛔ Задание доступно только для групп: ${forbiddenGroupsLabel}`
-                            : done
-                              ? `⭐ ${stars}/3 звёзд`
-                              : "Нажми, чтобы начать"
-                        }
-                        placement="top"
-                        arrow
-                      >
-                        <Paper
-                          onClick={() => {
-                            if (available) {
-                              navigate(`/task/${task.id}`);
-                            }
-                          }}
-                          sx={{
-                            p: 2.5,
-                            cursor: available ? "pointer" : "not-allowed",
-                            height: "100%",
-                            borderTop: `6px solid ${task.color || color}`,
-                            opacity: available ? 1 : 0.5,
-                            filter: available ? "none" : "grayscale(0.6)",
-                            transition: "all 0.3s ease",
-                            position: "relative",
-                            "&:hover": available
-                              ? {
-                                  transform: "translateY(-5px)",
-                                  boxShadow:
-                                    "0 16px 40px rgba(124,77,255,0.22)",
-                                }
-                              : {},
-                            pointerEvents: available ? "auto" : "none",
-                            backgroundColor: available ? "#FFFFFF" : "#F3F4F6",
-                          }}
-                        >
-                          {/* 🆕 Бейдж "Заблокировано" */}
-                          {!available && (
-                            <Box
-                              sx={{
-                                position: "absolute",
-                                top: 12,
-                                right: 12,
-                                backgroundColor: "#EF4444",
-                                color: "#fff",
-                                borderRadius: "8px",
-                                px: 1.5,
-                                py: 0.5,
-                                fontSize: 11,
-                                fontWeight: 700,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                                zIndex: 1,
-                              }}
-                            >
-                              <LockIcon sx={{ fontSize: 14 }} />
-                              Заблокировано
-                            </Box>
-                          )}
+    return (
+      <Grid item xs={12} sm={6} md={4} key={task.id}>
+        <Tooltip
+          title={
+            !available
+              ? `⛔ Задание доступно только для групп: ${forbiddenGroupsLabel}`
+              : done
+                ? `⭐ ${stars}/3 звёзд`
+                : "Нажми, чтобы начать"
+          }
+          placement="top"
+          arrow
+        >
+          <Paper
+            onClick={() => {
+              if (available) {
+                navigate(`/task/${task.id}`);
+              }
+            }}
+            sx={{
+              position: "relative",
+              cursor: available ? "pointer" : "not-allowed",
+              height: 220,                 // 🆕 фиксированная высота карточки
+              borderRadius: "16px",
+              overflow: "hidden",          // 🆕 обрезаем всё по скруглению
+              borderTop: `6px solid ${task.color || color}`,
+              opacity: available ? 1 : 0.85,
+              transition: "all 0.3s ease",
+              "&:hover": available
+                ? {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 16px 40px rgba(124,77,255,0.35)",
+                  }
+                : {},
+              pointerEvents: available ? "auto" : "none",
+              backgroundColor: "#1A1A2E", // фолбэк, если нет картинки
+            }}
+          >
+            {/* 🖼️ ФОН — картинка на всю карточку */}
+            {task.imageB64 && (
+              <Box
+                component="img"
+                src={task.imageB64}
+                alt={task.title}
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",     // 🆕 заполняет всю площадь
+                  objectPosition: "center",
+                  filter: available
+                    ? "none"
+                    : "grayscale(0.7) brightness(0.9)",
+                  userSelect: "none",
+                  zIndex: 0,
+                }}
+              />
+            )}
 
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="flex-start"
-                          >
-                            <Box
-                              sx={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: "12px",
-                                background: `linear-gradient(135deg, ${task.color || color}, ${task.color ? "#9C27B0" : "#EC407A"})`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: "#fff",
-                                opacity: available ? 1 : 0.4,
-                              }}
-                            >
-                              <TypeIcon sx={{ fontSize: 24 }} />
-                            </Box>
-                            {/* 🆕 Показываем звёзды только если задание доступно */}
-                            {available && (
-                              <Stack direction="row" spacing={0.5}>
-                                {[0, 1, 2].map((i) =>
-                                  i < stars ? (
-                                    <Star
-                                      key={i}
-                                      sx={{ fontSize: 18, color: "#FFCA28" }}
-                                    />
-                                  ) : (
-                                    <StarBorder
-                                      key={i}
-                                      sx={{ fontSize: 18, color: "#D1D5DB" }}
-                                    />
-                                  ),
-                                )}
-                              </Stack>
-                            )}
-                          </Stack>
+            {/* 🌈 Затемнение снизу для читаемости текста */}
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                background: `
+                  linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0.65) 25%,
+                    rgba(0, 0, 0, 0.35) 45%,
+                    rgba(0, 0, 0, 0) 65%
+                  )
+                `,
+                zIndex: 1,
+                pointerEvents: "none",
+              }}
+            />
 
-                          <Typography
-                            variant="h6"
-                            fontWeight={700}
-                            sx={{
-                              mt: 2,
-                              mb: 0.5,
-                              color: available ? "#1A1A2E" : "#9CA3AF",
-                            }}
-                          >
-                            {task.title}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color={available ? "text.secondary" : "#9CA3AF"}
-                            sx={{ mb: 2 }}
-                          >
-                            {task.description}
-                          </Typography>
+            {/* 🚫 Бейдж "Заблокировано" */}
+            {!available && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  backgroundColor: "#EF4444",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  px: 1.5,
+                  py: 0.5,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  zIndex: 3,
+                }}
+              >
+                <LockIcon sx={{ fontSize: 14 }} />
+                Заблокировано
+              </Box>
+            )}
 
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            flexWrap="wrap"
-                            sx={{ gap: 1 }}
-                          >
-                            <Chip
-                              label={`+${task.points} очков`}
-                              size="small"
-                              sx={{
-                                bgcolor: available ? "#FFF3E0" : "#F3F4F6",
-                                fontWeight: 600,
-                                color: available ? "inherit" : "#9CA3AF",
-                              }}
-                            />
-                            <Chip
-                              label={task.task_type}
-                              size="small"
-                              sx={{
-                                bgcolor: available ? "#F1EBFF" : "#F3F4F6",
-                                fontWeight: 600,
-                                color: available ? "inherit" : "#9CA3AF",
-                              }}
-                            />
-                            {/* 🆕 Индикатор групп доступа */}
-                            {task.forbidden_groups &&
-                              task.forbidden_groups.length > 0 && (
-                                <Chip
-                                  label={`👥 ${task.forbidden_groups.map((g) => g.toUpperCase()).join(", ")}`}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: available ? "#E0F2FE" : "#F3F4F6",
-                                    fontWeight: 600,
-                                    color: available ? "inherit" : "#9CA3AF",
-                                    fontSize: 10,
-                                  }}
-                                />
-                              )}
-                          </Stack>
+            {/* ⭐ Звёзды (сверху слева) */}
+            {available && (
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  position: "absolute",
+                  top: 12,
+                  left: 12,
+                  zIndex: 3,
+                  backgroundColor: "rgba(0,0,0,0.35)",
+                  backdropFilter: "blur(6px)",
+                  borderRadius: "10px",
+                  px: 1,
+                  py: 0.5,
+                }}
+              >
+                {[0, 1, 2].map((i) =>
+                  i < stars ? (
+                    <Star
+                      key={i}
+                      sx={{ fontSize: 18, color: "#FFCA28" }}
+                    />
+                  ) : (
+                    <StarBorder
+                      key={i}
+                      sx={{ fontSize: 18, color: "rgba(255,255,255,0.5)" }}
+                    />
+                  ),
+                )}
+              </Stack>
+            )}
 
-                          {/* 🆕 Подсказка о группах для заблокированного задания */}
-                          {!available && (
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                mt: 1.5,
-                                display: "block",
-                                color: "#EF4444",
-                                fontWeight: 600,
-                              }}
-                            >
-                              ⛔ Доступно для групп: {forbiddenGroupsLabel}
-                            </Typography>
-                          )}
-                        </Paper>
-                      </Tooltip>
-                    </Grid>
-                  );
-                })}
-              </Grid>
+            {/* 📝 ТЕКСТ поверх картинки */}
+            <Box
+              sx={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                p: 2,
+                zIndex: 2,
+                color: "#fff",
+              }}
+            >
+              <Typography
+                variant="h6"
+                fontWeight={700}
+                sx={{
+                  mb: 0.5,
+                  color: "#fff",
+                  textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+                  lineHeight: 1.25,
+                }}
+              >
+                {task.title}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  mb: 1.5,
+                  color: "rgba(255,255,255,0.85)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {task.description}
+              </Typography>
+
+              <Stack
+                direction="row"
+                spacing={1}
+                flexWrap="wrap"
+                sx={{ gap: 1 }}
+              >
+                <Chip
+                  label={`+${task.points} очков`}
+                  size="small"
+                  sx={{
+                    bgcolor: "rgba(255,243,224,0.95)",
+                    fontWeight: 600,
+                    color: "#7C4DFF",
+                  }}
+                />
+                <Chip
+                  label={task.task_type}
+                  size="small"
+                  sx={{
+                    bgcolor: "rgba(255,255,255,0.9)",
+                    fontWeight: 600,
+                    color: "#1A1A2E",
+                  }}
+                />
+                {task.forbidden_groups &&
+                  task.forbidden_groups.length > 0 && (
+                    <Chip
+                      label={`👥 ${task.forbidden_groups
+                        .map((g) => g.toUpperCase())
+                        .join(", ")}`}
+                      size="small"
+                      sx={{
+                        bgcolor: "rgba(224,242,254,0.95)",
+                        fontWeight: 600,
+                        color: "#0369A1",
+                        fontSize: 10,
+                      }}
+                    />
+                  )}
+              </Stack>
+
+              {!available && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: 1.5,
+                    display: "block",
+                    color: "#FCA5A5",
+                    fontWeight: 600,
+                    textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  ⛔ Доступно для групп: {forbiddenGroupsLabel}
+                </Typography>
+              )}
+            </Box>
+          </Paper>
+        </Tooltip>
+      </Grid>
+    );
+  })}
+</Grid>
             </Box>
           );
         })}

@@ -79,6 +79,7 @@ class TaskOut(BaseModel):
     instructions: str
     topic: str
     imagePath: Optional[str] = ""
+    imageB64: Optional[str] = ""
     task_type: str
     age_groups: list[str]
     forbidden_groups: list[str] = []
