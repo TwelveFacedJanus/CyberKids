@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 
-from dependencies import get_current_user
-from models import User
-from config import settings
+from ..dependencies import get_current_user
+from ..models import User
+from ..config import settings
 
 router = APIRouter(prefix="/api/run", tags=["execution"])
 

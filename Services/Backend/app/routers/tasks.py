@@ -2,11 +2,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 
-from database import tasks as tasks_col
-from dependencies import get_current_user
-from models import Task, User
-from schemas import TaskFullOut, TaskOut
-import constants
+from ..database import tasks as tasks_col
+from ..dependencies import get_current_user
+from ..models import Task, User
+from ..schemas import TaskFullOut, TaskOut
+from app import constants
 import base64
 from pathlib import Path
 

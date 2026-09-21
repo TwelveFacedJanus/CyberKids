@@ -3,10 +3,10 @@ from typing import List
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from database import groups as groups_col, users as users_col, tasks as tasks_col
-from dependencies import require_admin
-from models import Group, User
-from schemas import GroupCreate, GroupOut, GroupUpdate
+from ..database import groups as groups_col, users as users_col, tasks as tasks_col
+from ..dependencies import require_admin
+from ..models import Group, User
+from ..schemas import GroupCreate, GroupOut, GroupUpdate
 
 router = APIRouter(prefix="/api/groups", tags=["groups"])
 

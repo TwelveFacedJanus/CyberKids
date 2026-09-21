@@ -4,10 +4,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 
-import constants
-from database import users as users_col
-from models import User
-from security import decode_access_token
+from app import constants
+from .database import users as users_col
+from .models import User
+from .security import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 

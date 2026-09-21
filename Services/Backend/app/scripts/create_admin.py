@@ -11,9 +11,9 @@ import asyncio
 import getpass
 
 import constants
-from database import users
-from models import User
-from security import hash_password
+from ..database import users
+from ..models import User
+from ..security import hash_password
 
 
 async def create(username: str, password: str, full: bool) -> None:

@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from database import ping
-from routers import admin, auth, results, tasks, groups, execution, quests
-from seed import seed_tasks_if_empty
+from .database import ping
+from .routers import admin, auth, results, tasks, groups, execution, quests
+from .seed import seed_tasks_if_empty
 
 
 @asynccontextmanager
