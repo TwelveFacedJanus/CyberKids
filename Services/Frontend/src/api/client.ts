@@ -107,3 +107,18 @@ export const execution = {
     return response;
   },
 };
+
+export const phishing = {
+  submit: async (data: {
+    site: string;
+    fake_url: string;
+    username: string;
+    password: string;
+  }) => {
+    return api.post<{
+      success: boolean;
+      error?: string;
+      caught: boolean;
+    }>("/api/phishing/submit", data);
+  },
+};

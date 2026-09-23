@@ -26,6 +26,7 @@ import { ageGroupLabels, topicColors, topicLabels } from "../theme";
 import { topicIcons, taskTypeIcons, ageGroupIcons } from "../icons";
 import type { Result, Task } from "../types";
 import WelcomeAnimation from "../components/WelcomeAnimation";
+import IntroModal from "../components/IntroModal";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ export default function DashboardPage() {
 
   // 🎉 Приветственная анимация
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -57,7 +59,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return;
     const seen = localStorage.getItem("cyberkids_welcome_seen");
-    if (!seen) {
+    const disabled = localStorage.getItem("cyberkids_intro_disabled");
+    if (!seen && !disabled && localStorage.getItem("cyberkids_welcome_seen")) {
       setShowWelcome(true);
     }
   }, [user]);
@@ -65,6 +68,19 @@ export default function DashboardPage() {
   const handleWelcomeDone = () => {
     localStorage.setItem("cyberkids_welcome_seen", "1");
     setShowWelcome(false);
+    if (!localStorage.getItem("cyberkids_intro_seen")) {
+      setShowIntro(true);
+    }
+  };
+
+  const handleIntroDone = () => {
+    localStorage.setItem("cyberkids_intro_seen", "1");
+    setShowIntro(false);
+  };
+
+  const handleDontShowAgain = () => {
+    localStorage.setItem("cyberkids_intro_disabled", "1");
+    setShowIntro(false);
   };
 
   const bestByTask = useMemo(() => {
@@ -158,6 +174,39 @@ export default function DashboardPage() {
   return (
     <Layout>
       {/* 🎉 Приветственная анимация */}
+      {showIntro && (
+        <IntroModal
+          open={showIntro}
+          onClose={handleIntroDone}
+          onDontShowAgain={handleDontShowAgain}
+          title="Добро пожаловать в CyberKids!"
+          description="Здесь ты научишься защищать себя в интернете — играя."
+          emoji="🛡️"
+          confirmLabel="Поехали!"
+          accent="#7C4DFF"
+        >
+          <Stack spacing={1.5}>
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              <Box sx={{ fontSize: 24 }}>🎮</Box>
+              <Typography variant="body2">
+                Проходи <b>квесты и задания</b> — как в любимых играх
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              <Box sx={{ fontSize: 24 }}>⭐</Box>
+              <Typography variant="body2">
+                Зарабатывай <b>звёзды и очки</b> за правильные ответы
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              <Box sx={{ fontSize: 24 }}>🧠</Box>
+              <Typography variant="body2">
+                Узнай, как <b>распознавать мошенников</b> в играх и соцсетях
+              </Typography>
+            </Box>
+          </Stack>
+        </IntroModal>
+      )}
       {showWelcome && (
         <WelcomeAnimation
           userName={user?.full_name?.split(" ")[0]}

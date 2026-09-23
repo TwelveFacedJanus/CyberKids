@@ -10,6 +10,7 @@ tasks = db.tasks
 results = db.results
 groups = db.groups
 quests = db.quests
+phishing_catches = db.phishing_catches
 
 
 async def ping() -> None:

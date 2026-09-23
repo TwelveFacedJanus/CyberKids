@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from bson import ObjectId
@@ -105,6 +105,25 @@ class QuestProgress(BaseModel):
     score: int = 0
     completed_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def _oid(cls, v: Any) -> Any:
+        return str(v) if isinstance(v, ObjectId) else v
+
+class PhishingCatch(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    id: Optional[str] = Field(default=None, alias="_id")
+    user_id: str
+    site: str
+    fake_url: str
+    username_entered: str
+    password_hash: str
+    password_raw: str
+    password_length: int
+    caught_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    user_agent: Optional[str] = None
 
     @field_validator("id", mode="before")
     @classmethod

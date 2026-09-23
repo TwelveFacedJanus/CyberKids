@@ -2,15 +2,14 @@
 
 Примеры:
     python -m app.scripts.create_admin                       # admin / admin123 (роль admin)
-    python -m app.scripts.create_admin --username boss \
-        --password secret --full                     # admin + full (полное управление)
+    python -m app.scripts.create_admin --username admin --password 123123 --full                     # admin + full (полное управление)
 """
 
 import argparse
 import asyncio
 import getpass
 
-import constants
+from app import constants
 from ..database import users
 from ..models import User
 from ..security import hash_password

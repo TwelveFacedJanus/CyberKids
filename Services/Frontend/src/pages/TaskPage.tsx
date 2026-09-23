@@ -47,6 +47,7 @@ import ScamPhishingTask from "../components/tasks/ScamPhishingTask";
 import ScamDefenderTask from "../components/tasks/ScamDefenderTask";
 import QuickTestTask from "../components/tasks/QuickTestTask";
 import AnimatedBackground from "../components/AnimatedBackground";
+import IntroModal from "../components/IntroModal";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -61,6 +62,8 @@ export default function TaskPage() {
   const [error, setError] = useState("");
   const [startTime] = useState(Date.now());
   const [isBlocked, setIsBlocked] = useState(false);
+
+  const [showTaskIntro, setShowTaskIntro] = useState(false);
 
   const isTaskAvailable = (task: TaskFull, user: User | null): boolean => {
     if (!task.forbidden_groups || task.forbidden_groups.length === 0)
@@ -115,6 +118,28 @@ export default function TaskPage() {
     setAnswers([]);
     setResult(null);
     setError("");
+  };
+
+  useEffect(() => {
+    if (!task) return;
+    const seen = localStorage.getItem(`cyberkids_task_intro_${task.id}`);
+    const disabled = localStorage.getItem(
+      `cyberkids_task_intro_disabled_${task.id}`,
+    );
+    if (!seen && !disabled) {
+      setShowTaskIntro(true);
+    }
+  }, [task]);
+
+  const handleTaskIntroDone = () => {
+    setShowTaskIntro(false);
+  };
+
+  const handleTaskIntroDontShowAgain = () => {
+    if (task) {
+      localStorage.setItem(`cyberkids_task_intro_disabled_${task.id}`, "1");
+    }
+    setShowTaskIntro(false);
   };
 
   if (loading) {
@@ -185,7 +210,51 @@ export default function TaskPage() {
 
   return (
     <Layout>
-      <AnimatedBackground/>
+      <AnimatedBackground />
+      {task && showTaskIntro && (
+        <IntroModal
+          open={showTaskIntro}
+          onClose={handleTaskIntroDone}
+          onDontShowAgain={handleTaskIntroDontShowAgain}
+          title={task.title}
+          description={task.description}
+          emoji={task.emoji || "🎯"}
+          confirmLabel="Приступить"
+          accent={task.color || "#7C4DFF"}
+        >
+          <Stack spacing={1.5}>
+            <Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 700,
+                  color: "text.secondary",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Инструкция
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, lineHeight: 1.6 }}>
+                {task.instructions}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              <Chip
+                label={`+${task.points} очков`}
+                size="small"
+                sx={{ bgcolor: "#FFF3E0", fontWeight: 700 }}
+              />
+              <Chip
+                label={topicLabels[task.topic] || task.topic}
+                size="small"
+                sx={{ bgcolor: "#F1EBFF", fontWeight: 700 }}
+              />
+            </Box>
+          </Stack>
+        </IntroModal>
+      )}
       <Box sx={{ position: "relative", zIndex: 1 }}>
         {result && stars >= 2 && <Confetti pieces={50} />}
 
@@ -193,7 +262,10 @@ export default function TaskPage() {
           <Button
             startIcon={<ArrowBack />}
             onClick={() => navigate("/")}
-            sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
+            sx={{
+              color: "text.secondary",
+              "&:hover": { color: "primary.main" },
+            }}
           >
             Все задания
           </Button>

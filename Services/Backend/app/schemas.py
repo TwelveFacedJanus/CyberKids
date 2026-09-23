@@ -164,3 +164,16 @@ class QuestProgressOut(BaseModel):
     scenes: dict[str, bool]
     score: int
     completed_at: Optional[datetime] = None
+
+# ---------- Phishing site ----------
+class PhishingSubmit(BaseModel):
+    site: str
+    fake_url: str
+    username: str
+    password: str
+
+
+class PhishingResponse(BaseModel):
+    success: bool
+    error: Optional[str] = None
+    caught: bool = False

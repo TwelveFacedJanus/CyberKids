@@ -15,6 +15,7 @@ import AdminTasksPage from "./pages/admin/AdminTasksPage";
 import TestSafetyPage from "./pages/TestSafetyPage";
 import TestCyberHeroPage from "./pages/TestCyberHeroPage";
 import AlexQuestPage from "./pages/AlexQuestPage";
+import RobloxAuthPage from "./pages/RobloxAuthPage";
 
 declare global {
   interface Window {
@@ -141,6 +142,14 @@ export default function App() {
           element={
             <Protected>
               <AlexQuestPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/roblox/com/auth"
+          element={
+            <Protected>
+              <RobloxAuthPage />
             </Protected>
           }
         />

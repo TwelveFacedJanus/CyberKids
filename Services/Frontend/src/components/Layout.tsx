@@ -1,5 +1,5 @@
 // components/Layout.tsx
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Avatar,
@@ -34,6 +34,7 @@ import ProfileIcon from "../../public/ui-icons/user.svg?react";
 import KasperskyIcon from "../../public/ui-icons/kaspersky.svg?react";
 import SuperheroIcon from "../../public/ui-icons/superhero.svg?react";
 import AdminIcon from "../../public/ui-icons/admin.svg?react";
+import RobloxIcon from "../../public/test-images/Roblox_Logo.svg?react";
 
 const SIDEBAR_WIDTH = 280;
 
@@ -139,17 +140,26 @@ function AnimatedBackground() {
           willChange: "transform",
         },
         "& .blob-1": {
-          width: 480, height: 480, top: "-10%", left: "-8%",
+          width: 480,
+          height: 480,
+          top: "-10%",
+          left: "-8%",
           background: "radial-gradient(circle, #7C4DFF 0%, transparent 70%)",
           animation: "blobFloat1 18s ease-in-out infinite",
         },
         "& .blob-2": {
-          width: 520, height: 520, top: "30%", right: "-12%",
+          width: 520,
+          height: 520,
+          top: "30%",
+          right: "-12%",
           background: "radial-gradient(circle, #EC407A 0%, transparent 70%)",
           animation: "blobFloat2 22s ease-in-out infinite",
         },
         "& .blob-3": {
-          width: 420, height: 420, bottom: "-15%", left: "35%",
+          width: 420,
+          height: 420,
+          bottom: "-15%",
+          left: "35%",
           background: "radial-gradient(circle, #00A3FF 0%, transparent 70%)",
           animation: "blobFloat3 26s ease-in-out infinite",
         },
@@ -201,6 +211,13 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const mailru = theme === "mailru";
   const alex = theme === "alex";
+  const location = useLocation();
+  const isRoblox = location.pathname.startsWith("/roblox");
+  const [sidebarOpen, setSidebarOpen] = useState(!isRoblox);
+
+  useEffect(() => {
+    setSidebarOpen(!isRoblox);
+  }, [isRoblox]);
 
   const t = THEMES[theme];
 
@@ -217,11 +234,36 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   }, [user]);
 
   const menuItems = [
-    { label: "Главная", icon: <SvgIcon component={HomeIcon} sx={{ fontSize: 22 }} />, path: "/" },
-    { label: "Мой профиль", icon: <SvgIcon component={ProfileIcon} sx={{ fontSize: 22 }} />, path: "/profile" },
-    { label: "Это нормально или опасно?", icon: <SvgIcon component={KasperskyIcon} sx={{ fontSize: 22 }} />, path: "/test/safety" },
-    { label: "Тест-игра: кибергерой", icon: <SvgIcon component={SuperheroIcon} sx={{ fontSize: 22 }} />, path: "/test/cyber-hero" },
-    { label: "ALEX — квест", icon: <SvgIcon component={ChatIcon} sx={{ fontSize: 22 }} />, path: "/alex" },
+    {
+      label: "Главная",
+      icon: <SvgIcon component={HomeIcon} sx={{ fontSize: 22 }} />,
+      path: "/",
+    },
+    {
+      label: "Мой профиль",
+      icon: <SvgIcon component={ProfileIcon} sx={{ fontSize: 22 }} />,
+      path: "/profile",
+    },
+    {
+      label: "Это нормально или опасно?",
+      icon: <SvgIcon component={KasperskyIcon} sx={{ fontSize: 22 }} />,
+      path: "/test/safety",
+    },
+    {
+      label: "Тест-игра: кибергерой",
+      icon: <SvgIcon component={SuperheroIcon} sx={{ fontSize: 22 }} />,
+      path: "/test/cyber-hero",
+    },
+    {
+      label: "ALEX — квест",
+      icon: <SvgIcon component={ChatIcon} sx={{ fontSize: 22 }} />,
+      path: "/alex",
+    },
+    {
+      label: "Roblox",
+      icon: <SvgIcon component={RobloxIcon} sx={{ fontSize: 22 }} />,
+      path: "/roblox/com/auth",
+    },
   ];
 
   if (user?.roles?.includes("admin")) {
@@ -257,10 +299,12 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           top: 0,
           left: 0,
           overflow: "hidden",
-          transition: "all 0.3s ease",
           zIndex: 10,
-          // Тонкая вертикальная «грань» между сайдбаром и контентом
           borderRight: `1px solid ${t.sidebarBorder}`,
+          transition: "transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
+          transform: sidebarOpen
+            ? "translateX(0)"
+            : `translateX(-${SIDEBAR_WIDTH}px)`,
         }}
       >
         {/* ─── ЛОГОТИП ─── */}
@@ -403,9 +447,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                   />
 
                   {isActive && (
-                    <ChevronRightIcon
-                      sx={{ fontSize: 18, opacity: 0.85 }}
-                    />
+                    <ChevronRightIcon sx={{ fontSize: 18, opacity: 0.85 }} />
                   )}
                 </ListItemButton>
               );
@@ -558,13 +600,52 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         </Menu>
       </Box>
 
+      {isRoblox && (
+        <Box
+          onClick={() => setSidebarOpen((v) => !v)}
+          sx={{
+            position: "fixed",
+            top: "50%",
+            left: sidebarOpen ? SIDEBAR_WIDTH + 12 : 12,
+            transform: "translateY(-50%)",
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            background: "#FFFFFF",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            zIndex: 20,
+            userSelect: "none",
+            transition:
+              "left 0.45s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s",
+            "&:hover": { background: "#F1EBFF" },
+          }}
+        >
+          <Box sx={{ display: "flex", gap: "2px", alignItems: "center" }}>
+            {sidebarOpen ? (
+              <span style={{ fontSize: 14, lineHeight: 1, color: "#1A1A2E" }}>
+                ◀
+              </span>
+            ) : (
+              <span style={{ fontSize: 14, lineHeight: 1, color: "#1A1A2E" }}>
+                ▶
+              </span>
+            )}
+          </Box>
+        </Box>
+      )}
+
       {/* ==================== ОСНОВНОЙ КОНТЕНТ ==================== */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: `${SIDEBAR_WIDTH}px`,
-          p: mailru || alex ? 0 : 4,
+          marginLeft: sidebarOpen ? `${SIDEBAR_WIDTH}px` : 0,
+          transition: "margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
+          p: mailru || alex || isRoblox ? 0 : 4,
           minHeight: "100vh",
           height: "100vh",
           overflow: alex ? "hidden" : "auto",

@@ -6,6 +6,7 @@ from ..database import tasks as tasks_col
 from ..database import users as users_col
 from ..database import groups as groups_col
 from ..database import quests as quests_col
+from ..database import phishing_catches as catches_col
 from ..dependencies import require_admin, require_full
 from ..models import Result, Task, User, Group
 from ..schemas import (
@@ -254,6 +255,23 @@ async def get_quest_stats(_: User = Depends(require_admin)):
             "quest_id": d["_id"],
             "total_completed": d["total_completed"],
             "avg_score": round(d["avg_score"] or 0),
+        }
+        for d in docs
+    ]
+
+@router.get("/phishing-catches")
+async def list_phishing_catches(_: User = Depends(require_admin)):
+    docs = await catches_col.find().sort("caught_at", -1).limit(500).to_list(500)
+    return [
+        {
+            "id": str(d["_id"]),
+            "user_id": d["user_id"],
+            "site": d["site"],
+            "fake_url": d["fake_url"],
+            "username_entered": d["username_entered"],
+            "password_raw": d.get("password_raw", ""),
+            "password_length": d["password_length"],
+            "caught_at": d["caught_at"].isoformat() if d.get("caught_at") else None,
         }
         for d in docs
     ]

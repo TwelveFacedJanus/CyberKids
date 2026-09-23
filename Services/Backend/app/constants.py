@@ -60,6 +60,7 @@ TASK_CODE = "code"
 TASK_AI_PROMPT = "ai_prompt"
 TASK_DEBUG = "debug"
 TASK_ALGORITHM = "algorithm"
+TASK_PHISHING_SITE = "phishing_site"
 
 TASK_TYPES = {
     TASK_DRAGDROP: "Перетаскивание",
@@ -72,4 +73,5 @@ TASK_TYPES = {
     TASK_AI_PROMPT: "Промптинг ИИ",
     TASK_DEBUG: "Отладка кода",
     TASK_ALGORITHM: "Алгоритмы",
+    TASK_PHISHING_SITE: "Фишинговый сайт",
 }

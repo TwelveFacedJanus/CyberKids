@@ -231,6 +231,26 @@ def score_algorithm(content: dict, answers: list[dict]) -> tuple[int, int, list[
     
     return correct, total, details
 
+def score_phishing_site(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """
+    Оценка задания-симуляции фишингового сайта.
+    - Если ребёнок ввёл данные → 0 очков, деталь: caught=True
+    - Если НЕ ввёл (закрыл / не стал) → 1 очко (молодец)
+    """
+    entered = next(
+        (a.get("value") for a in answers if a.get("key") == "entered_data"),
+        False,
+    )
+    correct = 0 if entered else 1
+    total = 1
+    details = [{
+        "expected": "Не вводить данные на подозрительном сайте",
+        "chosen": "Ввёл логин и пароль" if entered else "Не стал вводить",
+        "correct": correct == 1,
+        "caught": bool(entered),
+    }]
+    return correct, total, details
+
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
     if task_type == constants.TASK_DRAGDROP:
@@ -253,5 +273,7 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_debug(content, answers)
     if task_type == constants.TASK_ALGORITHM:
         return score_algorithm(content, answers)
+    if task_type == constants.TASK_PHISHING_SITE:
+        return score_phishing_site(content, answers)
     return 0, 0, []
 
