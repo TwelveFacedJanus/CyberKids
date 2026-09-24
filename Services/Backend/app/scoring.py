@@ -297,6 +297,50 @@ def score_quick_test(content: dict, answers: list[dict]) -> tuple[int, int, list
     }]
     return correct, total, details
 
+def score_profile_builder(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """profile_builder: сколько шагов сборки профиля безопасно."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "profile_builder_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Пройти сборку профиля",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    total_correct = int(result.get("totalCorrect", 0))
+    total_possible = int(result.get("totalPossible", 1))
+    details = result.get("details") or []
+    return total_correct, total_possible, details
+
+def score_photo_detective(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """photo_detective: улики + инструменты + открытый ответ."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "photo_detective_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Пройти расследование",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    total_correct = int(result.get("totalCorrect", 0))
+    total_possible = int(result.get("totalPossible", 1))
+    details = result.get("details") or []
+
+    # Бонус за ключевые слова в ответе
+    answer = (result.get("finalAnswer") or "").lower()
+    keywords = ["геометк", "школ", "приватн", "скры", "не выкладыв", "адрес", "вывеск", "ник"]
+    if any(k in answer for k in keywords):
+        total_correct += 1
+        total_possible += 1
+
+    return total_correct, total_possible, details
+
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
     if task_type == constants.TASK_DRAGDROP:
@@ -327,5 +371,9 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_theory_cards(content, answers)
     if task_type == constants.TASK_QUICK_TEST:
         return score_quick_test(content, answers)
+    if task_type == constants.TASK_PROFILE_BUILDER:
+        return score_profile_builder(content, answers)
+    if task_type == constants.TASK_PHOTO_DETECTIVE:
+        return score_photo_detective(content, answers)
     return 0, 0, []
 

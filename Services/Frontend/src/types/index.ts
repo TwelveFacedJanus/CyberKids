@@ -13,6 +13,8 @@ export type TaskType =
   | 'scam_phishing'
   | 'scam_defender'
   | 'quick_test'
+  | 'profile_builder'
+  | 'photo_detective'
 
 export interface User {
   id: string

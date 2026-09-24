@@ -57,6 +57,8 @@ TASK_SCAM_DEFENDER = "scam_defender"
 TASK_THEORY_CARDS = "theory_cards"
 TASK_QUICK_TEST = "quick_test"
 TASK_DIGITAL_FOOTPRINT = "digital_footprint"
+TASK_PROFILE_BUILDER = "profile_builder"
+TASK_PHOTO_DETECTIVE = "photo_detective"
 
 TASK_TYPES = {
     TASK_DRAGDROP: "Перетаскивание",
@@ -74,4 +76,6 @@ TASK_TYPES = {
     TASK_THEORY_CARDS: "Теоретические карточки",
     TASK_QUICK_TEST: "Быстрый тест",
     TASK_DIGITAL_FOOTPRINT: "Цифровой след",
+    TASK_PROFILE_BUILDER: "Сборка профиля",
+    TASK_PHOTO_DETECTIVE: "Фото-детектив",
 }

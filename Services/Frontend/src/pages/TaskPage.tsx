@@ -40,6 +40,8 @@ import ScamPhishingTask from "../components/tasks/ScamPhishingTask";
 import ScamDefenderTask from "../components/tasks/ScamDefenderTask";
 import QuickTestTask from "../components/tasks/QuickTestTask";
 import TaskTutorial, { type TutorialStep } from "../components/TaskTutorial";
+import ProfileBuilderTask from "../components/tasks/ProfileBuilderTask";
+import PhotoDetectiveTask from "../components/tasks/PhotoDetectiveTask";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -288,6 +290,58 @@ export default function TaskPage() {
           {
             text: "Прочитай вопрос и выбери ответ. Затем нажми «Проверить».",
             targetSelector: '[data-tutorial="options"]',
+          },
+        ];
+
+      case "profile_builder":
+        return [
+          {
+            text: "Это карточка твоего профиля. Каждое поле может выдать личную информацию.",
+            targetSelector: '[data-tutorial="profile-builder"]',
+          },
+          {
+            text: "Следи за индикатором приватности вверху — он падает, когда ты выбираешь небезопасные варианты.",
+            targetSelector: '[data-tutorial="profile-privacy-bar"]',
+          },
+          {
+            text: "Кликни на аватар — он станет активным. Стрелками ◀ ▶ листай варианты.",
+            targetSelector: '[data-tutorial="profile-field-avatar"]',
+          },
+          {
+            text: "То же самое с ником — кликни и выбери безопасный вариант.",
+            targetSelector: '[data-tutorial="profile-field-nickname"]',
+          },
+          {
+            text: "И с настройкой приватности — выбирай «Только друзья», чтобы профиль был закрыт.",
+            targetSelector: '[data-tutorial="profile-field-privacy"]',
+          },
+          {
+            text: "Листай варианты активного поля этими стрелками.",
+            targetSelector: '[data-tutorial="profile-arrow-right"]',
+          },
+          {
+            text: "Когда выберешь все поля — нажми «Проверить профиль».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "photo_detective":
+        return [
+          {
+            text: "Ты — детектив. Изучи фото и найди все подозрительные места.",
+            targetSelector: '[data-tutorial="photo-detective"]',
+          },
+          {
+            text: "Кликай по уликам — они попадут в блокнот.",
+            targetSelector: '[data-tutorial="photo-detective"]',
+          },
+          {
+            text: "Потом используй инструменты, чтобы узнать больше.",
+            targetSelector: '[data-tutorial="tool-image_search"]',
+          },
+          {
+            text: "Когда всё соберёшь — нажми кнопку ниже.",
+            targetSelector: '[data-tutorial="submit"]',
           },
         ];
 
@@ -731,6 +785,22 @@ function TaskContent({
       case "quick_test":
         return (
           <QuickTestTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+          />
+        );
+      case "profile_builder":
+        return (
+          <ProfileBuilderTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+          />
+        );
+      case "photo_detective":
+        return (
+          <PhotoDetectiveTask
             content={task.content}
             answers={answers}
             onChange={setAnswers}

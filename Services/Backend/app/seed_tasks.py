@@ -932,4 +932,482 @@ SEED_TASKS = [
             ],
         },
     },
+    # ================= ЦИФРОВОЙ СЛЕД =================
+    {
+        "title": "Фото-детектив",
+        "description": "Узнай, сколько информации может раскрыть одна фотография",
+        "instructions": (
+            "Изучи учебную фотографию, найди цифровые следы и проверь их "
+            "с помощью инструментов. Собирай только те сведения, которые "
+            "подтверждаются найденными уликами."
+        ),
+        "topic": "digital_footprint",
+        "task_type": "photo_detective",
+        "age_groups": ["senior"],
+        "points": 30,
+        "emoji": "🔎",
+        "color": "#26C6DA",
+        "order": 62,
+        "forbidden_groups": [],
+        "content": {
+            "storyTitle": "Дело №001: цифровой след",
+            "intro": (
+                "Перед тобой фотография вымышленного персонажа. "
+                "Все аккаунты, публикации и данные в этом задании созданы "
+                "специально для игры. Попробуй выяснить, сколько информации "
+                "может раскрыть одна фотография."
+            ),
+            "imagePath": "/quest-photo/photo.png",
+            "debugMode": True,
+            # ============================================================
+            # УЛИКИ НА ФОТОГРАФИИ
+            # ============================================================
+            "hotspots": [
+                {
+                    "id": "h1",
+                    "x": 55,
+                    "y": 27,
+                    "width": 12,
+                    "height": 8,
+                    "rotation": 8,
+                    "label": "Школа №12",
+                    "hint": (
+                        "Табличка на здании. Название школы может "
+                        "оказаться важной зацепкой."
+                    ),
+                    "clueId": "school",
+                    "clueText": "Школа №12",
+                    "dossierField": "school",
+                },
+                {
+                    "id": "h2",
+                    "x": 16,
+                    "y": 12,
+                    "width": 20,
+                    "height": 12,
+                    "rotation": 18,
+                    "label": "Пятёрочка",
+                    "hint": (
+                        "Сетевая вывеска магазина. Она может помочь "
+                        "определить примерный район."
+                    ),
+                    "clueId": "shop",
+                    "clueText": "Магазин «Пятёрочка»",
+                    "dossierField": "shop",
+                },
+                {
+                    "id": "h3",
+                    "x": 82.5,
+                    "y": 24,
+                    "width": 7,
+                    "height": 15,
+                    "rotation": 1,
+                    "label": "Автобус №42",
+                    "hint": (
+                        "Номер маршрута на остановке. "
+                        "Транспорт тоже может быть цифровым следом."
+                    ),
+                    "clueId": "bus",
+                    "clueText": "Автобус №42",
+                    "dossierField": "route",
+                },
+                {
+                    "id": "h4",
+                    "x": 5,
+                    "y": 50,
+                    "width": 30,
+                    "height": 60,
+                    "rotation": 15,
+                    "label": "Отражение в витрине",
+                    "hint": (
+                        "В отражении можно заметить дополнительную "
+                        "вывеску или ориентир."
+                    ),
+                    "clueId": "reflection",
+                    "clueText": "Отражение в витрине",
+                    "dossierField": "reflection",
+                },
+                {
+                    "id": "h5",
+                    "x": 95,
+                    "y": 91,
+                    "width": 8,
+                    "height": 8,
+                    "rotation": 0,
+                    "label": "Геометка",
+                    "hint": (
+                        "На фотографии сохранились координаты: "
+                        "55.7558 N, 37.6173 E."
+                    ),
+                    "clueId": "geo",
+                    "clueText": "Координаты 55.7558, 37.6173",
+                    "dossierField": "coordinates",
+                },
+            ],
+            # ============================================================
+            # ПОЛЯ ФИНАЛЬНОГО ДОСЬЕ
+            # ============================================================
+            "dossierSlots": [
+                {
+                    "id": "nickname",
+                    "label": "Никнейм",
+                    "icon": "🆔",
+                    "acceptedClues": ["nickname"],
+                },
+                {
+                    "id": "about",
+                    "label": "О себе",
+                    "icon": "💬",
+                    "acceptedClues": ["interests"],
+                },
+                {
+                    "id": "city",
+                    "label": "Город",
+                    "icon": "🏙️",
+                    "acceptedClues": [
+                        "city",
+                        "city_name",
+                    ],
+                },
+                {
+                    "id": "district",
+                    "label": "Район",
+                    "icon": "📍",
+                    "acceptedClues": ["district"],
+                },
+                {
+                    "id": "school",
+                    "label": "Школа",
+                    "icon": "🏫",
+                    "acceptedClues": [
+                        "school",
+                        "school_confirm",
+                    ],
+                },
+                {
+                    "id": "class",
+                    "label": "Класс",
+                    "icon": "🎓",
+                    "acceptedClues": ["class"],
+                },
+                {
+                    "id": "route",
+                    "label": "Маршрут",
+                    "icon": "🚌",
+                    "acceptedClues": ["bus"],
+                },
+                {
+                    "id": "shop",
+                    "label": "Магазин рядом",
+                    "icon": "🏪",
+                    "acceptedClues": ["shop"],
+                },
+                {
+                    "id": "reflection",
+                    "label": "Дополнительная зацепка",
+                    "icon": "🪞",
+                    "acceptedClues": ["reflection"],
+                },
+                {
+                    "id": "coordinates",
+                    "label": "Координаты",
+                    "icon": "🌐",
+                    "acceptedClues": ["geo"],
+                },
+            ],
+            # ============================================================
+            # ИНСТРУМЕНТЫ
+            # ============================================================
+            "tools": [
+                {
+                    "id": "image_search",
+                    "type": "image_search",
+                    "title": "Поиск по фото",
+                    "icon": "🖼️",
+                },
+                {
+                    "id": "nick_search",
+                    "type": "nick_search",
+                    "title": "Поиск по нику",
+                    "icon": "👤",
+                },
+                {
+                    "id": "geo_map",
+                    "type": "geo_map",
+                    "title": "Карта координат",
+                    "icon": "🗺️",
+                },
+            ],
+            # ============================================================
+            # НИКНЕЙМ
+            # ============================================================
+            "nickname": "max_ivanov2011",
+            # ============================================================
+            # ПОИСК ПО ФОТО
+            # ============================================================
+            "imageSearchResults": [
+                {
+                    "id": "r1",
+                    "platform": "VK",
+                    "platformIcon": "📘",
+                    "url": "vk.com/max_ivanov2011",
+                    "date": "12.05.2026",
+                    "caption": "Гуляю в Хамовниках ❤️",
+                    "likes": 12,
+                    "comments": 3,
+                    "clueId": "district",
+                    "clueText": "Район: Хамовники",
+                    "dossierField": "district",
+                    "isClue": True,
+                },
+                {
+                    "id": "r2",
+                    "platform": "OK.ru",
+                    "platformIcon": "🟠",
+                    "url": "ok.ru/profile/587123",
+                    "date": "12.05.2026",
+                    "caption": "Школа №12, привет :)",
+                    "likes": 4,
+                    "comments": 0,
+                    "clueId": "school_confirm",
+                    "clueText": "Школа №12",
+                    "dossierField": "school",
+                    "isClue": True,
+                },
+                {
+                    "id": "r3",
+                    "platform": "Форум Minecraft",
+                    "platformIcon": "⛏️",
+                    "url": "forum.minecraft.ru/user/MaxIvan2011",
+                    "date": "—",
+                    "caption": "Аватарка пользователя MaxIvan2011",
+                    "likes": 0,
+                    "comments": 0,
+                    "isClue": False,
+                },
+            ],
+            # ============================================================
+            # ПОИСК ПО НИКУ
+            # ============================================================
+            "nickSearchResults": [
+                {
+                    "id": "n1",
+                    "platform": "Telegram",
+                    "platformIcon": "📱",
+                    "avatar": "⚽",
+                    "name": "Max Ivanov",
+                    "handle": "@max_ivanov2011",
+                    "bio": (
+                        "Канал: «Футбол для всех» · "
+                        "234 подписчика"
+                    ),
+                    "extra": None,
+                    "clueId": "nickname",
+                    "clueText": "@max_ivanov2011",
+                    "dossierField": "nickname",
+                    "isClue": True,
+                },
+                {
+                    "id": "n2",
+                    "platform": "Форум Minecraft",
+                    "platformIcon": "⛏️",
+                    "avatar": "🎮",
+                    "name": "MaxIvan2011",
+                    "handle": "Регистрация: 2023",
+                    "bio": (
+                        "Дата рождения: 2011 · "
+                        "Город: Москва · "
+                        "Любимые игры: Roblox, CS"
+                    ),
+                    "extra": (
+                        "Сообщений: 47 · "
+                        "Репутация: 12"
+                    ),
+                    "clueId": "city",
+                    "clueText": "Москва",
+                    "dossierField": "city",
+                    "isClue": True,
+                },
+                {
+                    "id": "n3",
+                    "platform": "VK",
+                    "platformIcon": "📘",
+                    "avatar": "📚",
+                    "name": "Максим Иванов",
+                    "handle": "6А класс школы №12",
+                    "bio": (
+                        "Первый день в 6А! "
+                        "Учительница по математике строгая 😂"
+                    ),
+                    "extra": (
+                        "03.09.2025 · "
+                        "💬 5 · ❤️ 24"
+                    ),
+                    "clueId": "class",
+                    "clueText": "6А класс",
+                    "dossierField": "class",
+                    "isClue": True,
+                },
+                {
+                    "id": "n4",
+                    "platform": "Telegram",
+                    "platformIcon": "📱",
+                    "avatar": "⚽",
+                    "name": "Max Ivanov",
+                    "handle": "@football_for_all",
+                    "bio": (
+                        "Футбол, тренировки и любимые команды"
+                    ),
+                    "extra": "Подписчиков: 234",
+                    "clueId": "interests",
+                    "clueText": "Футбол, Roblox",
+                    "dossierField": "about",
+                    "isClue": True,
+                },
+            ],
+            # ============================================================
+            # КАРТА
+            # ============================================================
+            "geoResults": {
+                "coords": "55.7558 N, 37.6173 E",
+                "city": "Москва",
+                "district": "Хамовники",
+                "landmarks": [
+                    "Школа №12",
+                    "Парк Горького",
+                    "Метро «Парк культуры»",
+                ],
+                "clueId": "city",
+                "dossierField": "city",
+            },
+            # ============================================================
+            # ФИНАЛЬНЫЙ ВОПРОС
+            # ============================================================
+            "finalQuestion": (
+                "Как избежать таких последствий?"
+            ),
+            "finalPlaceholder": (
+                "Напиши своими словами, какие данные "
+                "лучше не публиковать открыто и почему..."
+            ),
+            "explainer": (
+                "По одной фотографии и связанным с ней открытым "
+                "данным можно узнать гораздо больше, чем кажется: "
+                "город, район, школу, класс, интересы и другие детали. "
+                "Чтобы уменьшить цифровой след, отключай геометки, "
+                "не публикуй фотографии, на которых видны школа, "
+                "адрес или другие ориентиры, и не используй один "
+                "и тот же никнейм во всех сервисах."
+            ),
+        },
+    },
+    {
+        "title": "Собери профиль безопасно",
+        "description": "Заполни карточку профиля, не выдав лишнего",
+        "instructions": "Кликни на поле карточки и листай варианты стрелками ◀ ▶. Выбери безопасные значения для всех полей и нажми «Проверить».",
+        "topic": "digital_footprint",
+        "task_type": "profile_builder",
+        "age_groups": ["junior", "middle"],
+        "points": 30,
+        "emoji": "👤",
+        "color": "#26C6DA",
+        "order": 60,
+        "forbidden_groups": [],
+        "content": {
+            "storyTitle": "Карточка игрока",
+            "intro": "Заполни профиль. Кликни на поле, чтобы выбрать вариант стрелками. Следи за индикатором приватности.",
+            "explainer": "Каждое поле — отдельная утечка информации. Даже одно фото или ник могут выдать тебя с головой.",
+            "fields": [
+                {
+                    "id": "avatar",
+                    "label": "Аватар",
+                    "displayMode": "image",
+                    "options": [
+                        {
+                            "id": "a1",
+                            "image": "/quest-profile/avatar-game.png",
+                            "text": "Игровой аватар",
+                            "caption": "Стилизованный персонаж — безопасно",
+                            "safety": "good",
+                            "leak": 0,
+                        },
+                        {
+                            "id": "a2",
+                            "image": "/quest-profile/avatar-selfie.png",
+                            "text": "Своё селфи",
+                            "caption": "Твоё настоящее лицо",
+                            "safety": "bad",
+                            "leak": 30,
+                        },
+                        {
+                            "id": "a3",
+                            "image": "/quest-profile/avatar-school.png",
+                            "text": "Фото в школьной форме",
+                            "caption": "Видно школу и класс",
+                            "safety": "bad",
+                            "leak": 40,
+                        },
+                        {
+                            "id": "a4",
+                            "image": "/quest-profile/avatar-friend.png",
+                            "text": "Фото с другом",
+                            "caption": "Друг не разрешал публиковать",
+                            "safety": "warning",
+                            "leak": 20,
+                        },
+                    ],
+                },
+                {
+                    "id": "nickname",
+                    "label": "Никнейм",
+                    "options": [
+                        {"id": "n1", "text": "Тёмный_Рыцарь", "safety": "good", "leak": 0},
+                        {"id": "n2", "text": "Вася_Петров", "safety": "bad", "leak": 30},
+                        {"id": "n3", "text": "Вася_Школа5_7а", "safety": "bad", "leak": 50},
+                        {"id": "n4", "text": "Vasya2009", "safety": "warning", "leak": 15},
+                    ],
+                },
+                {
+                    "id": "bio",
+                    "label": "О себе",
+                    "options": [
+                        {"id": "b1", "text": "Люблю котиков и игры", "safety": "good", "leak": 0},
+                        {"id": "b2", "text": "8 класс, школа №5, живу на Ленина 15", "safety": "bad", "leak": 60},
+                        {"id": "b3", "text": "Вася, 13 лет", "safety": "warning", "leak": 20},
+                        {"id": "b4", "text": "Просто люблю играть 🎮", "safety": "good", "leak": 0},
+                    ],
+                },
+                {
+                    "id": "city",
+                    "label": "Город",
+                    "options": [
+                        {"id": "l1", "text": "Скрыто", "safety": "good", "leak": 0},
+                        {"id": "l2", "text": "Россия", "safety": "warning", "leak": 10},
+                        {"id": "l3", "text": "Ишимбай", "safety": "warning", "leak": 20},
+                        {"id": "l4", "text": "ул. Ленина 15, кв. 3", "safety": "bad", "leak": 70},
+                    ],
+                },
+                {
+                    "id": "privacy",
+                    "label": "Приватность",
+                    "options": [
+                        {"id": "p1", "text": "Только друзья", "safety": "good", "leak": 0},
+                        {"id": "p2", "text": "Друзья друзей", "safety": "warning", "leak": 20},
+                        {"id": "p3", "text": "Все, кроме заблокированных", "safety": "warning", "leak": 30},
+                        {"id": "p4", "text": "Все пользователи", "safety": "bad", "leak": 50},
+                    ],
+                },
+                {
+                    "id": "contact",
+                    "label": "Контакт",
+                    "options": [
+                        {"id": "c1", "text": "Только чат в игре", "safety": "good", "leak": 0},
+                        {"id": "c2", "text": "Скрыто", "safety": "good", "leak": 0},
+                        {"id": "c3", "text": "Ник в Telegram", "safety": "warning", "leak": 25},
+                        {"id": "c4", "text": "+7 917 XXX-XX-XX", "safety": "bad", "leak": 60},
+                    ],
+                },
+            ],
+        },
+    },
 ]
