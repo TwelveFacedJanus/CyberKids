@@ -22,13 +22,10 @@ import Mood from '@mui/icons-material/Mood'
 import MoodBad from '@mui/icons-material/MoodBad'
 import Verified from '@mui/icons-material/Verified'
 import WarningAmber from '@mui/icons-material/WarningAmber'
-import CodeIcon from '@mui/icons-material/Code';
-import AutoAwesome from '@mui/icons-material/AutoAwesome';
-import ViewKanban from '@mui/icons-material/ViewKanban';
-import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import GamepadIcon from '@mui/icons-material/Games';
 import QuizIcon from '@mui/icons-material/Quiz';
 import ShieldIcon from '@mui/icons-material/Shield';
+import MemoryIcon from '@mui/icons-material/MemoryRounded';
 
 export const topicIcons: Record<string, SvgIconComponent> = {
   phishing: MarkEmailUnread,
@@ -37,11 +34,10 @@ export const topicIcons: Record<string, SvgIconComponent> = {
   viruses: BugReportOutlined,
   privacy: PrivacyTipOutlined,
   safe: HealthAndSafetyOutlined,
-  python: CodeIcon,
-  lua: DeveloperBoardIcon,
   gaming_scams: GamepadIcon,
   safety_test: QuizIcon,
   cyber_hero_test: ShieldIcon,
+  digital_footprint: MemoryIcon,
 }
 
 export const taskTypeIcons: Record<string, SvgIconComponent> = {
@@ -51,10 +47,6 @@ export const taskTypeIcons: Record<string, SvgIconComponent> = {
   sort: CategoryOutlined,
   true_false: BalanceOutlined,
   scenario: TipsAndUpdatesOutlined,
-  code: CodeIcon,
-  debug: BugReportOutlined,
-  ai_prompt: AutoAwesome,
-  algorithm: ViewKanban,
 }
 
 export const ageGroupIcons: Record<string, SvgIconComponent> = {

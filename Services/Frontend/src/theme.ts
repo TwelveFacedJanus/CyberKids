@@ -23,15 +23,10 @@ export const topicColors: Record<string, string> = {
   viruses: palette.green,
   privacy: palette.purple,
   safe: palette.pink,
-  // Для новых тем
-  programming: '#FF6B6B',
-  python: '#3776AB',
-  lua: '#000080',
-  ai: '#4ECDC4',
-  logic: '#FFD93D',
   gaming_scams: '#FF6B6B',
   safety_test: '#00A651',
   cyber_hero_test: '#005FF9',
+  digital_footprint: '#26C6DA',
 }
 
 export const topicLabels: Record<string, string> = {
@@ -41,14 +36,10 @@ export const topicLabels: Record<string, string> = {
   viruses: 'Вирусы',
   privacy: 'Личные данные',
   safe: 'Безопасные действия',
-  programming: 'Программирование',
-  python: "Python",
-  lua: "Lua",
-  ai: 'Искусственный интеллект',
-  logic: 'Логика и алгоритмы',
   gaming_scams: 'Игровые мошенничества',  
   safety_test: 'Это нормально или опасно?',
   cyber_hero_test: 'Тест-игра: кибергерой',
+  digital_footprint: 'Цифровой след',
 }
 
 export const ageGroupLabels: Record<string, string> = {

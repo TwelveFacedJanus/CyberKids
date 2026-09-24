@@ -119,118 +119,6 @@ def score_scenario(content: dict, answers: list[dict]) -> tuple[int, int, list[d
         )
     return correct, total, details
 
-def score_code(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
-    # Проверяем, что код запустился успешно
-    code_result = next((a.get('value') for a in answers if a.get('key') == 'code_result'), False)
-    correct = 1 if code_result else 0
-    total = 1
-    details = [{
-        "expected": True,
-        "chosen": code_result,
-        "correct": correct == 1,
-    }]
-    return correct, total, details
-
-def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
-    """
-    Оценивает AI-промпт на основе совпадений с ключевыми словами
-    """
-    # 🔧 Отладка
-    print(f"[SCORING] Получены answers: {answers}")
-    
-    # Получаем процент совпадений из ответа
-    match_percentage = 0
-    matched_words = []
-    
-    for a in answers:
-        key = a.get('key')
-        value = a.get('value')
-        print(f"[SCORING] a: key={key}, value={value}, type={type(value)}")
-        
-        if key == 'ai_match_percentage':
-            if isinstance(value, (int, float)):
-                match_percentage = int(value)
-            elif isinstance(value, str):
-                try:
-                    match_percentage = int(value)
-                except:
-                    match_percentage = 0
-            print(f"[SCORING] match_percentage = {match_percentage}")
-            
-        if key == 'ai_matched_words':
-            if isinstance(value, list):
-                matched_words = value
-            elif isinstance(value, str):
-                try:
-                    import ast
-                    matched_words = ast.literal_eval(value) if value else []
-                except:
-                    matched_words = [value] if value else []
-            print(f"[SCORING] matched_words = {matched_words}")
-    
-    # 🔧 ПОРОГИ ДЛЯ ЗВЁЗД (более щадящие)
-    # 0-20% → 0 звёзд, 21-40% → 1 звезда, 41-70% → 2 звезды, 71-100% → 3 звезды
-    if match_percentage >= 71:
-        correct = 3
-        stars_text = "⭐⭐⭐"
-    elif match_percentage >= 41:
-        correct = 2
-        stars_text = "⭐⭐"
-    elif match_percentage >= 21:
-        correct = 1
-        stars_text = "⭐"
-    else:
-        correct = 0
-        stars_text = "☆"
-    
-    print(f"[SCORING] Итог: match_percentage={match_percentage}, correct={correct}")
-    
-    total = 3
-    
-    details = [{
-        "match_percentage": match_percentage,
-        "matched_words": matched_words[:5] if matched_words else [],
-        "correct": correct,
-        "expected": f"Найдено ключевых слов: {match_percentage}%",
-        "chosen": f"{stars_text} {match_percentage}% — найдено: {', '.join(matched_words[:3]) if matched_words else 'нет совпадений'}"
-    }]
-    
-    return correct, total, details
-
-def score_debug(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
-    # Аналогично code
-    code_result = next((a.get('value') for a in answers if a.get('key') == 'debug_result'), False)
-    correct = 1 if code_result else 0
-    total = 1
-    details = [{
-        "expected": True,
-        "chosen": code_result,
-        "correct": correct == 1,
-    }]
-    return correct, total, details
-
-def score_algorithm(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
-    # Проверяем правильный порядок блоков
-    items = content.get('items', [])
-    total = len(items)
-    correct = 0
-    details = []
-    
-    for i, item in enumerate(items):
-        chosen = next((a.get('value') for a in answers if a.get('key') == item.get('id')), None)
-        ok = chosen == i  # Правильный порядок — индекс соответствует позиции
-        if ok:
-            correct += 1
-        details.append({
-            "item_id": item.get('id'),
-            "item_text": item.get('text'),
-            "expected": i,
-            "chosen": chosen,
-            "correct": ok,
-        })
-    
-    return correct, total, details
-
 def score_phishing_site(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     """
     Оценка задания-симуляции фишингового сайта.
@@ -251,6 +139,164 @@ def score_phishing_site(content: dict, answers: list[dict]) -> tuple[int, int, l
     }]
     return correct, total, details
 
+def score_scam_banner(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """scam_banner — симуляция. Оцениваем сам факт прохождения."""
+    entered = next(
+        (a.get("value") for a in answers if a.get("key") == "scam_data"),
+        None,
+    )
+    details = [{
+        "expected": "Понять, что это была симуляция",
+        "chosen": "Данные введены" if entered else "Данные не введены",
+        "correct": True,
+    }]
+    return 1, 1, details
+
+
+def score_scam_chat(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """scam_chat: сколько мошенников найдено среди показанных."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "scam_chat_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Найти всех мошенников",
+            "chosen": "не выбрано",
+            "correct": False,
+        }]
+
+    # content в БД имеет pool. shownIds — что видел фронт.
+    pool = content.get("pool") or content.get("messages") or []
+    shown_ids = set(result.get("shownIds") or [])
+    selected = set(result.get("selectedIds") or [])
+
+    shown = [m for m in pool if m.get("id") in shown_ids]
+    total_scam = len([m for m in shown if m.get("isScam")])
+
+    caught = len([m for m in shown if m.get("isScam") and m.get("id") in selected])
+    wrong = len([m for m in shown if not m.get("isScam") and m.get("id") in selected])
+
+    correct = max(0, caught - wrong)
+    total = total_scam if total_scam > 0 else 1
+
+    details = [{
+        "expected": f"Найти всех мошенников среди показанных ({total_scam})",
+        "chosen": f"Поймано: {caught}, ошибок: {wrong}",
+        "correct": correct == total,
+    }]
+    return correct, total, details
+
+
+def score_scam_chain(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """scam_chain: 3 фазы — порядок + момент кражи + действие."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "scam_chain_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Пройти расследование",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    total_correct = int(result.get("totalCorrect", 0))
+    total_possible = int(result.get("totalPossible", 1))
+    details = result.get("details") or []
+
+    return total_correct, total_possible, details
+
+
+def score_scam_phishing(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """scam_phishing: собери безопасное письмо."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "scam_phishing_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Собрать безопасное письмо",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    total_correct = int(result.get("totalCorrect", 0))
+    total_possible = int(result.get("totalPossible", 1))
+    details = result.get("details") or []
+    return total_correct, total_possible, details
+
+
+def score_scam_defender(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """scam_defender: ситуации + настройки безопасности."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "scam_defender_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Защитить аккаунт",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    total_correct = int(result.get("totalCorrect", 0))
+    total_possible = int(result.get("totalPossible", 1))
+    details = result.get("details") or []
+    return total_correct, total_possible, details
+
+
+def score_theory_cards(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """theory_cards: все ли карточки изучены."""
+    import json
+
+    progress_raw = next(
+        (a.get("value") for a in answers if a.get("key") == "theory_progress"),
+        "[]",
+    )
+    try:
+        completed = (
+            json.loads(progress_raw)
+            if isinstance(progress_raw, str)
+            else (progress_raw or [])
+        )
+    except Exception:
+        completed = []
+
+    cards = content.get("cards", [])
+    total = len(cards) if cards else 1
+    correct = len([c for c in cards if c["id"] in completed])
+
+    details = [{
+        "expected": f"Изучить все карточки ({total})",
+        "chosen": f"Изучено: {correct}",
+        "correct": correct == total,
+    }]
+    return correct, total, details
+
+
+def score_quick_test(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """quick_test: считаем верные ответы."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "quick_test_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Пройти тест",
+            "chosen": "не пройден",
+            "correct": False,
+        }]
+
+    correct = int(result.get("correct", 0))
+    total = int(result.get("total", 1))
+    details = [{
+        "expected": f"Верно: {total}",
+        "chosen": f"Верно: {correct}",
+        "correct": correct == total,
+    }]
+    return correct, total, details
+
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
     if task_type == constants.TASK_DRAGDROP:
@@ -265,15 +311,21 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_true_false(content, answers)
     if task_type == constants.TASK_SCENARIO:
         return score_scenario(content, answers)
-    if task_type == constants.TASK_CODE:
-        return score_code(content, answers)
-    if task_type == constants.TASK_AI_PROMPT:
-        return score_ai_prompt(content, answers)
-    if task_type == constants.TASK_DEBUG:
-        return score_debug(content, answers)
-    if task_type == constants.TASK_ALGORITHM:
-        return score_algorithm(content, answers)
     if task_type == constants.TASK_PHISHING_SITE:
         return score_phishing_site(content, answers)
+    if task_type == constants.TASK_SCAM_BANNER:
+        return score_scam_banner(content, answers)
+    if task_type == constants.TASK_SCAM_CHAT:
+        return score_scam_chat(content, answers)
+    if task_type == constants.TASK_SCAM_CHAIN:
+        return score_scam_chain(content, answers)
+    if task_type == constants.TASK_SCAM_PHISHING:
+        return score_scam_phishing(content, answers)
+    if task_type == constants.TASK_SCAM_DEFENDER:
+        return score_scam_defender(content, answers)
+    if task_type == constants.TASK_THEORY_CARDS:
+        return score_theory_cards(content, answers)
+    if task_type == constants.TASK_QUICK_TEST:
+        return score_quick_test(content, answers)
     return 0, 0, []
 

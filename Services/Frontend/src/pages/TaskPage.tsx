@@ -3,12 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
-  Avatar,
   Box,
   Button,
-  Chip,
   CircularProgress,
-  Divider,
   Paper,
   Stack,
   Typography,
@@ -21,7 +18,6 @@ import CheckCircle from "@mui/icons-material/CheckCircle";
 import Cancel from "@mui/icons-material/Cancel";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import LockIcon from "@mui/icons-material/LockRounded";
 import LocalFlorist from "@mui/icons-material/LocalFlorist";
 import { api } from "../api/client";
@@ -32,9 +28,6 @@ import PhysicsDrag3D from "../components/tasks/PhysicsDrag3D";
 import QuizTask from "../components/tasks/QuizTask";
 import TrueFalseTask from "../components/tasks/TrueFalseTask";
 import ScenarioTask from "../components/tasks/ScenarioTask";
-import CodeTask from "../components/tasks/CodeTask";
-import AIPromptTask from "../components/tasks/AIPromptTask";
-import AlgorithmTask from "../components/tasks/AlgorithmTask";
 import { topicColors, topicLabels } from "../theme";
 import { taskTypeIcons, topicIcons, darkenHex } from "../icons";
 import { useAuth } from "../context/AuthContext";
@@ -46,8 +39,7 @@ import ScamChainTask from "../components/tasks/ScamChainTask";
 import ScamPhishingTask from "../components/tasks/ScamPhishingTask";
 import ScamDefenderTask from "../components/tasks/ScamDefenderTask";
 import QuickTestTask from "../components/tasks/QuickTestTask";
-import AnimatedBackground from "../components/AnimatedBackground";
-import IntroModal from "../components/IntroModal";
+import TaskTutorial, { type TutorialStep } from "../components/TaskTutorial";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -62,8 +54,7 @@ export default function TaskPage() {
   const [error, setError] = useState("");
   const [startTime] = useState(Date.now());
   const [isBlocked, setIsBlocked] = useState(false);
-
-  const [showTaskIntro, setShowTaskIntro] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const isTaskAvailable = (task: TaskFull, user: User | null): boolean => {
     if (!task.forbidden_groups || task.forbidden_groups.length === 0)
@@ -122,24 +113,191 @@ export default function TaskPage() {
 
   useEffect(() => {
     if (!task) return;
-    const seen = localStorage.getItem(`cyberkids_task_intro_${task.id}`);
-    const disabled = localStorage.getItem(
-      `cyberkids_task_intro_disabled_${task.id}`,
-    );
-    if (!seen && !disabled) {
-      setShowTaskIntro(true);
+    const key = `cyberkids_task_tutorial_${task.id}`;
+    if (!localStorage.getItem(key)) {
+      setShowTutorial(true);
     }
   }, [task]);
 
-  const handleTaskIntroDone = () => {
-    setShowTaskIntro(false);
+  const handleTutorialClose = () => {
+    setShowTutorial(false);
   };
 
-  const handleTaskIntroDontShowAgain = () => {
-    if (task) {
-      localStorage.setItem(`cyberkids_task_intro_disabled_${task.id}`, "1");
+  // Туториалы под каждый тип задания
+  const tutorialsFor = (t: TaskFull): TutorialStep[] => {
+    switch (t.task_type) {
+      case "dragdrop":
+      case "sort":
+        return [
+          {
+            text: "Возьми карточку из лотка. Ты можешь перетащить её или просто кликнуть.",
+            targetSelector: '[data-tutorial="tray"]',
+          },
+          {
+            text: "Перетащи или тапни карточку, чтобы отправить её в нужную зону.",
+            targetSelector: '[data-tutorial="zone-0"]',
+          },
+          {
+            text: "Когда все карточки разложены — нажми «Проверить ответы» внизу.",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "drag3d":
+        return [
+          {
+            text: "Это 3D-кубик. Возьми его и перетащи в нужную зону.",
+            targetSelector: '[data-tutorial="tray"]',
+          },
+          {
+            text: "Отпусти кубик над зоной — он встанет на место.",
+            targetSelector: '[data-tutorial="zone-0"]',
+          },
+          {
+            text: "Когда все кубики разложены — жми «Проверить ответы».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "quiz":
+        return [
+          {
+            text: "Прочитай вопрос и выбери один из вариантов ответа.",
+            targetSelector: '[data-tutorial="options"]',
+          },
+          {
+            text: "Листай вопросы стрелками «Назад» / «Далее», затем проверь ответы.",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "true_false":
+        return [
+          {
+            text: "Для каждого утверждения выбери: «Правда» или «Ложь».",
+            targetSelector: '[data-tutorial="options"]',
+          },
+          {
+            text: "Когда ответишь на все — жми «Проверить ответы».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "scenario":
+        return [
+          {
+            text: "Прочитай ситуацию и выбери вариант, как поступить правильно.",
+            targetSelector: '[data-tutorial="options"]',
+          },
+          {
+            text: "Пройди все ситуации и нажми «Проверить ответы».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "scam_banner":
+        return [
+          {
+            text: "Это поддельный баннер. Нажми на него, чтобы увидеть, как работают мошенники.",
+            targetSelector: '[data-tutorial="scam-banner"]',
+          },
+        ];
+
+      case "scam_chat":
+        return [
+          {
+            text: "Это чат игровой гильдии. Среди обычных сообщений спрятались мошенники.",
+            targetSelector: '[data-tutorial="scam-chat"]',
+          },
+          {
+            text: "Кликни на каждое подозрительное сообщение. Мошенников может быть несколько!",
+            targetSelector: '[data-tutorial="scam-chat"]',
+          },
+          {
+            text: "Когда отметишь всех — нажми «Проверить».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "scam_chain":
+        return [
+          {
+            text: "Это расследование кражи аккаунта. Шаги атаки перемешаны.",
+            targetSelector: '[data-tutorial="scam-chain"]',
+          },
+          {
+            text: "Перетаскивай карточки мышкой или используй стрелки ↑↓, чтобы восстановить порядок.",
+            targetSelector: '[data-tutorial="scam-chain"]',
+          },
+          {
+            text: "Потом выбери момент кражи и правильное действие, чтобы закрыть дело.",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "scam_phishing":
+        return [
+          {
+            text: "Это подозрительное письмо. Кликни на любую строку — она станет активной.",
+            targetSelector: '[data-tutorial="scam-phishing"]',
+          },
+          {
+            text: "Слева и справа от письма — стрелки ◀ ▶. Листай варианты строки и выбери безопасный.",
+            targetSelector: '[data-tutorial="scam-phishing-arrows"]',
+          },
+          {
+            text: "Пройди все строки: отправитель, приветствие, тело, действие, срочность, подпись.",
+            targetSelector: '[data-tutorial="scam-phishing"]',
+          },
+          {
+            text: "Когда выберешь варианты для всех строк — нажми «Проверить письмо».",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "scam_defender":
+        return [
+          {
+            text: "Мошенники атакуют твой аккаунт. Тебе приходят тревожные уведомления.",
+            targetSelector: '[data-tutorial="scam-defender"]',
+          },
+          {
+            text: "Выбери правильное действие в каждой ситуации. Ошибки уменьшают щит аккаунта!",
+            targetSelector: '[data-tutorial="scam-defender"]',
+          },
+          {
+            text: "В конце настрой защиту — включи те опции, которые реально помогают.",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "theory_cards":
+        return [
+          {
+            text: "Листай карточки, читай и жми «Запомнил!» на каждой.",
+            targetSelector: '[data-tutorial="theory-card"]',
+          },
+          {
+            text: "Когда изучишь все — нажми «К практике!».",
+            targetSelector: '[data-tutorial="theory-next"]',
+          },
+        ];
+
+      case "quick_test":
+        return [
+          {
+            text: "Прочитай вопрос и выбери ответ. Затем нажми «Проверить».",
+            targetSelector: '[data-tutorial="options"]',
+          },
+        ];
+
+      default:
+        return [
+          {
+            text: "Внимательно прочитай задание и выполни его по инструкции.",
+          },
+        ];
     }
-    setShowTaskIntro(false);
   };
 
   if (loading) {
@@ -210,50 +368,13 @@ export default function TaskPage() {
 
   return (
     <Layout>
-      <AnimatedBackground />
-      {task && showTaskIntro && (
-        <IntroModal
-          open={showTaskIntro}
-          onClose={handleTaskIntroDone}
-          onDontShowAgain={handleTaskIntroDontShowAgain}
-          title={task.title}
-          description={task.description}
-          emoji={task.emoji || "🎯"}
-          confirmLabel="Приступить"
+      {task && showTutorial && (
+        <TaskTutorial
+          open={showTutorial}
+          steps={tutorialsFor(task)}
+          onClose={handleTutorialClose}
           accent={task.color || "#7C4DFF"}
-        >
-          <Stack spacing={1.5}>
-            <Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 700,
-                  color: "text.secondary",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Инструкция
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5, lineHeight: 1.6 }}>
-                {task.instructions}
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              <Chip
-                label={`+${task.points} очков`}
-                size="small"
-                sx={{ bgcolor: "#FFF3E0", fontWeight: 700 }}
-              />
-              <Chip
-                label={topicLabels[task.topic] || task.topic}
-                size="small"
-                sx={{ bgcolor: "#F1EBFF", fontWeight: 700 }}
-              />
-            </Box>
-          </Stack>
-        </IntroModal>
+        />
       )}
       <Box sx={{ position: "relative", zIndex: 1 }}>
         {result && stars >= 2 && <Confetti pieces={50} />}
@@ -283,8 +404,8 @@ export default function TaskPage() {
 
         <Paper
           sx={{
-            p: 4,
-            mb: 4,
+            p: 3,
+            mb: 3,
             borderLeft: `6px solid ${color}`,
             borderRadius: "20px",
             background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
@@ -297,8 +418,8 @@ export default function TaskPage() {
           >
             <Box
               sx={{
-                width: 72,
-                height: 72,
+                width: 60,
+                height: 60,
                 borderRadius: "16px",
                 background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
                 display: "flex",
@@ -311,29 +432,6 @@ export default function TaskPage() {
               <TopicIcon sx={{ fontSize: 36 }} />
             </Box>
             <Box sx={{ flexGrow: 1 }}>
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="center"
-                flexWrap="wrap"
-              >
-                <Chip
-                  label={topicLabels[task.topic] || task.topic}
-                  size="small"
-                  sx={{ bgcolor: `${color}20`, color, fontWeight: 600 }}
-                />
-                <Chip
-                  icon={<TypeIcon sx={{ fontSize: 16 }} />}
-                  label="Интерактив"
-                  size="small"
-                  sx={{ bgcolor: "#F1EBFF", fontWeight: 600 }}
-                />
-                <Chip
-                  label={`+${task.points} очков`}
-                  size="small"
-                  sx={{ bgcolor: "#FFF3E0", fontWeight: 600 }}
-                />
-              </Stack>
               <Typography
                 variant="h4"
                 fontWeight={800}
@@ -346,24 +444,6 @@ export default function TaskPage() {
               </Typography>
             </Box>
           </Stack>
-
-          <Box
-            sx={{
-              mt: 3,
-              p: 2.5,
-              borderRadius: "12px",
-              backgroundColor: "#F8F9FA",
-              border: "1px solid #F1F1F1",
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 1.5,
-            }}
-          >
-            <InfoOutlined sx={{ color: "#7C4DFF", fontSize: 20, mt: 0.2 }} />
-            <Typography variant="body2" color="text.secondary">
-              <strong>Инструкция:</strong> {task.instructions}
-            </Typography>
-          </Box>
         </Paper>
 
         {result ? (
@@ -532,15 +612,6 @@ function ResultCard({
           К заданиям
         </Button>
       </Stack>
-
-      <Divider sx={{ my: 4 }} />
-      <Typography
-        variant="h6"
-        fontWeight={700}
-        sx={{ mb: 3, textAlign: "left" }}
-      >
-        📝 Разбор ответов
-      </Typography>
       <Feedback task={task} result={result} />
     </Paper>
   );
@@ -565,8 +636,6 @@ function TaskContent({
   onSubmit: () => void;
   error: string;
 }) {
-  const answeredCount = answers.length;
-
   const renderTask = () => {
     switch (task.task_type) {
       case "dragdrop":
@@ -614,30 +683,6 @@ function TaskContent({
       case "scenario":
         return (
           <ScenarioTask
-            content={task.content}
-            answers={answers}
-            onChange={setAnswers}
-          />
-        );
-      case "code":
-        return (
-          <CodeTask
-            content={task.content}
-            answers={answers}
-            onChange={setAnswers}
-          />
-        );
-      case "ai_prompt":
-        return (
-          <AIPromptTask
-            content={task.content}
-            answers={answers}
-            onChange={setAnswers}
-          />
-        );
-      case "algorithm":
-        return (
-          <AlgorithmTask
             content={task.content}
             answers={answers}
             onChange={setAnswers}
@@ -718,48 +763,6 @@ function TaskContent({
 
   return (
     <Box>
-      <Paper
-        sx={{
-          p: 2,
-          mb: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 1,
-          borderRadius: "12px",
-          backgroundColor: "#F8F9FA",
-          border: "1px solid #F1F1F1",
-        }}
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="body2" fontWeight={600}>
-            Прогресс:
-          </Typography>
-          <LinearProgress
-            variant="determinate"
-            value={
-              (answeredCount /
-                (task.content.questions?.length ||
-                  task.content.items?.length ||
-                  1)) *
-              100
-            }
-            sx={{ width: 120, height: 6, borderRadius: 3 }}
-          />
-          <Typography variant="caption" color="text.secondary">
-            {answeredCount} из{" "}
-            {task.content.questions?.length || task.content.items?.length || 0}
-          </Typography>
-        </Stack>
-        <Chip
-          label={answeredCount === 0 ? "Начни отвечать!" : "Можно проверять"}
-          color={answeredCount === 0 ? "default" : "primary"}
-          size="small"
-          sx={{ fontWeight: 600 }}
-        />
-      </Paper>
-
       <Box sx={{ mb: 3 }}>{renderTask()}</Box>
 
       {error && (
@@ -770,6 +773,7 @@ function TaskContent({
 
       <Button
         variant="contained"
+        data-tutorial="submit"
         size="large"
         fullWidth
         disabled={answers.length === 0 || submitting}

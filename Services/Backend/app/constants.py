@@ -22,14 +22,10 @@ TOPICS = {
     "viruses": "Вирусы",
     "privacy": "Личные данные",
     "safe": "Безопасные действия",
-    "programming": "Программирование",
-    "python": "Python",
-    "lua": "Lua",
-    "ai": "Искусственный интеллект",
-    "logic": "Логика и алгоритмы",
     "gaming_scams": "Игровые мошенничества",
     "safety_test": "Это нормально или опасно?",
     "cyber_hero_test": "Тест-игра: кибергерой",
+    "digital_footprint": "Цифровой след",
 }
 
 TOPIC_EMOJI = {
@@ -39,14 +35,10 @@ TOPIC_EMOJI = {
     "viruses": "🦠",
     "privacy": "🔒",
     "safe": "🛡️",
-    "programming": "💻",
-    "python": "🐍",
-    "lua": "⛏️",
-    "ai": "🤖",
-    "logic": "🧠",
     "gaming_scams": "🎮",
     "safety_test": "🎯",
-    "cyber_hero_test": "🦸"
+    "cyber_hero_test": "🦸",
+    "digital_footprint": "👣",
 }
 
 # Типы заданий
@@ -56,11 +48,15 @@ TASK_QUIZ = "quiz"
 TASK_SORT = "sort"
 TASK_TRUE_FALSE = "true_false"
 TASK_SCENARIO = "scenario"
-TASK_CODE = "code"
-TASK_AI_PROMPT = "ai_prompt"
-TASK_DEBUG = "debug"
-TASK_ALGORITHM = "algorithm"
 TASK_PHISHING_SITE = "phishing_site"
+TASK_SCAM_BANNER = "scam_banner"
+TASK_SCAM_CHAT = "scam_chat"
+TASK_SCAM_CHAIN = "scam_chain"
+TASK_SCAM_PHISHING = "scam_phishing"
+TASK_SCAM_DEFENDER = "scam_defender"
+TASK_THEORY_CARDS = "theory_cards"
+TASK_QUICK_TEST = "quick_test"
+TASK_DIGITAL_FOOTPRINT = "digital_footprint"
 
 TASK_TYPES = {
     TASK_DRAGDROP: "Перетаскивание",
@@ -69,9 +65,13 @@ TASK_TYPES = {
     TASK_SORT: "Сортировка по категориям",
     TASK_TRUE_FALSE: "Правда или ложь",
     TASK_SCENARIO: "Ситуация",
-    TASK_CODE: "Программирование",
-    TASK_AI_PROMPT: "Промптинг ИИ",
-    TASK_DEBUG: "Отладка кода",
-    TASK_ALGORITHM: "Алгоритмы",
     TASK_PHISHING_SITE: "Фишинговый сайт",
+    TASK_SCAM_BANNER: "Мошеннический баннер",
+    TASK_SCAM_CHAT: "Мошенник в чате",
+    TASK_SCAM_CHAIN: "Цепочка мошенничества",
+    TASK_SCAM_PHISHING: "Поддельное письмо",
+    TASK_SCAM_DEFENDER: "Защита аккаунта",
+    TASK_THEORY_CARDS: "Теоретические карточки",
+    TASK_QUICK_TEST: "Быстрый тест",
+    TASK_DIGITAL_FOOTPRINT: "Цифровой след",
 }

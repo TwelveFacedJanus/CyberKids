@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import type { AudioMessage as TAudio } from "../../../types/messenger";
+import type { AudioMessage as TAudio } from "../../types/messenger";
 import MessageFooter from "./MessageFooter";
 
 interface Props {

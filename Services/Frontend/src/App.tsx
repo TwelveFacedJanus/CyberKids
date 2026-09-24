@@ -2,8 +2,10 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { type ReactNode, useEffect, useState } from "react";
 import { Snackbar, Alert, Button } from "@mui/material";
 import { useAuth } from "./context/AuthContext";
+import WelcomePage from "./pages/WelcomePage";
+import BlocksPage from "./pages/BlocksPage";
+import BlockPage from "./pages/BlockPage";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
 import TaskPage from "./pages/TaskPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -101,7 +103,23 @@ export default function App() {
           path="/"
           element={
             <Protected>
-              <DashboardPage />
+              <WelcomePage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/blocks"
+          element={
+            <Protected>
+              <BlocksPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/block/:topic"
+          element={
+            <Protected>
+              <BlockPage />
             </Protected>
           }
         />

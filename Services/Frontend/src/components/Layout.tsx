@@ -14,19 +14,15 @@ import {
   MenuItem,
   Stack,
   CircularProgress,
-  SvgIcon,
   Tooltip,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
+
 import PersonIcon from "@mui/icons-material/Person";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import StarIcon from "@mui/icons-material/Star";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
-import { useAuth } from "../context/AuthContext";
-import { api } from "../api/client";
-import type { Result } from "../types";
 
 import HomeIcon from "../../public/ui-icons/home.svg?react";
 import ChatIcon from "../../public/ui-icons/message.svg?react";
@@ -34,15 +30,34 @@ import ProfileIcon from "../../public/ui-icons/user.svg?react";
 import KasperskyIcon from "../../public/ui-icons/kaspersky.svg?react";
 import SuperheroIcon from "../../public/ui-icons/superhero.svg?react";
 import AdminIcon from "../../public/ui-icons/admin.svg?react";
+
+import PhishingIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import BullyingIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import PasswordsIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import VirusesIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import PrivacyIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import GamingIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import FootprintIcon from "../../public/test-images/Roblox_Logo.svg?react";
 import RobloxIcon from "../../public/test-images/Roblox_Logo.svg?react";
+
+import { useAuth } from "../context/AuthContext";
+import { api } from "../api/client";
+import type { Result } from "../types";
 
 const SIDEBAR_WIDTH = 280;
 
 export type LayoutTheme = "default" | "kaspersky" | "mailru" | "alex";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   theme?: LayoutTheme;
+}
+
+interface MenuItem {
+  label?: string;
+  icon?: ReactNode;
+  path?: string;
+  divider?: boolean;
 }
 
 const THEMES: Record<
@@ -205,13 +220,11 @@ function AnimatedBackground() {
 export default function Layout({ children, theme = "default" }: LayoutProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [totalScore, setTotalScore] = useState<number | null>(null);
   const [loadingScore, setLoadingScore] = useState(true);
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const mailru = theme === "mailru";
-  const alex = theme === "alex";
-  const location = useLocation();
+
   const isRoblox = location.pathname.startsWith("/roblox");
   const [sidebarOpen, setSidebarOpen] = useState(!isRoblox);
 
@@ -219,6 +232,8 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
     setSidebarOpen(!isRoblox);
   }, [isRoblox]);
 
+  const mailru = theme === "mailru";
+  const alex = theme === "alex";
   const t = THEMES[theme];
 
   useEffect(() => {
@@ -226,53 +241,97 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
     api
       .get<Result[]>("/api/results/me")
       .then((results) => {
-        const sum = results.reduce((acc, r) => acc + r.score, 0);
+        const bestByTask = new Map<string, Result>();
+        for (const r of results) {
+          const prev = bestByTask.get(r.task_id);
+          if (!prev || r.score > prev.score) bestByTask.set(r.task_id, r);
+        }
+        const sum = [...bestByTask.values()].reduce(
+          (acc, r) => acc + r.score,
+          0,
+        );
         setTotalScore(sum);
       })
       .catch(() => setTotalScore(0))
       .finally(() => setLoadingScore(false));
   }, [user]);
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
+    { label: "Главная", icon: <HomeIcon sx={{ fontSize: 22 }} />, path: "/" },
     {
-      label: "Главная",
-      icon: <SvgIcon component={HomeIcon} sx={{ fontSize: 22 }} />,
-      path: "/",
+      label: "Фишинг",
+      icon: <PhishingIcon sx={{ fontSize: 22 }} />,
+      path: "/block/phishing",
     },
     {
-      label: "Мой профиль",
-      icon: <SvgIcon component={ProfileIcon} sx={{ fontSize: 22 }} />,
-      path: "/profile",
+      label: "Кибербуллинг",
+      icon: <BullyingIcon sx={{ fontSize: 22 }} />,
+      path: "/block/cyberbullying",
     },
+    {
+      label: "Пароли",
+      icon: <PasswordsIcon sx={{ fontSize: 22 }} />,
+      path: "/block/passwords",
+    },
+    {
+      label: "Вирусы",
+      icon: <VirusesIcon sx={{ fontSize: 22 }} />,
+      path: "/block/viruses",
+    },
+    {
+      label: "Личные данные",
+      icon: <PrivacyIcon sx={{ fontSize: 22 }} />,
+      path: "/block/privacy",
+    },
+    {
+      label: "Игровые мошенничества",
+      icon: <GamingIcon sx={{ fontSize: 22 }} />,
+      path: "/block/gaming_scams",
+    },
+    {
+      label: "Цифровой след",
+      icon: <FootprintIcon sx={{ fontSize: 22 }} />,
+      path: "/block/digital_footprint",
+    },
+    { divider: true },
     {
       label: "Это нормально или опасно?",
-      icon: <SvgIcon component={KasperskyIcon} sx={{ fontSize: 22 }} />,
+      icon: <KasperskyIcon sx={{ fontSize: 22 }} />,
       path: "/test/safety",
     },
     {
       label: "Тест-игра: кибергерой",
-      icon: <SvgIcon component={SuperheroIcon} sx={{ fontSize: 22 }} />,
+      icon: <SuperheroIcon sx={{ fontSize: 22 }} />,
       path: "/test/cyber-hero",
     },
     {
-      label: "ALEX — квест",
-      icon: <SvgIcon component={ChatIcon} sx={{ fontSize: 22 }} />,
+      label: "ALEX — Квест",
+      icon: <ChatIcon sx={{ fontSize: 22 }} />,
       path: "/alex",
     },
     {
-      label: "Roblox",
-      icon: <SvgIcon component={RobloxIcon} sx={{ fontSize: 22 }} />,
+      label: "Roblox — симуляция",
+      icon: <RobloxIcon sx={{ fontSize: 22 }} />,
       path: "/roblox/com/auth",
     },
   ];
 
   if (user?.roles?.includes("admin")) {
-    menuItems.push({
-      label: "Админ-панель",
-      icon: <SvgIcon component={AdminIcon} sx={{ fontSize: 22 }} />,
-      path: "/admin",
-    });
+    menuItems.push(
+      { divider: true },
+      {
+        label: "Админ-панель",
+        icon: <AdminIcon sx={{ fontSize: 22 }} />,
+        path: "/admin",
+      },
+    );
   }
+
+  const noPadding =
+    location.pathname === "/" ||
+    location.pathname.startsWith("/roblox") ||
+    mailru ||
+    alex;
 
   return (
     <Box
@@ -321,7 +380,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         >
           <Box
             component="img"
-            src="/logo.png"
+            src="/logo.svg"
             alt="CyberKids"
             onClick={() => navigate("/")}
             sx={{
@@ -369,15 +428,28 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           </Typography>
 
           <List disablePadding>
-            {menuItems.map((item) => {
-              const isActive = currentPath === item.path;
+            {menuItems.map((item, idx) => {
+              // ── Разделитель ──
+              if (item.divider) {
+                return (
+                  <Divider
+                    key={`divider-${idx}`}
+                    sx={{ my: 1, borderColor: t.sidebarBorder }}
+                  />
+                );
+              }
+
+              // ── Пункт меню ──
+              const path = item.path!;
+              const isActive =
+                path === "/"
+                  ? location.pathname === "/"
+                  : location.pathname.startsWith(path);
+
               return (
                 <ListItemButton
-                  key={item.path}
-                  onClick={() => {
-                    navigate(item.path);
-                    setCurrentPath(item.path);
-                  }}
+                  key={path}
+                  onClick={() => navigate(path)}
                   sx={{
                     position: "relative",
                     borderRadius: "12px",
@@ -386,20 +458,14 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                     py: 1.25,
                     minHeight: "auto",
                     gap: 1.5,
-
-                    // Активный пункт — градиентный фон + свечение
                     background: isActive ? t.activeBg : "transparent",
                     color: isActive ? t.activeColor : t.textColor,
                     boxShadow: isActive ? t.activeGlow : "none",
-
                     transition: "all 0.2s ease",
-
                     "&:hover": {
                       background: isActive ? t.activeBg : t.hoverBg,
                       transform: "translateX(3px)",
                     },
-
-                    // Индикатор слева для активного пункта
                     "&::before": isActive
                       ? {
                           content: '""',
@@ -600,6 +666,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         </Menu>
       </Box>
 
+      {/* ─── Кнопка сворачивания сайдбара на /roblox ─── */}
       {isRoblox && (
         <Box
           onClick={() => setSidebarOpen((v) => !v)}
@@ -645,7 +712,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           flexGrow: 1,
           marginLeft: sidebarOpen ? `${SIDEBAR_WIDTH}px` : 0,
           transition: "margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
-          p: mailru || alex || isRoblox ? 0 : 4,
+          p: noPadding ? 0 : 4,
           minHeight: "100vh",
           height: "100vh",
           overflow: alex ? "hidden" : "auto",

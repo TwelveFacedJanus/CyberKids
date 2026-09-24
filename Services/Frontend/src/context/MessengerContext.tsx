@@ -12,6 +12,7 @@ import type {
   Message,
   Choice,
   QuestProgress,
+  MessageWithoutTime,
 } from "../types/messenger";
 import { sleep, pad } from "../components/messenger/utils";
 import { ASSETS } from "../data/messenger/assets";
@@ -296,7 +297,7 @@ interface MessengerContextValue {
   nextTime: () => string;
   addMessage: (
     chatId: string,
-    msg: Omit<Message, "time" | "id"> & { time?: string; id?: string },
+    msg: MessageWithoutTime | Message,
     opts?: { typing?: boolean },
   ) => Promise<void>;
   setChoices: (chatId: string, choices: Choice[] | null) => void;
@@ -336,12 +337,14 @@ export function MessengerProvider({ children }: { children: ReactNode }) {
 
   const addMessage = async (
     chatId: string,
-    msg: Omit<Message, "time" | "id"> & { time?: string; id?: string },
+    msg: MessageWithoutTime | Message,
     opts: { typing?: boolean } = {},
   ): Promise<void> => {
-    const time = msg.time || nextTime();
+    const time = ("time" in msg && msg.time) || nextTime();
     const id =
-      msg.id || `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      "id" in msg && msg.id
+        ? msg.id
+        : `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     const fullMsg = { ...msg, time, id } as Message;
 
     const showTyping =
@@ -408,17 +411,22 @@ export function MessengerProvider({ children }: { children: ReactNode }) {
       chatId,
       title,
       description,
-      options: options.map((opt) => ({
-        ...opt,
-        action: () => {
-          // Очищаем pendingChoice
-          dispatch({
-            type: "SET_CHAT_PENDING_CHOICE",
-            payload: { chatId, pending: null },
-          });
-          opt.action();
-        },
-      })),
+      options: options.map(
+        (opt): Choice => ({
+          label: opt.label,
+          shortLabel: opt.shortLabel,
+          hint: opt.hint,
+          icon: opt.icon,
+          style: opt.style,
+          action: () => {
+            dispatch({
+              type: "SET_CHAT_PENDING_CHOICE",
+              payload: { chatId, pending: null },
+            });
+            opt.action?.();
+          },
+        }),
+      ),
     });
 
     // Очищаем pendingChoice в чате

@@ -78,46 +78,41 @@ export function useStoryEngine() {
   const runStoryMessages = async (story: Story) => {
     if (!story.initialMessages || story.initialMessages.length === 0) return;
 
-    // Day separator
     await messenger.addMessage(
       story.chatId,
       { type: "daysep", text: "Сегодня" },
       { typing: false },
     );
 
-    // Каждое сообщение
     for (let i = 0; i < story.initialMessages.length; i++) {
       const msg = story.initialMessages[i];
 
-      if (i > 0 && msg.from === "them") {
+      if (i > 0 && "from" in msg && msg.from === "them") {
         await new Promise((r) => setTimeout(r, DELAY_BETWEEN_MESSAGES));
       }
 
-      // Добавляем requiresListen для аудио, если нужно
       const enrichedMsg =
         story.listenToOpenModal && msg.type === "audio"
           ? { ...msg, requiresListen: true, listened: false }
           : msg;
 
-      await messenger.addMessage(story.chatId, enrichedMsg as any, {
-        typing: false,
-      });
+      await messenger.addMessage(story.chatId, enrichedMsg, { typing: false });
     }
 
-    // Откладываем модалку
     if (story.initialChoices && story.listenToOpenModal) {
-      console.log(
-        `[ALEX] Откладываю модалку для ${story.chatId} до прослушки аудио`,
-      );
       messenger.setChatPendingChoice(story.chatId, {
         title: story.choiceTitle || "Прими решение",
         description: story.choiceDescription,
         options: story.initialChoices,
       });
-      // Модалка откроется из useEffect, когда все аудио будут прослушаны
     } else if (story.initialChoices) {
       await new Promise((r) => setTimeout(r, DELAY_BEFORE_MODAL));
-      showChoice(story, story.initialChoices, story.choiceTitle, story.choiceDescription);
+      showChoice(
+        story,
+        story.initialChoices,
+        story.choiceTitle,
+        story.choiceDescription,
+      );
     }
   };
 
@@ -158,8 +153,9 @@ export function useStoryEngine() {
     }
 
     if (opt.messages) {
-      for (const msg of opt.messages) {
-        if (msg.from === "them") {
+      for (let i = 0; i < opt.messages.length; i++) {
+        const msg = opt.messages[i];
+        if ("from" in msg && msg.from === "them") {
           await new Promise((r) => setTimeout(r, DELAY_BETWEEN_MESSAGES));
         }
         await messenger.addMessage(story.chatId, msg, { typing: false });
@@ -186,7 +182,12 @@ export function useStoryEngine() {
       const choiceSet = story.choices.find((c) => c.id === opt.returnToChoice);
       if (choiceSet) {
         await new Promise((r) => setTimeout(r, DELAY_BEFORE_MODAL));
-        showChoice(story, choiceSet.options, choiceSet.title, choiceSet.description);
+        showChoice(
+          story,
+          choiceSet.options,
+          choiceSet.title,
+          choiceSet.description,
+        );
       }
     }
 

@@ -49,6 +49,7 @@ export default function ScamBannerTask({
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
         <Paper
+          data-tutorial="scam-banner"
           onClick={handleBannerClick}
           sx={{
             width: "100%",

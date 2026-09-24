@@ -6,10 +6,6 @@ export type TaskType =
   | 'sort'
   | 'true_false'
   | 'scenario'
-  | 'code'
-  | 'ai_prompt'
-  | 'debug'
-  | 'algorithm'
   | 'theory_cards'
   | 'scam_banner'
   | 'scam_chat'
@@ -102,21 +98,34 @@ export interface TaskContent {
   statements?: Statement[]
   scenarios?: Scenario[]
   cards?: TheoryCard[]
-  // 🆕 Для заданий по программированию
-  language?: 'python' | 'javascript' | 'lua'
-  starter_code?: string
-  solution?: string
-  hint?: string
-  is_theory?: boolean
-  theory?: {
-    title: string
-    sections: Array<{ title: string; text: string }>
-  }
-  tests?: Array<{ input: string; expected: string }>
-  // 🆕 Для заданий по промптингу
   title?: string
   description?: string
   examples?: string[]
+  messages?: Array<{
+    id: string;
+    user: string;
+    avatar: string;
+    text: string;
+    isScam: boolean;
+    explanation?: string;
+  }>;
+  signs?: Array<{
+    id: string;
+    text: string;
+    isSuspicious: boolean;
+  }>;
+  steps?: Array<{
+    id: string;
+    title?: string;
+    emoji?: string;
+    text?: string;
+    description?: string;
+    correct?: number;
+    options?: string[];
+    explanation?: string;
+  }>;
+  options?: string[][];
+  test_title?: string;
 }
 
 export interface TheoryCard {
@@ -132,23 +141,14 @@ export interface TheoryContent {
   sections: Array<{ title: string; text: string }>
 }
 
-export interface CodeContent {
-  language: 'python' | 'javascript' | 'lua'
-  starter_code: string
-  solution: string
-  tests?: Array<{ input: string; expected: string }>
-}
-
-export interface AIPromptContent {
-  title: string
-  description: string
-  examples?: string[]
-  expected_keywords?: string[]
-}
-
 export interface Answer {
-  key: string
-  value: string | number | boolean | string[]
+  key: string;
+  value:
+    | string
+    | number
+    | boolean
+    | string[]
+    | Record<string, unknown>;
 }
 
 export interface Result {

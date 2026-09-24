@@ -144,6 +144,7 @@ export default function TheoryCardsTask({
 
       {/* 🔥 НОВАЯ КАРТОЧКА — КАК ИГРОВОЙ БАННЕР */}
       <Card
+        data-tutorial="theory-card"
         sx={{
           borderRadius: "24px",
           border: `4px solid ${cardStyle.border}`,
@@ -289,6 +290,7 @@ export default function TheoryCardsTask({
               ) : allCompleted ? (
                 <Button
                   variant="contained"
+                  data-tutorial="theory-next"
                   size="large"
                   endIcon={<ArrowForwardIcon />}
                   onClick={handleGoToPractice}

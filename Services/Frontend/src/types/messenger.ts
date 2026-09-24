@@ -3,27 +3,9 @@
 export type MessageFrom = "me" | "them";
 export type ChatFilter = "all" | "unread";
 
-export interface Chat {
-  id: string;
-  name: string;
-  status: string;
-  avatarKey?: string;
-  hidden: boolean;
-  unread: number;
-  messages: Message[];
-  locked: boolean;
-  choices: Choice[] | null;
-  isGroup?: boolean;
-  _flash?: boolean;
-  storyStarted?: boolean;
-  storyDone?: boolean;
-  listenDone?: boolean;
-  pendingChoice?: {
-    title: string;
-    description?: string;
-    options: StoryOption[];
-  } | null;
-}
+// ============================================================
+// Сообщения
+// ============================================================
 
 export type Message =
   | TextMessage
@@ -34,6 +16,16 @@ export type Message =
   | RecapMessage
   | QuizMessage
   | DaySepMessage;
+
+export type MessageWithoutTime =
+  | Omit<TextMessage, "time" | "id">
+  | Omit<AudioMessage, "time" | "id">
+  | Omit<MemeMessage, "time" | "id">
+  | Omit<LessonCardMessage, "time" | "id">
+  | Omit<TransferMessage, "time" | "id">
+  | Omit<RecapMessage, "time" | "id">
+  | Omit<QuizMessage, "time" | "id">
+  | Omit<DaySepMessage, "time" | "id">;
 
 interface BaseMessage {
   id: string;
@@ -103,9 +95,36 @@ export interface QuizMessage extends BaseMessage {
 }
 
 export interface DaySepMessage {
-  id: string;
+  id?: string;
   type: "daysep";
   text: string;
+  time?: string;
+}
+
+// ============================================================
+// Чаты
+// ============================================================
+
+export interface Chat {
+  id: string;
+  name: string;
+  status: string;
+  avatarKey?: string;
+  hidden: boolean;
+  unread: number;
+  messages: Message[];
+  locked: boolean;
+  choices: Choice[] | null;
+  isGroup?: boolean;
+  _flash?: boolean;
+  storyStarted?: boolean;
+  storyDone?: boolean;
+  listenDone?: boolean;
+  pendingChoice?: {
+    title: string;
+    description?: string;
+    options: StoryOption[];
+  } | null;
 }
 
 export interface Choice {
@@ -132,7 +151,9 @@ export interface QuestState {
   clock: { h: number; m: number };
 }
 
-// ============ STORY ENGINE ============
+// ============================================================
+// Story Engine
+// ============================================================
 
 export interface Story {
   id: string;
@@ -142,7 +163,7 @@ export interface Story {
   listenToOpenModal?: boolean;
   choiceTitle?: string;
   choiceDescription?: string;
-  initialMessages?: Omit<Message, "time">[];
+  initialMessages?: MessageWithoutTime[];
   initialChoices?: StoryOption[];
   choices: StoryChoiceSet[];
   finalScene?: (messenger: any) => Promise<void>;
@@ -162,10 +183,11 @@ export interface StoryOption {
   icon?: string;
   style: "good" | "bad" | "neutral";
   hideText?: boolean;
-  messages?: Omit<Message, "time">[];
+  messages?: MessageWithoutTime[];
   setProgress?: keyof QuestProgress;
-  evidence?: Omit<Message, "time">;
+  evidence?: MessageWithoutTime;
   revealChat?: string;
   returnToChoice?: string;
   checkComplete?: boolean;
+  action?: () => void | Promise<void>;
 }

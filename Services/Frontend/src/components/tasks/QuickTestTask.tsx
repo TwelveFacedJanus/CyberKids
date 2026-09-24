@@ -173,50 +173,6 @@ export default function QuickTestTask({
             Пройти еще раз
           </Button>
         </Stack>
-
-        {/* Детальный разбор */}
-        <Paper sx={{ p: 3, borderRadius: "16px" }}>
-          <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-            📋 Разбор ответов
-          </Typography>
-          <Stack spacing={2}>
-            {questions.map((q, idx) => {
-              const userAns = selectedAnswers[idx];
-              const isCorrect = userAns === q.correct;
-              return (
-                <Box
-                  key={q.id}
-                  sx={{
-                    p: 2,
-                    borderRadius: "12px",
-                    backgroundColor: isCorrect ? "#F0FDF4" : "#FEF2F2",
-                    borderLeft: `4px solid ${isCorrect ? "#22C55E" : "#EF4444"}`,
-                  }}
-                >
-                  <Typography fontWeight={600} sx={{ mb: 1 }}>
-                    {idx + 1}. {q.question}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Твой ответ: <strong>{q.options[userAns]}</strong>
-                  </Typography>
-                  {!isCorrect && (
-                    <Typography variant="body2" color="success.main">
-                      Правильный ответ: <strong>{q.options[q.correct]}</strong>
-                    </Typography>
-                  )}
-                  {q.explanation && (
-                    <Typography
-                      variant="caption"
-                      sx={{ display: "block", mt: 1, color: "text.secondary" }}
-                    >
-                      💡 {q.explanation}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })}
-          </Stack>
-        </Paper>
       </Stack>
     );
   }
