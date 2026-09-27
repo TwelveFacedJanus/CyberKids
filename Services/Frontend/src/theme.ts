@@ -27,6 +27,12 @@ export const topicColors: Record<string, string> = {
   safety_test: '#00A651',
   cyber_hero_test: '#005FF9',
   digital_footprint: '#26C6DA',
+  //
+  fake_friends: '#EC407A',
+  ai_traps: '#7C4DFF',
+  easy_money: '#FFD54F',
+  school_trap: '#42A5F5',
+  cybersecurity: '#26A69A',
 }
 
 export const topicLabels: Record<string, string> = {
@@ -40,6 +46,12 @@ export const topicLabels: Record<string, string> = {
   safety_test: 'Это нормально или опасно?',
   cyber_hero_test: 'Тест-игра: кибергерой',
   digital_footprint: 'Цифровой след',
+  //
+  fake_friends: 'Фальшивые друзья',
+  ai_traps: 'Ловушки с ИИ и дипфейками',
+  easy_money: 'Лёгкие деньги',
+  school_trap: 'Школьная ловушка',
+  cybersecurity: 'Кибербезопасность',
 }
 
 export const ageGroupLabels: Record<string, string> = {

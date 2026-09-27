@@ -12,23 +12,26 @@ import Layout from "../components/Layout";
 import { topicColors, topicLabels } from "../theme";
 
 const BLOCKS = [
-  { key: "phishing", emoji: "🎣" },
-  { key: "cyberbullying", emoji: "🛡️" },
-  { key: "passwords", emoji: "🔑" },
-  { key: "viruses", emoji: "🦠" },
-  { key: "privacy", emoji: "🔒" },
   { key: "gaming_scams", emoji: "🎮" },
+  { key: "fake_friends", emoji: "👥" },
+  { key: "ai_traps", emoji: "🤖" },
+  { key: "easy_money", emoji: "💰" },
   { key: "digital_footprint", emoji: "👣" },
+  { key: "school_trap", emoji: "🏫" },
+  { key: "cybersecurity", emoji: "🛡️" },
 ];
 
 const DESCRIPTIONS: Record<string, string> = {
-  phishing: "Как распознать поддельные сайты и сообщения",
-  cyberbullying: "Что делать, если тебя обижают в сети",
-  passwords: "Как придумать надёжный пароль",
-  viruses: "Как защитить компьютер от вредных программ",
-  privacy: "Что можно, а что нельзя рассказывать о себе",
-  gaming_scams: "Как не попасться на уловки в играх",
-  digital_footprint: "Что остаётся в интернете после тебя",
+  gaming_scams:
+    "Уловки в играх: бесплатные робуксы, фейковые конкурсы и кража аккаунтов",
+  fake_friends: "Как распознать мошенника, который притворяется другом",
+  ai_traps: "Голосовые дипфейки, поддельные видео и умные боты-обманщики",
+  easy_money:
+    "Легкие деньги — быстрый способ потерять всё. Учимся распознавать",
+  digital_footprint: "Что остаётся в интернете после тебя и как это найти",
+  school_trap:
+    "Мошенники в школе: фейковые олимпиады, чаты классов и «учителя»",
+  cybersecurity: "Основы: фишинг, пароли, вирусы, кибербуллинг и личные данные",
 };
 
 export default function BlocksPage() {
@@ -51,7 +54,8 @@ export default function BlocksPage() {
           Выбери блок заданий
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>
-          7 тем — от фишинга до цифрового следа. Проходи в любом порядке.
+          7 тем — от игровых мошенников до ловушек с ИИ. Проходи в любом
+          порядке.
         </Typography>
 
         <Grid container spacing={3}>

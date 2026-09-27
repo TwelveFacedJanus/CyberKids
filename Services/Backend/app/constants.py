@@ -26,6 +26,12 @@ TOPICS = {
     "safety_test": "Это нормально или опасно?",
     "cyber_hero_test": "Тест-игра: кибергерой",
     "digital_footprint": "Цифровой след",
+    #
+    "fake_friends": "Фальшивые друзья",
+    "ai_traps": "Ловушки с ИИ и дипфейками",
+    "easy_money": "Лёгкие деньги",
+    "school_trap": "Школьная ловушка",
+    "cybersecurity": "Кибербезопасность",
 }
 
 TOPIC_EMOJI = {
@@ -39,6 +45,12 @@ TOPIC_EMOJI = {
     "safety_test": "🎯",
     "cyber_hero_test": "🦸",
     "digital_footprint": "👣",
+    #
+    "fake_friends": "👥",
+    "ai_traps": "🤖",
+    "easy_money": "💰",
+    "school_trap": "🏫",
+    "cybersecurity": "🛡️",
 }
 
 # Типы заданий

@@ -500,6 +500,7 @@ function PhotoPhase({
             }}
           >
             <Box
+              data-tutorial="photo-detective"
               component="img"
               src={content.imagePath}
               alt="Учебная фотография"
@@ -599,6 +600,7 @@ function PhotoPhase({
         >
           <Notebook clues={clues} />
           <Button
+            data-tutorial="tool-image_search+submit"
             fullWidth
             variant="contained"
             disabled={!complete}

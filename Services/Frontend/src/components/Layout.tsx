@@ -16,7 +16,7 @@ import {
   CircularProgress,
   Tooltip,
 } from "@mui/material";
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 
 import PersonIcon from "@mui/icons-material/Person";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -36,9 +36,16 @@ import BullyingIcon from "../../public/test-images/Roblox_Logo.svg?react";
 import PasswordsIcon from "../../public/test-images/Roblox_Logo.svg?react";
 import VirusesIcon from "../../public/test-images/Roblox_Logo.svg?react";
 import PrivacyIcon from "../../public/test-images/Roblox_Logo.svg?react";
-import GamingIcon from "../../public/test-images/Roblox_Logo.svg?react";
-import FootprintIcon from "../../public/test-images/Roblox_Logo.svg?react";
+// import GamingIcon from "../../public/test-images/Roblox_Logo.svg?react";
+// import FootprintIcon from "../../public/test-images/Roblox_Logo.svg?react";
 import RobloxIcon from "../../public/test-images/Roblox_Logo.svg?react";
+import AIIcon from "@mui/icons-material/AssistantRounded";
+import FriendsIcon from "@mui/icons-material/Diversity3Rounded";
+import SchoolIcon from "@mui/icons-material/SchoolRounded";
+import ShieldIcon from "@mui/icons-material/SecurityRounded";
+import MoneyIcon from "@mui/icons-material/MoneyRounded";
+import GamingIcon from "@mui/icons-material/SportsEsportsRounded";
+import FootprintIcon from "@mui/icons-material/LanRounded";
 
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/client";
@@ -228,6 +235,11 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   const isRoblox = location.pathname.startsWith("/roblox");
   const [sidebarOpen, setSidebarOpen] = useState(!isRoblox);
 
+  const [logoClicks, setLogoClicks] = useState(0);
+  const [showSwitch, setShowSwitch] = useState(false);
+  const [useEmojiMenu, setUseEmojiMenu] = useState(false);
+  const switchTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     setSidebarOpen(!isRoblox);
   }, [isRoblox]);
@@ -256,67 +268,61 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
       .finally(() => setLoadingScore(false));
   }, [user]);
 
-  const menuItems: MenuItem[] = [
-    { label: "Главная", icon: <HomeIcon sx={{ fontSize: 22 }} />, path: "/" },
-    {
-      label: "Фишинг",
-      icon: <PhishingIcon sx={{ fontSize: 22 }} />,
-      path: "/block/phishing",
-    },
-    {
-      label: "Кибербуллинг",
-      icon: <BullyingIcon sx={{ fontSize: 22 }} />,
-      path: "/block/cyberbullying",
-    },
-    {
-      label: "Пароли",
-      icon: <PasswordsIcon sx={{ fontSize: 22 }} />,
-      path: "/block/passwords",
-    },
-    {
-      label: "Вирусы",
-      icon: <VirusesIcon sx={{ fontSize: 22 }} />,
-      path: "/block/viruses",
-    },
-    {
-      label: "Личные данные",
-      icon: <PrivacyIcon sx={{ fontSize: 22 }} />,
-      path: "/block/privacy",
-    },
+  const MENU_ITEMS_EMOJI: MenuItem[] = [
+    { label: "Главная", icon: <HomeIcon />, path: "/" },
     {
       label: "Игровые мошенничества",
-      icon: <GamingIcon sx={{ fontSize: 22 }} />,
+      icon: <GamingIcon />,
       path: "/block/gaming_scams",
     },
     {
+      label: "Фальшивые друзья",
+      icon: <FriendsIcon />,
+      path: "/block/fake_friends",
+    },
+    {
+      label: "Ловушки с ИИ и дипфейками",
+      icon: <AIIcon />,
+      path: "/block/ai_traps",
+    },
+    { label: "Лёгкие деньги", icon: <MoneyIcon />, path: "/block/easy_money" },
+    {
       label: "Цифровой след",
-      icon: <FootprintIcon sx={{ fontSize: 22 }} />,
+      icon: <FootprintIcon />,
       path: "/block/digital_footprint",
     },
-    { divider: true },
     {
-      label: "Это нормально или опасно?",
-      icon: <KasperskyIcon sx={{ fontSize: 22 }} />,
-      path: "/test/safety",
+      label: "Школьная ловушка",
+      icon: <SchoolIcon />,
+      path: "/block/school_trap",
     },
     {
-      label: "Тест-игра: кибергерой",
-      icon: <SuperheroIcon sx={{ fontSize: 22 }} />,
-      path: "/test/cyber-hero",
-    },
-    {
-      label: "ALEX — Квест",
-      icon: <ChatIcon sx={{ fontSize: 22 }} />,
-      path: "/alex",
-    },
-    {
-      label: "Roblox — симуляция",
-      icon: <RobloxIcon sx={{ fontSize: 22 }} />,
-      path: "/roblox/com/auth",
+      label: "Кибербезопасность",
+      icon: <ShieldIcon />,
+      path: "/block/cybersecurity",
     },
   ];
 
-  if (user?.roles?.includes("admin")) {
+  const MENU_ITEMS_ICONS: MenuItem[] = [
+    { label: "Главная", icon: <HomeIcon />, path: "/" },
+    { label: "🎮 Игровые мошенничества", path: "/block/gaming_scams" },
+    { label: "👥 Фальшивые друзья", path: "/block/fake_friends" },
+    { label: "🤖 Ловушки с ИИ и дипфейками", path: "/block/ai_traps" },
+    { label: "💰 Лёгкие деньги", path: "/block/easy_money" },
+    { label: "👣 Цифровой след", path: "/block/digital_footprint" },
+    { label: "🏫 Школьная ловушка", path: "/block/school_trap" },
+    { label: "🛡️ Кибербезопасность", path: "/block/cybersecurity" },
+  ];
+
+  useEffect(() => {
+    setLogoClicks(0);
+  }, [location.pathname]);
+
+  const menuItems: MenuItem[] = useEmojiMenu
+    ? MENU_ITEMS_EMOJI
+    : MENU_ITEMS_ICONS;
+
+  if (user?.roles?.includes("admin") && showSwitch) {
     menuItems.push(
       { divider: true },
       {
@@ -382,7 +388,24 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
             component="img"
             src="/logo.svg"
             alt="CyberKids"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              const next = logoClicks + 1;
+
+              if (next >= 5) {
+                setLogoClicks(0);
+                setShowSwitch(true);
+                if (switchTimerRef.current) {
+                  window.clearTimeout(switchTimerRef.current);
+                }
+                switchTimerRef.current = window.setTimeout(() => {
+                  setShowSwitch(false);
+                }, 30000);
+                return; // не переходим
+              }
+
+              setLogoClicks(next);
+              navigate("/");
+            }}
             sx={{
               cursor: "pointer",
               maxWidth: "100%",
@@ -394,6 +417,65 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
             }}
           />
         </Box>
+
+        {/* ТУМБЛЕР */}
+        {showSwitch && (
+          <Box
+            sx={{
+              mx: 3,
+              mb: 2,
+              p: 1.5,
+              borderRadius: "12px",
+              backgroundColor: "rgba(124,77,255,0.08)",
+              border: "1px dashed #7C4DFF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1,
+              animation: "switchIn 0.4s ease",
+              "@keyframes switchIn": {
+                "0%": { opacity: 0, transform: "translateY(-8px)" },
+                "100%": { opacity: 1, transform: "translateY(0)" },
+              },
+            }}
+          >
+            <Typography fontSize={11} fontWeight={700} color="#7C4DFF">
+              Режим меню
+            </Typography>
+            <Box sx={{ display: "flex", gap: 0.5 }}>
+              <Box
+                onClick={() => setUseEmojiMenu(false)}
+                sx={{
+                  px: 1,
+                  py: 0.4,
+                  borderRadius: "6px",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  bgcolor: !useEmojiMenu ? "#7C4DFF" : "transparent",
+                  color: !useEmojiMenu ? "#fff" : "#7C4DFF",
+                }}
+              >
+                Иконки
+              </Box>
+              <Box
+                onClick={() => setUseEmojiMenu(true)}
+                sx={{
+                  px: 1,
+                  py: 0.4,
+                  borderRadius: "6px",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  bgcolor: useEmojiMenu ? "#7C4DFF" : "transparent",
+                  color: useEmojiMenu ? "#fff" : "#7C4DFF",
+                }}
+              >
+                Эмодзи
+              </Box>
+            </Box>
+          </Box>
+        )}
 
         {/* ─── НАВИГАЦИЯ ─── */}
         <Box
@@ -457,7 +539,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                     px: 1.5,
                     py: 1.25,
                     minHeight: "auto",
-                    gap: 1.5,
+                    gap: item.icon ? 1.5 : 0,
                     background: isActive ? t.activeBg : "transparent",
                     color: isActive ? t.activeColor : t.textColor,
                     boxShadow: isActive ? t.activeGlow : "none",
@@ -482,24 +564,26 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                       : {},
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      width: 22,
-                      height: 22,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "inherit",
-                      "& svg": {
+                  {item.icon && (
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
                         width: 22,
                         height: 22,
-                        display: "block",
-                      },
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "inherit",
+                        "& svg": {
+                          width: 22,
+                          height: 22,
+                          display: "block",
+                        },
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                  )}
 
                   <ListItemText
                     primary={item.label}

@@ -342,12 +342,12 @@ export default function TaskPage() {
             targetSelector: '[data-tutorial="photo-detective"]',
           },
           {
-            text: "Потом используй инструменты, чтобы узнать больше.",
-            targetSelector: '[data-tutorial="tool-image_search"]',
+            text: "Переходи к инструментам, и используй каждое приложение для добавления улик.",
+            targetSelector: '[data-tutorial="tool-image_search+submit"]',
           },
           {
-            text: "Когда всё соберёшь — нажми кнопку ниже.",
-            targetSelector: '[data-tutorial="submit"]',
+            text: "Когда соберешь все улики - переходи к сбору досье.",
+            targetSelector: '[data-tutorial="tool-image_search+submit"]',
           },
         ];
 

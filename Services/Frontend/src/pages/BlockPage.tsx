@@ -22,6 +22,46 @@ import Layout from "../components/Layout";
 import { topicColors, topicLabels } from "../theme";
 import type { Result, Task } from "../types";
 
+const SPECIAL_CARDS: Record<
+  string,
+  Array<{
+    title: string;
+    description: string;
+    emoji: string;
+    path: string;
+    badge?: string;
+  }>
+> = {
+  gaming_scams: [
+    {
+      title: "Roblox — симуляция",
+      description:
+        "Попробуй войти на поддельный сайт Roblox и узнай, как крадут аккаунты",
+      emoji: "⚠️",
+      path: "/roblox/com/auth",
+      badge: "Симуляция",
+    },
+  ],
+  fake_friends: [
+    {
+      title: "Тест-игра: Кибергерой",
+      description:
+        "10 ситуаций из жизни — как бы поступил настоящий кибергерой?",
+      emoji: "🦸",
+      path: "/test/cyber-hero",
+    },
+  ],
+  ai_traps: [
+    {
+      title: "ALEX — Квест",
+      description:
+        "Пройди историю в мессенджере и разоблачи мошенников, использующих ИИ",
+      emoji: "💬",
+      path: "/alex",
+    },
+  ],
+};
+
 export default function BlockPage() {
   const { topic } = useParams<{ topic: string }>();
   const navigate = useNavigate();
@@ -29,6 +69,8 @@ export default function BlockPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const special = SPECIAL_CARDS[topic || ""] || [];
 
   useEffect(() => {
     Promise.all([
@@ -149,6 +191,12 @@ export default function BlockPage() {
 
         {/* Карточки заданий */}
         <Grid container spacing={3}>
+          {special.map((card, i) => (
+            <Grid item xs={12} sm={6} md={4} key={card.path}>
+              <SpecialCard {...card} />
+            </Grid>
+          ))}
+
           {tasks.map((task, i) => {
             const best = bestByTask.get(task.id);
             const done = best !== undefined;
@@ -243,12 +291,161 @@ export default function BlockPage() {
           })}
         </Grid>
 
-        {tasks.length === 0 && (
+        {tasks.length === 0 && special.length === 0 && (
           <Alert severity="info" sx={{ mt: 3 }}>
             В этом блоке пока нет заданий. Загляни позже!
           </Alert>
         )}
       </Box>
     </Layout>
+  );
+}
+
+function SpecialCard({
+  title,
+  description,
+  emoji,
+  path,
+  badge,
+}: {
+  title: string;
+  description: string;
+  emoji: string;
+  path: string;
+  badge?: string;
+}) {
+  const navigate = useNavigate();
+
+  return (
+    <Card
+      sx={{
+        borderRadius: "20px",
+        borderTop: "6px solid #7C4DFF", // ← акцентная полоса сверху
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        position: "relative",
+        overflow: "hidden",
+        height: "100%",
+        background: "#FFFFFF",
+        // Лёгкий фиолетовый оттенок по углам — «спец», но не кричит
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(circle at 100% 0%, rgba(124,77,255,0.06), transparent 50%)",
+          pointerEvents: "none",
+        },
+        "&:hover": {
+          transform: "translateY(-6px)",
+          boxShadow: "0 20px 40px rgba(124,77,255,0.25)",
+        },
+      }}
+    >
+      <CardActionArea
+        onClick={() => navigate(path)}
+        sx={{
+          p: 3,
+          height: "100%",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        <Stack spacing={2}>
+          {/* Верхняя строка: бейдж слева, эмодзи-иконка справа */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ minHeight: 28 }}
+          >
+            {badge ? (
+              <Chip
+                label={badge}
+                size="small"
+                sx={{
+                  bgcolor: "#F1EBFF",
+                  color: "#7C4DFF",
+                  fontWeight: 700,
+                  fontSize: 10,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              />
+            ) : (
+              <Chip
+                label="Интерактив"
+                size="small"
+                sx={{
+                  bgcolor: "#F1EBFF",
+                  color: "#7C4DFF",
+                  fontWeight: 700,
+                  fontSize: 10,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              />
+            )}
+
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #7C4DFF22, #7C4DFF08)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
+              }}
+            >
+              {emoji}
+            </Box>
+          </Stack>
+
+          {/* Заголовок */}
+          <Typography
+            variant="h6"
+            fontWeight={800}
+            sx={{ color: "#1A1A2E", lineHeight: 1.3 }}
+          >
+            {title}
+          </Typography>
+
+          {/* Описание */}
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              lineHeight: 1.55,
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {description}
+          </Typography>
+
+          {/* Нижняя строка с чипом, как у обычных заданий */}
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Chip
+              label="Открыть"
+              size="small"
+              sx={{
+                bgcolor: "#FFF3E0",
+                fontWeight: 700,
+                color: "#7C4DFF",
+              }}
+            />
+            <Chip
+              label="спец"
+              size="small"
+              sx={{ bgcolor: "#F1EBFF", fontWeight: 600, color: "#7C4DFF" }}
+            />
+          </Stack>
+        </Stack>
+      </CardActionArea>
+    </Card>
   );
 }
