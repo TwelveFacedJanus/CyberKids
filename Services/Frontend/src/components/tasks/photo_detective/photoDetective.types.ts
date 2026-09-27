@@ -73,15 +73,11 @@ export interface PhotoDetectiveContent {
   storyTitle: string;
   intro: string;
   imagePath: string;
-
   hotspots: Hotspot[];
-
   nickname: string;
-
   imageSearchResults: SearchResult[];
   nickSearchResults: NickSearchResult[];
   geoResults: GeoResults;
-
   finalQuestion: string;
   finalPlaceholder: string;
   explainer?: string;

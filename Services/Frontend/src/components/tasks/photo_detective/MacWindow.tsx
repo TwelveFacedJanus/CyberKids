@@ -31,27 +31,17 @@ export default function MacWindow({
         left: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
-
         width,
         height,
-
         display: "flex",
         flexDirection: "column",
-
         overflow: "hidden",
-
         background: "#f8f8fa",
-
         borderRadius: 1,
-
         border: "1px solid rgba(0,0,0,.22)",
-
         boxShadow: "0 30px 90px rgba(0,0,0,.45)",
-
         zIndex: 20,
-
         animation: "windowOpen .25s ease",
-
         "@keyframes windowOpen": {
           from: {
             opacity: 0,
@@ -69,14 +59,10 @@ export default function MacWindow({
         sx={{
           height: 46,
           flexShrink: 0,
-
           display: "flex",
           alignItems: "center",
-
           px: 1.5,
-
           background: "linear-gradient(#fafafa, #e9e9eb)",
-
           borderBottom: "1px solid #d2d2d5",
         }}
       >
@@ -87,12 +73,9 @@ export default function MacWindow({
           }}
         >
           <TrafficLight color="#ff5f57" onClick={onClose} />
-
           <TrafficLight color="#febc2e" />
-
           <TrafficLight color="#28c840" />
         </Box>
-
         <Box
           sx={{
             flex: 1,
@@ -103,15 +86,12 @@ export default function MacWindow({
           }}
         >
           {icon}
-
           <Typography fontSize={13} fontWeight={700} color="#333">
             {title}
           </Typography>
         </Box>
-
         <Box sx={{ width: 65 }} />
       </Box>
-
       {/* content */}
       <Box
         sx={{
@@ -141,11 +121,8 @@ function TrafficLight({
         height: 12,
         borderRadius: "50%",
         background: color,
-
         cursor: onClick ? "pointer" : "default",
-
         boxShadow: "inset 0 0 0 1px rgba(0,0,0,.1)",
-
         "&:hover": onClick
           ? {
               filter: "brightness(.9)",

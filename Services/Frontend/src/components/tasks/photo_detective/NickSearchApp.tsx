@@ -23,6 +23,7 @@ interface Props {
   results: NickSearchResult[];
   onAddClue: (clue: Clue) => void;
   addedClues: string[];
+  onUse?: () => void;
 }
 
 export default function NickSearchApp({
@@ -30,6 +31,7 @@ export default function NickSearchApp({
   results,
   onAddClue,
   addedClues,
+  onUse,
 }: Props) {
   const [query, setQuery] = useState(nickname);
 
@@ -155,13 +157,14 @@ export default function NickSearchApp({
                       startIcon={
                         added ? <CheckRoundedIcon /> : <AddRoundedIcon />
                       }
-                      onClick={() =>
+                      onClick={() => {
                         onAddClue({
                           id: result.clueId!,
                           text: result.clueText!,
                           source: "nick_search",
-                        })
-                      }
+                        });
+                        onUse?.();
+                      }}
                     >
                       {added ? "Добавлено" : "В блокнот"}
                     </Button>
@@ -174,6 +177,7 @@ export default function NickSearchApp({
                     size="small"
                     sx={{
                       mt: 1.5,
+                      ml: 9,
                       background: "#fef3c7",
                       color: "#92400e",
                     }}

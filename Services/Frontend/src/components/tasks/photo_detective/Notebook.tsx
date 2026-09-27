@@ -1,171 +1,336 @@
 // src/components/tasks/photo_detective/Notebook.tsx
 
 import React from "react";
-import { Box, Typography, Paper, Chip, Stack, Divider } from "@mui/material";
+
+import { Box, Typography } from "@mui/material";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import PhotoCameraRoundedIcon from "@mui/icons-material/PhotoCameraRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 
 import type { Clue } from "./photoDetective.types";
 
-interface NotebookProps {
+interface Props {
   clues: Clue[];
   compact?: boolean;
 }
 
-const getSourceIcon = (source: Clue["source"]) => {
-  switch (source) {
-    case "photo":
-      return <CameraAltRoundedIcon fontSize="small" />;
-    default:
-      return <SearchRoundedIcon fontSize="small" />;
-  }
-};
+export default function Notebook({ clues, compact = false }: Props) {
+  const rows = Math.max(compact ? 8 : 12, clues.length + 2);
 
-export default function Notebook({ clues, compact = false }: NotebookProps) {
   return (
-    <Paper
-      elevation={0}
+    <Box
       sx={{
-        width: compact ? 280 : 330,
-        height: compact ? "auto" : "100%",
-        minHeight: compact ? 180 : 460,
-        borderRadius: 1,
+        width: "100%",
+        height: compact ? 560 : "100%",
+        display: "flex",
+        flexDirection: "column",
         overflow: "hidden",
-        position: "relative",
-
-        background: "linear-gradient(145deg, #fffdf5 0%, #fffaf0 100%)",
-
-        border: "1px solid #eadfca",
-
-        boxShadow: "0 16px 45px rgba(70, 55, 30, 0.12)",
+        borderRadius: 1,
+        background: "#fffdf7",
+        border: "1px solid #ddd4c5",
+        boxShadow: compact
+          ? "0 18px 45px rgba(0,0,0,.25)"
+          : "0 12px 35px rgba(15,23,42,.15)",
       }}
     >
-      {/* Верх блокнота */}
+      {/* HEADER */}
       <Box
         sx={{
-          px: 2.2,
-          py: 1.8,
-          background: "linear-gradient(135deg, #292524 0%, #44403c 100%)",
+          flexShrink: 0,
+          minHeight: compact ? 82 : 88,
+          px: compact ? 2 : 2.2,
+          py: 1.6,
+          display: "flex",
+          alignItems: "center",
+          gap: 1.3,
+          background: "linear-gradient(135deg, #393632 0%, #45413c 100%)",
           color: "#fff",
         }}
       >
-        <Stack direction="row" spacing={1.2} alignItems="center">
-          <MenuBookRoundedIcon />
+        <MenuBookRoundedIcon
+          sx={{
+            fontSize: compact ? 29 : 32,
+            flexShrink: 0,
+          }}
+        />
 
-          <Box sx={{ flex: 1 }}>
-            <Typography fontWeight={800} fontSize={16}>
-              Блокнот улик
-            </Typography>
-
-            <Typography fontSize={11} sx={{ opacity: 0.65 }}>
-              Собирай только найденную информацию
-            </Typography>
-          </Box>
-
-          <Typography fontWeight={800} fontSize={14} sx={{ opacity: 0.8 }}>
-            {clues.length}
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography
+            sx={{
+              fontSize: compact ? 17 : 19,
+              lineHeight: 1.1,
+              fontWeight: 900,
+            }}
+          >
+            Блокнот улик
           </Typography>
-        </Stack>
+
+          <Typography
+            sx={{
+              mt: 0.5,
+              fontSize: compact ? 10 : 11,
+              color: "rgba(255,255,255,.65)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Собирай только найденную информацию
+          </Typography>
+        </Box>
+
+        <Typography
+          sx={{
+            fontSize: compact ? 17 : 19,
+            fontWeight: 900,
+            flexShrink: 0,
+          }}
+        >
+          {clues.length}
+        </Typography>
       </Box>
 
-      {/* Листы */}
+      {/* NOTEBOOK BODY */}
       <Box
         sx={{
-          p: 2,
-          minHeight: compact ? 110 : 390,
-          backgroundImage: "linear-gradient(#eee5d4 1px, transparent 1px)",
-          backgroundSize: "100% 28px",
+          position: "relative",
+          flex: 1,
+          overflow: "hidden",
+          background: "#fffdf7",
         }}
       >
-        {clues.length === 0 ? (
+        {/* Красная вертикальная линия тетради */}
+        <Box
+          sx={{
+            position: "absolute",
+            left: compact ? 38 : 40,
+            top: 0,
+            bottom: 0,
+            width: "1px",
+            background: "rgba(214, 92, 75, .22)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* СТРОКИ */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+
+            scrollbarWidth: "thin",
+
+            "&::-webkit-scrollbar": {
+              width: 5,
+            },
+
+            "&::-webkit-scrollbar-thumb": {
+              background: "rgba(120,110,100,.25)",
+              borderRadius: 10,
+            },
+          }}
+        >
+          {Array.from({ length: rows }).map((_, index) => {
+            const clue = clues[index];
+
+            return (
+              <NotebookRow
+                key={clue?.id ?? `empty-${index}`}
+                number={index + 1}
+                clue={clue}
+                compact={compact}
+              />
+            );
+          })}
+
+          {/* нижняя зона */}
           <Box
             sx={{
-              height: 150,
+              height: 55,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              textAlign: "center",
-              px: 2,
             }}
           >
-            <Box>
-              <Typography fontSize={32} sx={{ mb: 1 }}>
-                🔎
-              </Typography>
-
-              <Typography fontWeight={700} color="text.secondary" fontSize={14}>
-                Здесь пока пусто
-              </Typography>
-
-              <Typography fontSize={12} color="text.secondary" sx={{ mt: 0.5 }}>
-                Находи улики на фотографии и в инструментах
-              </Typography>
-            </Box>
+            <Typography
+              sx={{
+                fontSize: compact ? 10 : 11,
+                color: "#a78b72",
+              }}
+            >
+              Улик найдено: {clues.length}
+            </Typography>
           </Box>
-        ) : (
-          <Stack spacing={1.3}>
-            {clues.map((clue, index) => (
-              <Box
-                key={clue.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-
-                  animation: "clueAppear .4s ease",
-
-                  "@keyframes clueAppear": {
-                    from: {
-                      opacity: 0,
-                      transform: "translateX(25px) scale(.9)",
-                    },
-                    to: {
-                      opacity: 1,
-                      transform: "translateX(0) scale(1)",
-                    },
-                  },
-                }}
-              >
-                <Typography
-                  fontSize={11}
-                  color="text.secondary"
-                  sx={{
-                    width: 18,
-                    textAlign: "right",
-                  }}
-                >
-                  {index + 1}.
-                </Typography>
-
-                <Chip
-                  icon={getSourceIcon(clue.source)}
-                  label={clue.text}
-                  sx={{
-                    height: 32,
-                    borderRadius: 2,
-                    background: "#fff",
-                    border: "1px solid #e4d8c4",
-                    fontWeight: 700,
-
-                    "& .MuiChip-icon": {
-                      color: "#78716c",
-                    },
-                  }}
-                />
-              </Box>
-            ))}
-          </Stack>
-        )}
+        </Box>
       </Box>
-
-      <Divider />
-
-      <Box sx={{ p: 1.5 }}>
-        <Typography fontSize={11} color="text.secondary" textAlign="center">
-          Улик найдено: <b>{clues.length}</b>
-        </Typography>
-      </Box>
-    </Paper>
+    </Box>
   );
+}
+
+/* =========================================================
+   ОДНА СТРОКА БЛОКНОТА
+========================================================= */
+
+function NotebookRow({
+  number,
+  clue,
+  compact,
+}: {
+  number: number;
+  clue?: Clue;
+  compact: boolean;
+}) {
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        /*
+         * ВАЖНО:
+         * каждая улика получает собственную фиксированную строку.
+         */
+        minHeight: compact ? 53 : 56,
+        height: compact ? 53 : 56,
+        display: "flex",
+        alignItems: "center",
+
+        /*
+         * Линия принадлежит именно этой строке.
+         */
+        borderBottom: "1px solid rgba(188, 165, 133, .32)",
+
+        boxSizing: "border-box",
+      }}
+    >
+      {/* НОМЕР */}
+      <Box
+        sx={{
+          width: compact ? 43 : 48,
+          flexShrink: 0,
+
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+
+          color: "#8f7d69",
+          fontSize: compact ? 11 : 12,
+          fontFamily: "Georgia, serif",
+        }}
+      >
+        {clue ? `${number}.` : ""}
+      </Box>
+
+      {/* СОДЕРЖИМОЕ */}
+      {clue ? (
+        <Box
+          sx={{
+            minWidth: 0,
+            flex: 1,
+
+            display: "flex",
+            alignItems: "center",
+
+            pr: 1.2,
+            overflow: "hidden",
+          }}
+        >
+          <ClueChip clue={clue} compact={compact} />
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
+
+/* =========================================================
+   УЛИКА
+========================================================= */
+
+function ClueChip({ clue, compact }: { clue: Clue; compact: boolean }) {
+  const Icon = getClueIcon(clue.source);
+
+  return (
+    <Box
+      sx={{
+        maxWidth: "100%",
+
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 0.8,
+
+        px: compact ? 1 : 1.1,
+        py: compact ? 0.65 : 0.7,
+
+        borderRadius: 999,
+
+        background: "#fff",
+        border: "1px solid #dfd3c4",
+
+        boxShadow: "0 1px 2px rgba(0,0,0,.04)",
+
+        boxSizing: "border-box",
+      }}
+    >
+      <Box
+        sx={{
+          width: compact ? 24 : 27,
+          height: compact ? 24 : 27,
+          flexShrink: 0,
+
+          borderRadius: 1.2,
+
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+
+          background: "#827b74",
+          color: "#fff",
+        }}
+      >
+        <Icon
+          sx={{
+            fontSize: compact ? 15 : 17,
+          }}
+        />
+      </Box>
+
+      <Typography
+        sx={{
+          minWidth: 0,
+
+          fontSize: compact ? 13 : 14,
+          fontWeight: 700,
+          color: "#263238",
+
+          /*
+           * Улика не переносится на несколько строк.
+           * Если слишком длинная — обрезается.
+           */
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {clue.text}
+      </Typography>
+    </Box>
+  );
+}
+
+/* =========================================================
+   ИКОНКИ ПО ИСТОЧНИКУ
+========================================================= */
+
+function getClueIcon(source: Clue["source"]) {
+  switch (source) {
+    case "geo":
+      return LocationOnRoundedIcon;
+
+    case "image_search":
+    case "nick_search":
+      return SearchRoundedIcon;
+
+    case "photo":
+    default:
+      return PhotoCameraRoundedIcon;
+  }
 }

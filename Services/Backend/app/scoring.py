@@ -328,18 +328,55 @@ def score_photo_detective(content: dict, answers: list[dict]) -> tuple[int, int,
             "correct": False,
         }]
 
-    total_correct = int(result.get("totalCorrect", 0))
-    total_possible = int(result.get("totalPossible", 1))
-    details = result.get("details") or []
+    details: list[dict] = []
 
-    # Бонус за ключевые слова в ответе
+    # ─── 1. Улики на фото ───
+    hotspots = content.get("hotspots", [])
+    total_hotspots = len(hotspots)
+    found_ids = set(result.get("foundHotspots") or [])
+    found_correct = sum(1 for h in hotspots if h.get("id") in found_ids)
+
+    for h in hotspots:
+        details.append({
+            "item_id": h.get("id"),
+            "item_text": h.get("label"),
+            "expected": "найти",
+            "chosen": "найдено" if h.get("id") in found_ids else "пропущено",
+            "correct": h.get("id") in found_ids,
+        })
+
+    # ─── 2. Инструменты ───
+    tools = content.get("tools", [])
+    total_tools = len(tools)
+    used_ids = set(result.get("usedTools") or [])
+    tools_correct = sum(1 for t in tools if t.get("id") in used_ids)
+
+    for t in tools:
+        details.append({
+            "item_id": t.get("id"),
+            "item_text": t.get("title"),
+            "expected": "использовать",
+            "chosen": "использован" if t.get("id") in used_ids else "не использован",
+            "correct": t.get("id") in used_ids,
+        })
+
+    # ─── 3. Открытый ответ ───
     answer = (result.get("finalAnswer") or "").lower()
     keywords = ["геометк", "школ", "приватн", "скры", "не выкладыв", "адрес", "вывеск", "ник"]
-    if any(k in answer for k in keywords):
-        total_correct += 1
-        total_possible += 1
+    answer_correct = any(k in answer for k in keywords)
 
-    return total_correct, total_possible, details
+    details.append({
+        "item_id": "final_answer",
+        "item_text": "Открытый ответ",
+        "expected": "развёрнутый ответ по теме",
+        "chosen": (result.get("finalAnswer") or "")[:80],
+        "correct": answer_correct,
+    })
+
+    total_correct = found_correct + tools_correct + (1 if answer_correct else 0)
+    total_possible = total_hotspots + total_tools + 1
+
+    return total_correct, total_possible, detail
 
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]

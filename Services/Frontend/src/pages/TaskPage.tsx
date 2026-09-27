@@ -89,23 +89,29 @@ export default function TaskPage() {
       .finally(() => setLoading(false));
   }, [id, user]);
 
-  const submit = useCallback(async () => {
-    if (!task) return;
-    setSubmitting(true);
-    try {
-      const timeSpent = Math.round((Date.now() - startTime) / 1000);
-      const res = await api.post<Result>("/api/results", {
-        task_id: task.id,
-        answers: answers.map((a) => ({ payload: a })),
-        time_spent_sec: timeSpent,
-      });
-      setResult(res);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Не удалось отправить ответы");
-    } finally {
-      setSubmitting(false);
-    }
-  }, [answers, task, startTime]);
+  const submit = useCallback(
+    async (answersArg?: Answer[]) => {
+      if (!task) return;
+      const payload = answersArg ?? answers;
+      setSubmitting(true);
+      try {
+        const timeSpent = Math.round((Date.now() - startTime) / 1000);
+        const res = await api.post<Result>("/api/results", {
+          task_id: task.id,
+          answers: payload.map((a) => ({ payload: a })),
+          time_spent_sec: timeSpent,
+        });
+        setResult(res);
+      } catch (e) {
+        setError(
+          e instanceof Error ? e.message : "Не удалось отправить ответы",
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [answers, task, startTime],
+  );
 
   const restart = () => {
     setAnswers([]);
@@ -456,49 +462,51 @@ export default function TaskPage() {
           </Typography>
         </Stack>
 
-        <Paper
-          sx={{
-            p: 3,
-            mb: 3,
-            borderLeft: `6px solid ${color}`,
-            borderRadius: "20px",
-            background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
-          }}
-        >
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={3}
-            alignItems={{ sm: "center" }}
+        {task.task_type != "photo_detective" && (
+          <Paper
+            sx={{
+              p: 3,
+              mb: 3,
+              borderLeft: `6px solid ${color}`,
+              borderRadius: "20px",
+              background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
+            }}
           >
-            <Box
-              sx={{
-                width: 60,
-                height: 60,
-                borderRadius: "16px",
-                background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                flexShrink: 0,
-              }}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={3}
+              alignItems={{ sm: "center" }}
             >
-              <TopicIcon sx={{ fontSize: 36 }} />
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography
-                variant="h4"
-                fontWeight={800}
-                sx={{ mt: 1, color: "#1A1A2E" }}
+              <Box
+                sx={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: "16px",
+                  background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  flexShrink: 0,
+                }}
               >
-                {task.title}
-              </Typography>
-              <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-                {task.description}
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
+                <TopicIcon sx={{ fontSize: 36 }} />
+              </Box>
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography
+                  variant="h4"
+                  fontWeight={800}
+                  sx={{ mt: 1, color: "#1A1A2E" }}
+                >
+                  {task.title}
+                </Typography>
+                <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+                  {task.description}
+                </Typography>
+              </Box>
+            </Stack>
+          </Paper>
+        )}
 
         {result ? (
           <ResultCard
@@ -840,33 +848,34 @@ function TaskContent({
           {error}
         </Alert>
       )}
-
-      <Button
-        variant="contained"
-        data-tutorial="submit"
-        size="large"
-        fullWidth
-        disabled={answers.length === 0 || submitting}
-        onClick={onSubmit}
-        sx={{
-          py: 1.8,
-          fontSize: 18,
-          fontWeight: 700,
-          borderRadius: "12px",
-          background:
-            answers.length === 0
-              ? undefined
-              : "linear-gradient(135deg, #7C4DFF, #9C27B0)",
-        }}
-      >
-        {submitting ? (
-          <CircularProgress size={24} sx={{ color: "#fff" }} />
-        ) : answers.length === 0 ? (
-          "Сначала ответь на все вопросы"
-        ) : (
-          "✅ Проверить ответы"
-        )}
-      </Button>
+      {task.task_type !== "photo_detective" && (
+        <Button
+          variant="contained"
+          data-tutorial="submit"
+          size="large"
+          fullWidth
+          disabled={answers.length === 0 || submitting}
+          onClick={onSubmit}
+          sx={{
+            py: 1.8,
+            fontSize: 18,
+            fontWeight: 700,
+            borderRadius: "12px",
+            background:
+              answers.length === 0
+                ? undefined
+                : "linear-gradient(135deg, #7C4DFF, #9C27B0)",
+          }}
+        >
+          {submitting ? (
+            <CircularProgress size={24} sx={{ color: "#fff" }} />
+          ) : answers.length === 0 ? (
+            "Сначала ответь на все вопросы"
+          ) : (
+            "✅ Проверить ответы"
+          )}
+        </Button>
+      )}
     </Box>
   );
 }

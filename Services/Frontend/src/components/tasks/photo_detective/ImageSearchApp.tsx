@@ -22,12 +22,14 @@ interface Props {
   results: SearchResult[];
   onAddClue: (clue: Clue) => void;
   addedClues: string[];
+  onUse?: () => void;
 }
 
 export default function ImageSearchApp({
   results,
   onAddClue,
   addedClues,
+  onUse,
 }: Props) {
   const [query, setQuery] = useState("поиск похожих изображений");
 
@@ -138,23 +140,20 @@ export default function ImageSearchApp({
                   {/* fake thumbnail */}
                   <Box
                     sx={{
-                      width: 130,
+                      width: 160,
                       height: 90,
                       flexShrink: 0,
-
                       borderRadius: 1.5,
-
                       background: "linear-gradient(135deg,#dbeafe,#e0e7ff)",
-
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-
                       fontSize: 34,
                     }}
-                  >
-                    🖼️
-                  </Box>
+                    src="/quest-photo/photo.png"
+                    component="img"
+                    alt=""
+                  ></Box>
 
                   <Box sx={{ flex: 1 }}>
                     <Stack direction="row" spacing={1} alignItems="center">
@@ -213,13 +212,14 @@ export default function ImageSearchApp({
                         startIcon={
                           added ? <CheckRoundedIcon /> : <AddRoundedIcon />
                         }
-                        onClick={() =>
+                        onClick={() => {
                           onAddClue({
                             id: result.clueId!,
                             text: result.clueText!,
                             source: "image_search",
-                          })
-                        }
+                          });
+                          onUse?.();
+                        }}
                       >
                         {added ? "В блокноте" : "Добавить"}
                       </Button>

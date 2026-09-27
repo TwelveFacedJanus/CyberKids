@@ -1,343 +1,391 @@
-// src/components/tasks/photo_detective/DossierBuilder.tsx
+import React, { useMemo, useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 
-import React, { useState } from "react";
-import { Box, Typography, Paper, Chip, Stack, Button } from "@mui/material";
+import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 
-import type { Clue, DossierSlot } from "./photoDetective.types";
+import DossierSlot from "./DossierSlot";
+import DraggableClue, { type DraggableClueData } from "./DraggableClue";
 
-interface Props {
-  clues: Clue[];
-  onComplete: () => void;
+interface DossierSlotConfig {
+  id: string;
+  label: string;
+  icon: string;
+  acceptedClues: string[];
 }
 
-const slots: DossierSlot[] = [
-  {
-    id: "nickname",
-    label: "Никнейм",
-    icon: "🆔",
-    acceptedClues: ["nickname"],
-  },
-  {
-    id: "about",
-    label: "О себе",
-    icon: "💬",
-    acceptedClues: ["interests"],
-  },
-  {
-    id: "city",
-    label: "Город",
-    icon: "🏙️",
-    acceptedClues: ["city"],
-  },
-  {
-    id: "district",
-    label: "Район",
-    icon: "📍",
-    acceptedClues: ["district"],
-  },
-  {
-    id: "school",
-    label: "Школа",
-    icon: "🏫",
-    acceptedClues: ["school"],
-  },
-  {
-    id: "route",
-    label: "Маршрут",
-    icon: "🚌",
-    acceptedClues: ["bus"],
-  },
-];
+interface DossierBuilderProps {
+  slots: DossierSlotConfig[];
 
-export default function DossierBuilder({ clues, onComplete }: Props) {
-  const [placed, setPlaced] = useState<Record<string, Clue>>({});
+  clues: DraggableClueData[];
 
-  const [errorSlot, setErrorSlot] = useState<string | null>(null);
+  onComplete?: () => void;
 
-  const handleDrop = (slot: DossierSlot, clue: Clue) => {
-    if (!slot.acceptedClues.includes(clue.id)) {
-      setErrorSlot(slot.id);
+  onBack?: () => void;
+}
 
-      setTimeout(() => setErrorSlot(null), 900);
+const DossierBuilder: React.FC<DossierBuilderProps> = ({
+  slots,
+  clues,
+  onComplete,
+  onBack,
+}) => {
+  /**
+   * slotId -> clue
+   */
+  const [placedClues, setPlacedClues] = useState<
+    Record<string, DraggableClueData>
+  >({});
 
-      return;
-    }
-
-    setPlaced((prev) => ({
-      ...prev,
-      [slot.id]: clue,
+  const handleDropClue = (slotId: string, clue: DraggableClueData) => {
+    setPlacedClues((previous) => ({
+      ...previous,
+      [slotId]: clue,
     }));
   };
 
-  const allComplete = slots.every((slot) => placed[slot.id]);
+  const usedClueIds = useMemo(() => {
+    return new Set(Object.values(placedClues).map((clue) => clue.id));
+  }, [placedClues]);
 
-  React.useEffect(() => {
-    if (allComplete) {
-      onComplete();
-    }
-  }, [allComplete, onComplete]);
+  const completedCount = Object.keys(placedClues).length;
+
+  const isComplete = completedCount === slots.length;
 
   return (
     <Box
       sx={{
-        minHeight: "100%",
-        p: 4,
+        width: "100%",
+        minHeight: "100vh",
 
-        background:
-          "radial-gradient(circle at 20% 20%, #334155, transparent 35%)," +
-          "linear-gradient(135deg,#0f172a,#1e293b)",
+        p: {
+          xs: 2,
+          md: 4,
+        },
+
+        background: "linear-gradient(135deg, #e9eef2 0%, #d9e1e7 100%)",
       }}
     >
-      <Typography
-        color="#fff"
-        fontSize={27}
-        fontWeight={900}
-        textAlign="center"
-      >
-        🗂️ Собери досье
-      </Typography>
-
-      <Typography
-        color="rgba(255,255,255,.65)"
-        textAlign="center"
-        fontSize={13}
-        sx={{ mt: 0.7, mb: 3 }}
-      >
-        Перетащи каждую улику в подходящее поле
-      </Typography>
-
+      {/* HEADER */}
       <Box
         sx={{
-          maxWidth: 1100,
+          maxWidth: 1200,
+          mx: "auto",
+          mb: 3,
+
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography
+            sx={{
+              fontSize: {
+                xs: 22,
+                md: 28,
+              },
+
+              fontWeight: 900,
+              color: "#263238",
+            }}
+          >
+            Составь досье
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 0.5,
+              fontSize: 13,
+              color: "#607078",
+            }}
+          >
+            Перетащи найденные улики в подходящие поля
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            px: 2,
+            py: 1,
+
+            borderRadius: "12px",
+
+            background: "#fff",
+            border: "1px solid #d5dde2",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 800,
+              color: "#455a64",
+            }}
+          >
+            {completedCount} / {slots.length}
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* MAIN */}
+      <Box
+        sx={{
+          maxWidth: 1200,
           mx: "auto",
 
           display: "grid",
-          gridTemplateColumns: "280px 1fr",
+
+          gridTemplateColumns: {
+            xs: "1fr",
+            lg: "330px 1fr",
+          },
+
           gap: 3,
+
+          alignItems: "start",
         }}
       >
-        {/* clues */}
-        <Paper
-          elevation={0}
+        {/* CLUES */}
+        <Box
           sx={{
             p: 2,
-            borderRadius: 1,
-            background: "rgba(255,255,255,.08)",
-            border: "1px solid rgba(255,255,255,.12)",
+
+            borderRadius: "18px",
+
+            background: "#fff",
+
+            border: "1px solid #d9e0e5",
+
+            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
           }}
         >
-          <Typography color="#fff" fontWeight={800} sx={{ mb: 2 }}>
+          <Typography
+            sx={{
+              fontSize: 15,
+              fontWeight: 900,
+              color: "#263238",
+              mb: 1.5,
+            }}
+          >
             🔎 Найденные улики
           </Typography>
 
-          <Stack spacing={1}>
-            {clues.map((clue) => {
-              const alreadyPlaced = Object.values(placed).some(
-                (item) => item.id === clue.id,
-              );
-
-              return (
-                <Chip
-                  key={clue.id}
-                  draggable={!alreadyPlaced}
-                  label={clue.text}
-                  onDragStart={(event) => {
-                    event.dataTransfer.setData("clueId", clue.id);
-                  }}
-                  sx={{
-                    justifyContent: "flex-start",
-                    height: 42,
-
-                    color: alreadyPlaced ? "rgba(255,255,255,.3)" : "#fff",
-
-                    background: alreadyPlaced
-                      ? "rgba(255,255,255,.04)"
-                      : "rgba(255,255,255,.12)",
-
-                    border: "1px solid rgba(255,255,255,.15)",
-
-                    cursor: alreadyPlaced ? "default" : "grab",
-
-                    "&:hover": {
-                      background: alreadyPlaced
-                        ? undefined
-                        : "rgba(255,255,255,.18)",
-                    },
-                  }}
-                />
-              );
-            })}
-          </Stack>
-        </Paper>
-
-        {/* dossier */}
-        <Paper
-          elevation={0}
-          sx={{
-            p: 3,
-            borderRadius: 1,
-            background: "linear-gradient(145deg,#fff,#f8fafc)",
-          }}
-        >
-          <Box
+          <Typography
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
+              fontSize: 11,
+              color: "#78909c",
               mb: 2,
             }}
           >
-            <Box>
-              <Typography fontSize={21} fontWeight={900}>
-                Личное дело
-              </Typography>
-
-              <Typography fontSize={11} color="text.secondary">
-                Учебный персонаж
-              </Typography>
-            </Box>
-
-            <Typography fontSize={30}>🗃️</Typography>
-          </Box>
+            Перетащи каждую улику в подходящее поле досье.
+          </Typography>
 
           <Box
             sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            {clues.length === 0 && (
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: "#90a4ae",
+                  py: 2,
+                }}
+              >
+                Улик пока нет.
+              </Typography>
+            )}
+
+            {clues.map((clue) => (
+              <DraggableClue
+                key={clue.id}
+                clue={clue}
+                disabled={usedClueIds.has(clue.id)}
+              />
+            ))}
+          </Box>
+        </Box>
+
+        {/* DOSSIER */}
+        <Box
+          sx={{
+            position: "relative",
+
+            p: {
+              xs: 2,
+              md: 3,
+            },
+
+            borderRadius: "20px",
+
+            background: "linear-gradient(135deg, #fffdf8, #f4eee2)",
+
+            border: "1px solid #d8cdbb",
+
+            boxShadow: "0 15px 40px rgba(65,50,30,0.12)",
+          }}
+        >
+          {/* DOSSIER HEADER */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+
+              pb: 2,
+              mb: 2,
+
+              borderBottom: "2px solid #ded3c3",
+            }}
+          >
+            <Box
+              sx={{
+                width: 46,
+                height: 46,
+
+                borderRadius: "12px",
+
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+
+                background: "#3f3b38",
+                color: "#fff",
+              }}
+            >
+              <AssignmentTurnedInRoundedIcon />
+            </Box>
+
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: 19,
+                  fontWeight: 900,
+                  color: "#302b27",
+                }}
+              >
+                Дело №001
+              </Typography>
+
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  color: "#817568",
+                }}
+              >
+                Карточка собранной информации
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* SLOTS */}
+          <Box
+            sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "1fr 1fr",
+              },
+
               gap: 1.5,
             }}
           >
-            {slots.map((slot) => {
-              const clue = placed[slot.id];
-
-              const isError = errorSlot === slot.id;
-
-              return (
-                <DossierSlot
-                  key={slot.id}
-                  slot={slot}
-                  clue={clue}
-                  error={isError}
-                  onDrop={handleDrop}
-                />
-              );
-            })}
+            {slots.map((slot) => (
+              <DossierSlot
+                key={slot.id}
+                slot={slot}
+                clue={placedClues[slot.id] ?? null}
+                onDropClue={handleDropClue}
+              />
+            ))}
           </Box>
 
-          {allComplete && (
+          {/* BACK */}
+          {onBack && (
+            <Button
+              onClick={onBack}
+              startIcon={<ArrowBackRoundedIcon />}
+              sx={{
+                mt: 3,
+                color: "#607d8b",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              Назад
+            </Button>
+          )}
+
+          {/* COMPLETE */}
+          {isComplete && (
             <Box
               sx={{
                 mt: 3,
                 p: 2,
-                borderRadius: 1,
-                background: "#dcfce7",
-                border: "1px solid #86efac",
+
+                borderRadius: "14px",
+
+                background: "linear-gradient(135deg, #e8f5e9, #f1f8e9)",
+
+                border: "1px solid #a5d6a7",
+
                 textAlign: "center",
               }}
             >
-              <Typography fontWeight={800} color="#166534">
+              <Typography
+                sx={{
+                  fontSize: 15,
+                  fontWeight: 900,
+                  color: "#2e7d32",
+                }}
+              >
                 ✓ Досье собрано
               </Typography>
+
+              <Typography
+                sx={{
+                  mt: 0.5,
+                  fontSize: 11,
+                  color: "#558b5a",
+                }}
+              >
+                Все поля заполнены правильно.
+              </Typography>
+
+              {onComplete && (
+                <Button
+                  variant="contained"
+                  onClick={onComplete}
+                  sx={{
+                    mt: 1.5,
+
+                    borderRadius: "10px",
+
+                    background: "#2e7d32",
+
+                    textTransform: "none",
+
+                    fontWeight: 800,
+
+                    "&:hover": {
+                      background: "#1b5e20",
+                    },
+                  }}
+                >
+                  Продолжить
+                </Button>
+              )}
             </Box>
           )}
-        </Paper>
+        </Box>
       </Box>
     </Box>
   );
-}
+};
 
-function DossierSlot({
-  slot,
-  clue,
-  error,
-  onDrop,
-}: {
-  slot: DossierSlot;
-  clue?: Clue;
-  error: boolean;
-  onDrop: (slot: DossierSlot, clue: Clue) => void;
-}) {
-  const [dragOver, setDragOver] = useState(false);
-
-  return (
-    <Box
-      onDragOver={(event) => {
-        event.preventDefault();
-        setDragOver(true);
-      }}
-      onDragLeave={() => setDragOver(false)}
-      onDrop={(event) => {
-        event.preventDefault();
-
-        setDragOver(false);
-
-        const clueId = event.dataTransfer.getData("clueId");
-
-        const clueElement = document.querySelector(
-          `[data-clue-id="${clueId}"]`,
-        );
-
-        void clueElement;
-
-        window.dispatchEvent(
-          new CustomEvent("photo-detective-drop", {
-            detail: {
-              slotId: slot.id,
-              clueId,
-            },
-          }),
-        );
-      }}
-      sx={{
-        minHeight: 105,
-        p: 2,
-
-        borderRadius: 1.5,
-
-        border: error
-          ? "2px solid #ef4444"
-          : dragOver
-            ? "2px solid #3b82f6"
-            : clue
-              ? "2px solid #22c55e"
-              : "2px dashed #cbd5e1",
-
-        background: error ? "#fef2f2" : clue ? "#f0fdf4" : "#f8fafc",
-
-        transition: ".15s",
-
-        transform: error ? "translateX(-4px)" : "none",
-      }}
-    >
-      <Typography fontSize={11} color="text.secondary" fontWeight={700}>
-        {slot.icon} {slot.label}
-      </Typography>
-
-      {clue ? (
-        <Chip
-          label={clue.text}
-          sx={{
-            mt: 1,
-            fontWeight: 800,
-            background: "#dcfce7",
-            color: "#166534",
-          }}
-        />
-      ) : (
-        <Typography fontSize={12} color="text.secondary" sx={{ mt: 2 }}>
-          Перетащи улику сюда
-        </Typography>
-      )}
-
-      {error && (
-        <Typography
-          fontSize={10}
-          color="#dc2626"
-          fontWeight={700}
-          sx={{ mt: 0.5 }}
-        >
-          Эта улика сюда не подходит
-        </Typography>
-      )}
-    </Box>
-  );
-}
+export default DossierBuilder;

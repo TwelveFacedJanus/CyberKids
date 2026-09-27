@@ -965,8 +965,8 @@ SEED_TASKS = [
             "hotspots": [
                 {
                     "id": "h1",
-                    "x": 55,
-                    "y": 27,
+                    "x": 49,
+                    "y": 23,
                     "width": 12,
                     "height": 8,
                     "rotation": 8,
@@ -981,8 +981,8 @@ SEED_TASKS = [
                 },
                 {
                     "id": "h2",
-                    "x": 16,
-                    "y": 12,
+                    "x": 6,
+                    "y": 6,
                     "width": 20,
                     "height": 12,
                     "rotation": 18,
@@ -997,11 +997,11 @@ SEED_TASKS = [
                 },
                 {
                     "id": "h3",
-                    "x": 82.5,
-                    "y": 24,
+                    "x": 79,
+                    "y": 16,
                     "width": 7,
                     "height": 15,
-                    "rotation": 1,
+                    "rotation": -3,
                     "label": "Автобус №42",
                     "hint": (
                         "Номер маршрута на остановке. "
@@ -1013,8 +1013,8 @@ SEED_TASKS = [
                 },
                 {
                     "id": "h4",
-                    "x": 5,
-                    "y": 50,
+                    "x": -10,
+                    "y": 20,
                     "width": 30,
                     "height": 60,
                     "rotation": 15,
@@ -1029,8 +1029,8 @@ SEED_TASKS = [
                 },
                 {
                     "id": "h5",
-                    "x": 95,
-                    "y": 91,
+                    "x": 91,
+                    "y": 87,
                     "width": 8,
                     "height": 8,
                     "rotation": 0,
@@ -1055,7 +1055,7 @@ SEED_TASKS = [
                     "acceptedClues": ["nickname"],
                 },
                 {
-                    "id": "about",
+                    "id": "interests",
                     "label": "О себе",
                     "icon": "💬",
                     "acceptedClues": ["interests"],
@@ -1138,13 +1138,7 @@ SEED_TASKS = [
                     "icon": "🗺️",
                 },
             ],
-            # ============================================================
-            # НИКНЕЙМ
-            # ============================================================
             "nickname": "max_ivanov2011",
-            # ============================================================
-            # ПОИСК ПО ФОТО
-            # ============================================================
             "imageSearchResults": [
                 {
                     "id": "r1",
@@ -1261,7 +1255,7 @@ SEED_TASKS = [
                     "extra": "Подписчиков: 234",
                     "clueId": "interests",
                     "clueText": "Футбол, Roblox",
-                    "dossierField": "about",
+                    "dossierField": "interests",
                     "isClue": True,
                 },
             ],

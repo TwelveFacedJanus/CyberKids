@@ -31,13 +31,11 @@ export default function MacDesktop({
         height: "100%",
         minHeight: 650,
         overflow: "hidden",
-
         background:
-          "radial-gradient(circle at 30% 20%, #475569 0%, transparent 35%)," +
-          "radial-gradient(circle at 80% 70%, #312e81 0%, transparent 40%)," +
-          "linear-gradient(135deg, #0f172a, #1e293b)",
-
-        color: "#fff",
+          "radial-gradient(circle at 30% 20%, #8ba7ce45 0%, transparent 35%)," +
+          "radial-gradient(circle at 80% 70%, #9f9ddf25 0%, transparent 40%)," +
+          "linear-gradient(135deg, #080808, #080808)",
+        color: "#000",
       }}
     >
       {/* top menu */}
@@ -48,44 +46,38 @@ export default function MacDesktop({
           display: "flex",
           alignItems: "center",
           gap: 2,
-
-          background: "rgba(20,20,25,.7)",
-
+          background: "rgba(218, 218, 218, 0.7)",
           backdropFilter: "blur(20px)",
         }}
       >
         <Typography fontWeight={800} fontSize={15}>
           
         </Typography>
-
-        <Typography fontSize={12}>Finder</Typography>
-
-        <Typography fontSize={12} sx={{ opacity: 0.7 }}>
+        <Typography fontSize={12} sx={{ fontWeight: 700 }}>
+          Finder
+        </Typography>
+        <Typography fontSize={12} sx={{ opacity: 0.7, fontWeight: 700 }}>
           Файл
         </Typography>
-
-        <Typography fontSize={12} sx={{ opacity: 0.7 }}>
+        <Typography fontSize={12} sx={{ opacity: 0.7, fontWeight: 700 }}>
           Правка
         </Typography>
-
-        <Typography fontSize={12} sx={{ opacity: 0.7 }}>
+        <Typography fontSize={12} sx={{ opacity: 0.7, fontWeight: 700 }}>
           Вид
         </Typography>
-
         <Box sx={{ flex: 1 }} />
-
-        <Typography fontSize={11} sx={{ opacity: 0.7 }}>
+        <Typography fontSize={12} sx={{ opacity: 1, fontWeight: 700 }}>
           Дело №001
         </Typography>
       </Box>
-
       {/* desktop icons */}
       <Box
         sx={{
-          p: 4,
+          p: 3,
           display: "grid",
           gridTemplateColumns: "repeat(4, 100px)",
           gap: 3,
+          color: "#fff",
         }}
       >
         <DesktopApp
@@ -93,26 +85,22 @@ export default function MacDesktop({
           title="Поиск по фото"
           onClick={onOpenImageSearch}
         />
-
         <DesktopApp
           icon={<PersonSearchRoundedIcon />}
           title="Поиск по нику"
           onClick={onOpenNickSearch}
         />
-
         <DesktopApp
           icon={<MapRoundedIcon />}
           title="Карта"
           onClick={onOpenMap}
         />
-
         <DesktopApp
           icon={<MenuBookRoundedIcon />}
           title="Блокнот"
           onClick={onOpenNotebook}
         />
       </Box>
-
       {/* dock */}
       <Box
         sx={{
@@ -120,20 +108,14 @@ export default function MacDesktop({
           bottom: 16,
           left: "50%",
           transform: "translateX(-50%)",
-
           px: 2,
           py: 1,
-
           display: "flex",
           gap: 1,
-
           borderRadius: 3,
-
-          background: "rgba(255,255,255,.18)",
-
+          background: "rgba(37, 37, 37, 0.18)",
           backdropFilter: "blur(20px)",
-
-          border: "1px solid rgba(255,255,255,.25)",
+          // border: "1px solid rgba(255,255,255,.25)",
         }}
       >
         <DockIcon icon="🔎" />
@@ -141,7 +123,6 @@ export default function MacDesktop({
         <DockIcon icon="🗺️" />
         <DockIcon icon="📓" />
       </Box>
-
       {children}
     </Box>
   );
@@ -163,13 +144,9 @@ function DesktopApp({
         width: 90,
         cursor: "pointer",
         textAlign: "center",
-
         p: 1,
-
         borderRadius: 2,
-
         transition: ".2s",
-
         "&:hover": {
           background: "rgba(255,255,255,.12)",
           transform: "translateY(-3px)",
@@ -182,23 +159,17 @@ function DesktopApp({
           height: 58,
           mx: "auto",
           mb: 0.8,
-
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-
-          borderRadius: 1.8,
-
+          borderRadius: 1,
           background: "linear-gradient(145deg,#fff,#dbeafe)",
-
           color: "#334155",
-
           boxShadow: "0 8px 20px rgba(0,0,0,.25)",
         }}
       >
         {icon}
       </Box>
-
       <Typography fontSize={11} fontWeight={600}>
         {title}
       </Typography>
@@ -212,15 +183,10 @@ function DockIcon({ icon }: { icon: string }) {
       sx={{
         width: 38,
         height: 38,
-
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-
         borderRadius: 1.5,
-
-        background: "rgba(255,255,255,.16)",
-
         fontSize: 21,
       }}
     >

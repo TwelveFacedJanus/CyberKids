@@ -1,6 +1,6 @@
-// src/components/tasks/photo_detective/PhotoDetectiveTask.tsx
+// src/components/tasks/PhotoDetectiveTask.tsx
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import {
   Box,
@@ -10,20 +10,16 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import ComputerRoundedIcon from "@mui/icons-material/ComputerRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
-
 import Notebook from "./photo_detective/Notebook";
 import MacDesktop from "./photo_detective/MacDesktop";
 import MacWindow from "./photo_detective/MacWindow";
-
 import ImageSearchApp from "./photo_detective/ImageSearchApp";
 import NickSearchApp from "./photo_detective/NickSearchApp";
 import GeoMapApp from "./photo_detective/GeoMapApp";
 import DossierBuilder from "./photo_detective/DossierBuilder";
+import type { Answer } from "../../types";
 
 import type {
   Clue,
@@ -34,35 +30,35 @@ type Phase = "photo" | "desktop" | "dossier" | "completed";
 
 interface Props {
   content: PhotoDetectiveContent;
-
-  /**
-   * Если у твоей системы есть callback завершения:
-   * onComplete?.()
-   */
+  answers: Answer[];
+  onChange: (answers: Answer[]) => void;
+  onSubmit: (finalAnswers: Answer[]) => void;
   onComplete?: () => void;
 }
 
-export default function PhotoDetectiveTask({ content, onComplete }: Props) {
+export default function PhotoDetectiveTask({
+  content,
+  answers,
+  onChange,
+  onSubmit,
+  onComplete,
+}: Props) {
   const [phase, setPhase] = useState<Phase>("photo");
-
   const [foundHotspots, setFoundHotspots] = useState<string[]>([]);
-
   const [clues, setClues] = useState<Clue[]>([]);
-
+  const [usedTools, setUsedTools] = useState<string[]>([]);
   const [activeApp, setActiveApp] = useState<
     "image" | "nick" | "geo" | "notebook" | null
   >(null);
-
   const [finalAnswer, setFinalAnswer] = useState("");
-
   const [showFinalQuestion, setShowFinalQuestion] = useState(false);
 
   const addClue = useCallback((clue: Clue) => {
     setClues((current) => {
+      // Не добавляем одну и ту же улику дважды
       if (current.some((item) => item.id === clue.id)) {
         return current;
       }
-
       return [...current, clue];
     });
   }, []);
@@ -71,9 +67,7 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
     if (foundHotspots.includes(hotspot.id)) {
       return;
     }
-
     setFoundHotspots((current) => [...current, hotspot.id]);
-
     addClue({
       id: hotspot.clueId,
       text: hotspot.clueText,
@@ -84,8 +78,9 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
   const photoComplete = foundHotspots.length >= content.hotspots.length;
 
   const goDesktop = () => {
-    if (!photoComplete) return;
-
+    if (!photoComplete) {
+      return;
+    }
     setPhase("desktop");
   };
 
@@ -94,7 +89,7 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
     setPhase("dossier");
   };
 
-  const finish = () => {
+  const handleDossierComplete = () => {
     setShowFinalQuestion(true);
   };
 
@@ -103,8 +98,24 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
       return;
     }
 
-    setPhase("completed");
+    onChange([
+      ...answers.filter((a) => a.key !== "photo_detective_result"),
+      {
+        key: "photo_detective_result",
+        value: {
+          foundHotspots,
+          usedTools,
+          finalAnswer,
+          // Для скоринга на бэке:
+          totalFound: foundHotspots.length,
+          totalTools: usedTools.length,
+          // Полный набор улик (по clueId)
+          clueIds: clues.map((c) => c.id),
+        },
+      },
+    ]);
 
+    setPhase("completed");
     onComplete?.();
   };
 
@@ -116,7 +127,7 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
         position: "relative",
         overflow: "hidden",
         borderRadius: 1,
-        background: "#0f172a",
+        background: "linear-gradient(135deg,#e2e8f0,#cbd5e1)",
       }}
     >
       <InvestigationHeader
@@ -126,7 +137,9 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
         totalCount={content.hotspots.length}
       />
 
-      {/* PHOTO */}
+      {/* ======================================================
+          PHOTO
+      ====================================================== */}
       {phase === "photo" && (
         <PhotoPhase
           content={content}
@@ -138,7 +151,9 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
         />
       )}
 
-      {/* DESKTOP */}
+      {/* ======================================================
+          DESKTOP
+      ====================================================== */}
       {phase === "desktop" && (
         <Box
           sx={{
@@ -152,65 +167,98 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
             onOpenMap={() => setActiveApp("geo")}
             onOpenNotebook={() => setActiveApp("notebook")}
           >
+            {/* =========================
+                IMAGE SEARCH
+            ========================= */}
             {activeApp === "image" && (
               <MacWindow
                 title="Поиск по фото"
-                icon={<span>🖼️</span>}
+                // icon={<span>🖼️</span>}
                 onClose={() => setActiveApp(null)}
               >
                 <ImageSearchApp
                   results={content.imageSearchResults}
                   onAddClue={addClue}
-                  addedClues={clues.map((c) => c.id)}
+                  addedClues={clues.map((clue) => clue.id)}
+                  onUse={() =>
+                    setUsedTools((prev) => [
+                      ...new Set([...prev, "image_search"]),
+                    ])
+                  }
                 />
               </MacWindow>
             )}
 
+            {/* =========================
+                NICK SEARCH
+            ========================= */}
             {activeApp === "nick" && (
               <MacWindow
                 title="Поиск по нику"
-                icon={<span>👤</span>}
+                // icon={<span>👤</span>}
                 onClose={() => setActiveApp(null)}
               >
                 <NickSearchApp
                   nickname={content.nickname}
                   results={content.nickSearchResults}
                   onAddClue={addClue}
-                  addedClues={clues.map((c) => c.id)}
+                  addedClues={clues.map((clue) => clue.id)}
+                  onUse={() =>
+                    setUsedTools((prev) => [
+                      ...new Set([...prev, "nick_search"]),
+                    ])
+                  }
                 />
               </MacWindow>
             )}
 
+            {/* =========================
+                GEO MAP
+            ========================= */}
             {activeApp === "geo" && (
               <MacWindow
                 title="Карта координат"
-                icon={<span>🗺️</span>}
+                // icon={<span>🗺️</span>}
                 onClose={() => setActiveApp(null)}
               >
                 <GeoMapApp
                   results={content.geoResults}
                   onAddClue={addClue}
-                  addedClues={clues.map((c) => c.id)}
+                  addedClues={clues.map((clue) => clue.id)}
+                  onUse={() =>
+                    setUsedTools((prev) => [...new Set([...prev, "geo_map"])])
+                  }
                 />
               </MacWindow>
             )}
 
+            {/* =========================
+                NOTEBOOK
+            ========================= */}
             {activeApp === "notebook" && (
               <MacWindow
                 title="Блокнот улик"
-                icon={<MenuBookRoundedIcon fontSize="small" />}
+                // icon={<MenuBookRoundedIcon fontSize="small" />}
                 onClose={() => setActiveApp(null)}
                 width={380}
                 height={560}
               >
-                <Box sx={{ p: 2 }}>
-                  <Notebook clues={clues} compact />
+                <Box
+                  sx={{
+                    p: 2,
+                    height: "100%",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <Notebook clues={clues} />
                 </Box>
               </MacWindow>
             )}
           </MacDesktop>
 
-          {/* desktop controls */}
+          {/* ==================================================
+              DESKTOP CONTROLS
+          ================================================== */}
           <Box
             sx={{
               position: "absolute",
@@ -233,22 +281,12 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
               Перейти к досье
             </Button>
           </Box>
-
-          {/* notebook overlay */}
-          <Box
-            sx={{
-              position: "absolute",
-              right: 18,
-              top: 55,
-              zIndex: 30,
-            }}
-          >
-            <Notebook clues={clues} compact />
-          </Box>
         </Box>
       )}
 
-      {/* DOSSIER */}
+      {/* ======================================================
+          DOSSIER
+      ====================================================== */}
       {phase === "dossier" && (
         <Box
           sx={{
@@ -256,8 +294,16 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
             position: "relative",
           }}
         >
-          <DossierBuilder clues={clues} onComplete={finish} />
+          <DossierBuilder
+            slots={content.dossierSlots}
+            clues={clues}
+            onComplete={handleDossierComplete}
+            onBack={() => setPhase("desktop")}
+          />
 
+          {/* ==================================================
+              FINAL QUESTION
+          ================================================== */}
           {showFinalQuestion && (
             <FinalQuestion
               question={content.finalQuestion}
@@ -270,7 +316,9 @@ export default function PhotoDetectiveTask({ content, onComplete }: Props) {
         </Box>
       )}
 
-      {/* COMPLETED */}
+      {/* ======================================================
+          COMPLETED
+      ====================================================== */}
       {phase === "completed" && (
         <CompletedScreen answer={finalAnswer} explainer={content.explainer} />
       )}
@@ -293,7 +341,7 @@ function InvestigationHeader({
   foundCount: number;
   totalCount: number;
 }) {
-  const steps = [
+  const steps: [Phase, string][] = [
     ["photo", "Фото"],
     ["desktop", "Инструменты"],
     ["dossier", "Досье"],
@@ -307,22 +355,36 @@ function InvestigationHeader({
         display: "flex",
         alignItems: "center",
         gap: 3,
-        background: "rgba(15,23,42,.96)",
-        color: "#fff",
+        background: "rgb(255, 255, 255)",
+        // color: "#000",
         borderBottom: "1px solid rgba(255,255,255,.08)",
         position: "relative",
         zIndex: 100,
       }}
     >
+      {/* TITLE */}
       <Box>
         <Typography fontWeight={900} fontSize={17}>
           🔎 Фото-детектив
         </Typography>
-        <Typography fontSize={10} sx={{ opacity: 0.55 }}>
+        <Typography
+          fontSize={10}
+          sx={{
+            opacity: 0.55,
+          }}
+        >
           Учебное расследование
         </Typography>
       </Box>
-      <Stack direction="row" spacing={1} sx={{ flex: 1 }}>
+
+      {/* STEPS */}
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          flex: 1,
+        }}
+      >
         {steps.map(([id, label], index) => {
           const active = phase === id;
           return (
@@ -332,15 +394,14 @@ function InvestigationHeader({
                   px: 1.5,
                   py: 0.7,
                   borderRadius: 2,
-                  background: active ? "rgba(59,130,246,.2)" : "transparent",
-                  color: active ? "#93c5fd" : "rgba(255,255,255,.4)",
+                  background: active ? "#26C6DA" : "transparent",
+                  color: active ? "#000" : "rgba(0,0,0,.4)",
                   fontSize: 11,
                   fontWeight: 800,
                 }}
               >
                 {index + 1}. {label}
               </Box>
-
               {index < steps.length - 1 && (
                 <Typography
                   sx={{
@@ -355,9 +416,9 @@ function InvestigationHeader({
         })}
       </Stack>
 
+      {/* STATS */}
       <Stack direction="row" spacing={1}>
         <Stat label="Фото" value={`${foundCount}/${totalCount}`} />
-
         <Stat label="Улики" value={cluesCount} />
       </Stack>
     </Box>
@@ -375,8 +436,12 @@ function Stat({ label, value }: { label: string; value: string | number }) {
       <Typography fontWeight={900} fontSize={14}>
         {value}
       </Typography>
-
-      <Typography fontSize={9} sx={{ opacity: 0.45 }}>
+      <Typography
+        fontSize={9}
+        sx={{
+          opacity: 0.45,
+        }}
+      >
         {label}
       </Typography>
     </Box>
@@ -416,7 +481,7 @@ function PhotoPhase({
           gap: 3,
         }}
       >
-        {/* photo */}
+        {/* ====================== PHOTO ============================ */}
         <Paper
           elevation={0}
           sx={{
@@ -446,38 +511,29 @@ function PhotoPhase({
               }}
             />
 
+            {/* HOTSPOTS */}
             {content.hotspots.map((hotspot) => {
               const found = foundHotspots.includes(hotspot.id);
-
               return (
                 <Box
                   key={hotspot.id}
                   onClick={() => onHotspotClick(hotspot)}
                   sx={{
                     position: "absolute",
-
                     left: `${hotspot.x}%`,
                     top: `${hotspot.y}%`,
-
                     width: `${hotspot.width}%`,
                     height: `${hotspot.height}%`,
-
                     transform: `rotate(${hotspot.rotation || 0}deg)`,
-
                     borderRadius: 1,
-
                     border: found
                       ? "3px solid #22c55e"
                       : "2px dashed rgba(255,255,255,.9)",
-
                     background: found
                       ? "rgba(34,197,94,.18)"
                       : "rgba(255,255,255,.03)",
-
                     cursor: found ? "default" : "crosshair",
-
                     transition: ".2s",
-
                     "&:hover": {
                       background: found ? undefined : "rgba(59,130,246,.2)",
                       transform: `rotate(${
@@ -492,16 +548,12 @@ function PhotoPhase({
                         position: "absolute",
                         top: -12,
                         right: -12,
-
                         width: 25,
                         height: 25,
-
                         borderRadius: "50%",
-
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-
                         background: "#22c55e",
                         color: "#fff",
                       }}
@@ -513,7 +565,7 @@ function PhotoPhase({
               );
             })}
 
-            {/* instruction */}
+            {/* INSTRUCTION */}
             <Box
               sx={{
                 position: "absolute",
@@ -534,7 +586,10 @@ function PhotoPhase({
           </Box>
         </Paper>
 
-        {/* notebook */}
+        {/* ==================================================
+            NOTEBOOK
+        ================================================== */}
+
         <Box
           sx={{
             display: "flex",
@@ -543,7 +598,6 @@ function PhotoPhase({
           }}
         >
           <Notebook clues={clues} />
-
           <Button
             fullWidth
             variant="contained"
@@ -590,15 +644,11 @@ function FinalQuestion({
       sx={{
         position: "absolute",
         inset: 0,
-
         zIndex: 200,
-
         display: "flex",
         alignItems: "flex-end",
         justifyContent: "center",
-
         p: 4,
-
         background: "linear-gradient(transparent 20%,rgba(15,23,42,.78))",
       }}
     >
@@ -606,28 +656,25 @@ function FinalQuestion({
         elevation={0}
         sx={{
           width: "min(700px, 95%)",
-
           p: 3,
-
-          borderRadius: 4,
-
+          borderRadius: 2,
           background: "rgba(255,255,255,.98)",
-
           boxShadow: "0 25px 80px rgba(0,0,0,.35)",
         }}
       >
         <Typography fontSize={23} fontWeight={900}>
           💭 {question}
         </Typography>
-
         <Typography
           fontSize={13}
           color="text.secondary"
-          sx={{ mt: 0.7, mb: 2 }}
+          sx={{
+            mt: 0.7,
+            mb: 2,
+          }}
         >
           Подумай, какие детали лучше не публиковать открыто.
         </Typography>
-
         <TextField
           fullWidth
           multiline
@@ -636,7 +683,6 @@ function FinalQuestion({
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
-
         <Button
           fullWidth
           variant="contained"
@@ -671,13 +717,10 @@ function CompletedScreen({
     <Box
       sx={{
         minHeight: 650,
-
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-
         p: 4,
-
         background: "radial-gradient(circle at 50% 30%,#334155,#0f172a)",
       }}
     >
@@ -687,26 +730,34 @@ function CompletedScreen({
           maxWidth: 650,
           width: "100%",
           p: 4,
-          borderRadius: 5,
+          borderRadius: 2,
           textAlign: "center",
         }}
       >
         <Typography fontSize={60}>🕵️</Typography>
-
-        <Typography fontSize={28} fontWeight={900} sx={{ mt: 1 }}>
+        <Typography
+          fontSize={28}
+          fontWeight={900}
+          sx={{
+            mt: 1,
+          }}
+        >
           Расследование завершено
         </Typography>
-
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
+        <Typography
+          color="text.secondary"
+          sx={{
+            mt: 1,
+          }}
+        >
           Ты увидел, сколько информации может раскрыть одна фотография.
         </Typography>
-
         {explainer && (
           <Box
             sx={{
               mt: 3,
               p: 2,
-              borderRadius: 3,
+              borderRadius: 1,
               background: "#f1f5f9",
               textAlign: "left",
             }}
@@ -716,7 +767,6 @@ function CompletedScreen({
             </Typography>
           </Box>
         )}
-
         <Box
           sx={{
             mt: 3,
@@ -728,8 +778,13 @@ function CompletedScreen({
           <Typography fontSize={11} color="text.secondary">
             Твой ответ
           </Typography>
-
-          <Typography fontSize={14} fontWeight={600} sx={{ mt: 0.5 }}>
+          <Typography
+            fontSize={14}
+            fontWeight={600}
+            sx={{
+              mt: 0.5,
+            }}
+          >
             {answer}
           </Typography>
         </Box>
