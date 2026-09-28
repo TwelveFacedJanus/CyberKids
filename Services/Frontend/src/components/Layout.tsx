@@ -237,7 +237,9 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
 
   const [logoClicks, setLogoClicks] = useState(0);
   const [showSwitch, setShowSwitch] = useState(false);
-  const [useEmojiMenu, setUseEmojiMenu] = useState(false);
+  const [useEmojiMenu, setUseEmojiMenu] = useState(() => {
+    return localStorage.getItem("cyberkids_menu_style") === "emoji";
+  });
   const switchTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -317,6 +319,13 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   useEffect(() => {
     setLogoClicks(0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "cyberkids_menu_style",
+      useEmojiMenu ? "emoji" : "icons",
+    );
+  }, [useEmojiMenu]);
 
   const menuItems: MenuItem[] = useEmojiMenu
     ? MENU_ITEMS_EMOJI
