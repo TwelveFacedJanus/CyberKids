@@ -376,7 +376,136 @@ def score_photo_detective(content: dict, answers: list[dict]) -> tuple[int, int,
     total_correct = found_correct + tools_correct + (1 if answer_correct else 0)
     total_possible = total_hotspots + total_tools + 1
 
-    return total_correct, total_possible, detail
+    return total_correct, total_possible, details
+
+def score_fake_friend_chat(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """fake_friend_chat: красные флаги + развилки + финал."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "fake_friend_chat_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Пройти диалог",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    details: list[dict] = []
+
+    # ─── 1. Красные флаги ───
+    red_flags = content.get("redFlags", [])
+    total_flags = len(red_flags)
+    found_flags = set(result.get("foundFlags") or [])
+    flags_correct = sum(1 for f in red_flags if f.get("id") in found_flags)
+
+    for f in red_flags:
+        details.append({
+            "item_id": f.get("id"),
+            "item_text": f.get("label"),
+            "expected": "заметить",
+            "chosen": "замечено" if f.get("id") in found_flags else "пропущено",
+            "correct": f.get("id") in found_flags,
+        })
+
+    # ─── 2. Развилки ───
+    choices = result.get("choices") or {}   # { choiceId: "good"|"neutral"|"bad" }
+    correct_choices = 0
+    total_choices = 0
+
+    for choice in content.get("choices", []):
+        total_choices += 1
+        picked = choices.get(choice.get("id"))
+        is_correct = picked == "good"
+        if is_correct:
+            correct_choices += 1
+        details.append({
+            "scenario_id": choice.get("id"),
+            "title": choice.get("title"),
+            "expected": "правильный вариант",
+            "chosen": picked or "не выбрано",
+            "correct": is_correct,
+        })
+
+    # ─── 3. Финал ───
+    final_choice = result.get("finalChoice")   # "good" | "neutral" | "bad"
+    final_correct = final_choice == "good"
+
+    details.append({
+        "scenario_id": "final",
+        "title": "Финальное решение",
+        "expected": "good",
+        "chosen": final_choice or "не выбрано",
+        "correct": final_correct,
+    })
+
+    total_correct = flags_correct + correct_choices + (1 if final_correct else 0)
+    total_possible = total_flags + total_choices + 1
+
+    return total_correct, total_possible, details
+
+def score_hacked_friend(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """hacked_friend: флаги + развилки + финал."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "hacked_friend_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Разоблачить мошенника",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    details: list[dict] = []
+
+    # Флаги
+    red_flags = content.get("redFlags", [])
+    total_flags = len(red_flags)
+    found_flags = set(result.get("foundFlags") or [])
+    flags_correct = sum(1 for f in red_flags if f.get("id") in found_flags)
+    for f in red_flags:
+        details.append({
+            "item_id": f.get("id"),
+            "item_text": f.get("label"),
+            "expected": "заметить",
+            "chosen": "замечено" if f.get("id") in found_flags else "пропущено",
+            "correct": f.get("id") in found_flags,
+        })
+
+    # Развилки
+    choices = result.get("choices") or {}
+    correct_choices = 0
+    total_choices = 0
+    for choice in content.get("choices", []):
+        total_choices += 1
+        picked = choices.get(choice.get("id"))
+        is_correct = picked == "good"
+        if is_correct:
+            correct_choices += 1
+        details.append({
+            "scenario_id": choice.get("id"),
+            "title": choice.get("title"),
+            "expected": "правильный вариант",
+            "chosen": picked or "не выбрано",
+            "correct": is_correct,
+        })
+
+    # Финал
+    final_choice = result.get("finalChoice")
+    final_correct = final_choice == "good"
+    details.append({
+        "scenario_id": "final",
+        "title": "Финальное решение",
+        "expected": "good",
+        "chosen": final_choice or "не выбрано",
+        "correct": final_correct,
+    })
+
+    total_correct = flags_correct + correct_choices + (1 if final_correct else 0)
+    total_possible = total_flags + total_choices + 1
+
+    return total_correct, total_possible, details
 
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
@@ -412,5 +541,9 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_profile_builder(content, answers)
     if task_type == constants.TASK_PHOTO_DETECTIVE:
         return score_photo_detective(content, answers)
+    if task_type == constants.TASK_FAKE_FRIEND_CHAT:
+        return score_fake_friend_chat(content, answers)
+    if task_type == constants.TASK_HACKED_FRIEND:
+        return score_hacked_friend(content, answers)
     return 0, 0, []
 

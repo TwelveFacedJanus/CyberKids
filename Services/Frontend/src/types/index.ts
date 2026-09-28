@@ -15,6 +15,8 @@ export type TaskType =
   | 'quick_test'
   | 'profile_builder'
   | 'photo_detective'
+  | 'fake_friend_chat'
+  | 'hacked_friend'
 
 export interface User {
   id: string

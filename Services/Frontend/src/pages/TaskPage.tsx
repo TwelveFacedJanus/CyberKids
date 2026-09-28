@@ -42,6 +42,8 @@ import QuickTestTask from "../components/tasks/QuickTestTask";
 import TaskTutorial, { type TutorialStep } from "../components/TaskTutorial";
 import ProfileBuilderTask from "../components/tasks/ProfileBuilderTask";
 import PhotoDetectiveTask from "../components/tasks/PhotoDetectiveTask";
+import FakeFriendChatTask from "../components/tasks/FakeFriendChatTask";
+import HackedFriendTask from "../components/tasks/HackedFriendTask";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -351,6 +353,46 @@ export default function TaskPage() {
           },
         ];
 
+      case "fake_friend_chat":
+        return [
+          {
+            text: "Это чат с «другом». Читай сообщения внимательно — что-то не так.",
+            targetSelector: '[data-tutorial="fake-friend-chat"]',
+          },
+          {
+            text: "Замечай красные флаги — они появляются в панели справа.",
+            targetSelector: '[data-tutorial="fake-friend-chat"]',
+          },
+          {
+            text: "Сравни стиль общения с настоящим Андреем — кнопка сверху.",
+            targetSelector: '[data-tutorial="fake-friend-chat"]',
+          },
+          {
+            text: "На каждой развилке выбирай правильное действие.",
+            targetSelector: '[data-tutorial="submit"]',
+          },
+        ];
+
+      case "hacked_friend":
+        return [
+          {
+            text: "Тебе пришло голосовое от Андрея. Прослушай его.",
+            targetSelector: '[data-tutorial="hacked-friend-chat"]',
+          },
+          {
+            text: "Общайся с «Андреем» — используй инструменты проверки снизу.",
+            targetSelector: '[data-tutorial="hacked-friend-chat"]',
+          },
+          {
+            text: "Замечай красные флаги справа. Они появляются, когда мошенник выдаёт себя.",
+            targetSelector: '[data-tutorial="hacked-friend-chat"]',
+          },
+          {
+            text: "Сделай 4+ хода — потом появится кнопка «Пора принять решение».",
+            targetSelector: '[data-tutorial="hacked-friend-chat"]',
+          },
+        ];
+
       default:
         return [
           {
@@ -462,51 +504,53 @@ export default function TaskPage() {
           </Typography>
         </Stack>
 
-        {task.task_type != "photo_detective" && (
-          <Paper
-            sx={{
-              p: 3,
-              mb: 3,
-              borderLeft: `6px solid ${color}`,
-              borderRadius: "20px",
-              background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
-            }}
-          >
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={3}
-              alignItems={{ sm: "center" }}
+        {task.task_type != "photo_detective" &&
+          task.task_type != "fake_friend_chat" &&
+          task.task_type != "hacked_friend" && (
+            <Paper
+              sx={{
+                p: 3,
+                mb: 3,
+                borderLeft: `6px solid ${color}`,
+                borderRadius: "20px",
+                background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
+              }}
             >
-              <Box
-                sx={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: "16px",
-                  background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  flexShrink: 0,
-                }}
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={3}
+                alignItems={{ sm: "center" }}
               >
-                <TopicIcon sx={{ fontSize: 36 }} />
-              </Box>
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography
-                  variant="h4"
-                  fontWeight={800}
-                  sx={{ mt: 1, color: "#1A1A2E" }}
+                <Box
+                  sx={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: "16px",
+                    background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    flexShrink: 0,
+                  }}
                 >
-                  {task.title}
-                </Typography>
-                <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-                  {task.description}
-                </Typography>
-              </Box>
-            </Stack>
-          </Paper>
-        )}
+                  <TopicIcon sx={{ fontSize: 36 }} />
+                </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight={800}
+                    sx={{ mt: 1, color: "#1A1A2E" }}
+                  >
+                    {task.title}
+                  </Typography>
+                  <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+                    {task.description}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Paper>
+          )}
 
         {result ? (
           <ResultCard
@@ -814,6 +858,22 @@ function TaskContent({
             onChange={setAnswers}
           />
         );
+      case "fake_friend_chat":
+        return (
+          <FakeFriendChatTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+          />
+        );
+      case "hacked_friend":
+        return (
+          <HackedFriendTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+          />
+        );
       case "theory_cards": {
         const nextTask = allTasks.find(
           (t) =>
@@ -848,34 +908,36 @@ function TaskContent({
           {error}
         </Alert>
       )}
-      {task.task_type !== "photo_detective" && (
-        <Button
-          variant="contained"
-          data-tutorial="submit"
-          size="large"
-          fullWidth
-          disabled={answers.length === 0 || submitting}
-          onClick={onSubmit}
-          sx={{
-            py: 1.8,
-            fontSize: 18,
-            fontWeight: 700,
-            borderRadius: "12px",
-            background:
-              answers.length === 0
-                ? undefined
-                : "linear-gradient(135deg, #7C4DFF, #9C27B0)",
-          }}
-        >
-          {submitting ? (
-            <CircularProgress size={24} sx={{ color: "#fff" }} />
-          ) : answers.length === 0 ? (
-            "Сначала ответь на все вопросы"
-          ) : (
-            "✅ Проверить ответы"
-          )}
-        </Button>
-      )}
+      {task.task_type !== "photo_detective" &&
+        task.task_type !== "fake_friend_chat" &&
+        task.task_type !== "hacked_friend" && (
+          <Button
+            variant="contained"
+            data-tutorial="submit"
+            size="large"
+            fullWidth
+            disabled={answers.length === 0 || submitting}
+            onClick={onSubmit}
+            sx={{
+              py: 1.8,
+              fontSize: 18,
+              fontWeight: 700,
+              borderRadius: "12px",
+              background:
+                answers.length === 0
+                  ? undefined
+                  : "linear-gradient(135deg, #7C4DFF, #9C27B0)",
+            }}
+          >
+            {submitting ? (
+              <CircularProgress size={24} sx={{ color: "#fff" }} />
+            ) : answers.length === 0 ? (
+              "Сначала ответь на все вопросы"
+            ) : (
+              "✅ Проверить ответы"
+            )}
+          </Button>
+        )}
     </Box>
   );
 }
