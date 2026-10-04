@@ -507,6 +507,87 @@ def score_hacked_friend(content: dict, answers: list[dict]) -> tuple[int, int, l
 
     return total_correct, total_possible, details
 
+def score_safe_job_sort(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """safe_job_sort: 12 карточек на безопасность."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "safe_job_sort_result"),
+        None,
+    )
+    if not result:
+        return 0, 1, [{
+            "expected": "Промодерировать карточки",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+
+    decisions: dict[str, str] = result.get("decisions") or {}   # { cardId: "safe" | "danger" }
+    cards = content.get("cards", [])
+    total = len(cards)
+
+    correct = 0
+    details: list[dict] = []
+
+    for c in cards:
+        picked = decisions.get(c.get("id"))
+        expected = c.get("safety")
+        is_correct = picked == expected
+        if is_correct:
+            correct += 1
+
+        details.append({
+            "item_id": c.get("id"),
+            "item_text": c.get("title"),
+            "expected": expected,
+            "chosen": picked or "не выбрано",
+            "correct": is_correct,
+        })
+
+    return correct, total, details
+
+def score_dropper_chat(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """dropper_chat: 5 пунктов — расследование, улики, решение, отказ под давлением, роль."""
+    result = next(
+        (a.get("value") for a in answers if a.get("key") == "dropper_chat_result"),
+        None,
+    )
+    if not result:
+        return 0, 5, [{
+            "expected": "Пройти сценарий до конца",
+            "chosen": "не пройдено",
+            "correct": False,
+        }]
+ 
+    min_q = content.get("minQuestions", 3)
+    min_flags = content.get("minFlags", 4)
+    first_choice = result.get("firstChoice")
+    pressure_first = result.get("pressureFirst")
+    role_first = result.get("roleFirst")
+ 
+    pressure_ok_id = next(
+        (o["id"] for o in (content.get("pressure") or {}).get("options", []) if o.get("correct")),
+        None,
+    )
+    role_ok_id = next(
+        (o["id"] for o in content.get("roleOptions", []) if o.get("correct")),
+        None,
+    )
+    asked = len(result.get("questionsAsked") or [])
+    flags = len(result.get("flagsFound") or [])
+ 
+    items = [
+        ("Расспросить Артёма", f"минимум {min_q} вопроса", f"{asked} вопр.", asked >= min_q),
+        ("Найти тревожные сообщения", f"минимум {min_flags}", f"{flags} найдено", flags >= min_flags),
+        ("Решение при входящем переводе", "stop", first_choice or "не выбрано", first_choice == "stop"),
+        ("Отказ под давлением (с первой попытки)", pressure_ok_id, pressure_first or "не выбрано", pressure_first == pressure_ok_id),
+        ("Роль в схеме", role_ok_id, role_first or "не выбрано", role_first == role_ok_id),
+    ]
+    details = [
+        {"item_id": f"d{i + 1}", "item_text": t, "expected": e, "chosen": c, "correct": ok}
+        for i, (t, e, c, ok) in enumerate(items)
+    ]
+    return sum(1 for d in details if d["correct"]), len(details), details
+
+
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
     if task_type == constants.TASK_DRAGDROP:
@@ -545,5 +626,9 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_fake_friend_chat(content, answers)
     if task_type == constants.TASK_HACKED_FRIEND:
         return score_hacked_friend(content, answers)
+    if task_type == constants.TASK_SAFE_JOB_SORT:
+        return score_safe_job_sort(content, answers)
+    if task_type == constants.TASK_DROPPER_CHAT:
+        return score_dropper_chat(content, answers)
     return 0, 0, []
 

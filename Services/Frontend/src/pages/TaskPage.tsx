@@ -44,6 +44,8 @@ import ProfileBuilderTask from "../components/tasks/ProfileBuilderTask";
 import PhotoDetectiveTask from "../components/tasks/PhotoDetectiveTask";
 import FakeFriendChatTask from "../components/tasks/FakeFriendChatTask";
 import HackedFriendTask from "../components/tasks/HackedFriendTask";
+import SafeJobSortTask from "../components/tasks/SafeJobSortTask";
+import DropperChatTask from "../components/tasks/DropperChatTask";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -393,6 +395,38 @@ export default function TaskPage() {
           },
         ];
 
+      case "safe_job_sort":
+        return [
+          {
+            text: "Ты — модератор биржи подработок. Просмотри 12 заказов.",
+            targetSelector: '[data-tutorial="safe-job-card"]',
+          },
+          {
+            text: "Раскрой карточку — там детали, чат с заказчиком и история.",
+            targetSelector: '[data-tutorial="safe-job-card"]',
+          },
+          {
+            text: "Реши: пропустить заказ или заблокировать.",
+            targetSelector: '[data-tutorial="safe-job-card"]',
+          },
+        ];
+
+      case "dropper_chat":
+        return [
+          {
+            text: "Тебе пишет незнакомец, предложив оплату за получения перевода.",
+            targetSelector: '[data-tutorial="dropper-chat"]',
+          },
+          {
+            text: "Расследуй это дело до конца, найди все улики.",
+            targetSelector: '[data-tutorial="dropper-chat"]',
+          },
+          {
+            text: "Пойми, на сколько это может быть опасно вне симуляции.",
+            targetSelector: '[data-tutorial="dropper-chat"]',
+          },
+        ];
+
       default:
         return [
           {
@@ -506,7 +540,9 @@ export default function TaskPage() {
 
         {task.task_type != "photo_detective" &&
           task.task_type != "fake_friend_chat" &&
-          task.task_type != "hacked_friend" && (
+          task.task_type != "hacked_friend" &&
+          task.task_type != "safe_job_sort" &&
+          task.task_type != "dropper_chat" && (
             <Paper
               sx={{
                 p: 3,
@@ -568,6 +604,7 @@ export default function TaskPage() {
             setAnswers={setAnswers}
             submitting={submitting}
             onSubmit={submit}
+            onSubmitAnswers={submit}
             error={error}
           />
         )}
@@ -732,6 +769,7 @@ function TaskContent({
   setAnswers,
   submitting,
   onSubmit,
+  onSubmitAnswers,
   error,
 }: {
   task: TaskFull;
@@ -740,6 +778,7 @@ function TaskContent({
   setAnswers: (a: Answer[]) => void;
   submitting: boolean;
   onSubmit: () => void;
+  onSubmitAnswers: (a: Answer[]) => void;
   error: string;
 }) {
   const renderTask = () => {
@@ -874,6 +913,23 @@ function TaskContent({
             onChange={setAnswers}
           />
         );
+      case "safe_job_sort":
+        return (
+          <SafeJobSortTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+          />
+        );
+      case "dropper_chat":
+        return (
+          <DropperChatTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+            onSubmit={onSubmitAnswers}
+          />
+        );
       case "theory_cards": {
         const nextTask = allTasks.find(
           (t) =>
@@ -910,7 +966,9 @@ function TaskContent({
       )}
       {task.task_type !== "photo_detective" &&
         task.task_type !== "fake_friend_chat" &&
-        task.task_type !== "hacked_friend" && (
+        task.task_type !== "hacked_friend" &&
+        task.task_type !== "safe_job_sort" &&
+        task.task_type !== "dropper_chat" && (
           <Button
             variant="contained"
             data-tutorial="submit"

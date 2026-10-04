@@ -17,6 +17,8 @@ export type TaskType =
   | 'photo_detective'
   | 'fake_friend_chat'
   | 'hacked_friend'
+  | 'safe_job_sort'
+  | 'dropper_chat'
 
 export interface User {
   id: string
