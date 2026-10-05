@@ -46,6 +46,8 @@ import FakeFriendChatTask from "../components/tasks/FakeFriendChatTask";
 import HackedFriendTask from "../components/tasks/HackedFriendTask";
 import SafeJobSortTask from "../components/tasks/SafeJobSortTask";
 import DropperChatTask from "../components/tasks/DropperChatTask";
+import PrizeTrapTask from "../components/tasks/PrizeTrapTask";
+import FakeDiaryTask from "../components/tasks/FakeDiaryTask";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
@@ -542,7 +544,9 @@ export default function TaskPage() {
           task.task_type != "fake_friend_chat" &&
           task.task_type != "hacked_friend" &&
           task.task_type != "safe_job_sort" &&
-          task.task_type != "dropper_chat" && (
+          task.task_type != "dropper_chat" &&
+          task.task_type != "prize_trap" &&
+          task.task_type != "fake_diary" && (
             <Paper
               sx={{
                 p: 3,
@@ -930,6 +934,24 @@ function TaskContent({
             onSubmit={onSubmitAnswers}
           />
         );
+      case "prize_trap":
+        return (
+          <PrizeTrapTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+            onSubmit={onSubmitAnswers}
+          />
+        );
+      case "fake_diary":
+        return (
+          <FakeDiaryTask
+            content={task.content}
+            answers={answers}
+            onChange={setAnswers}
+            onSubmit={onSubmitAnswers}
+          />
+        );
       case "theory_cards": {
         const nextTask = allTasks.find(
           (t) =>
@@ -968,7 +990,9 @@ function TaskContent({
         task.task_type !== "fake_friend_chat" &&
         task.task_type !== "hacked_friend" &&
         task.task_type !== "safe_job_sort" &&
-        task.task_type !== "dropper_chat" && (
+        task.task_type !== "dropper_chat" &&
+        task.task_type !== "prize_trap" &&
+        task.task_type !== "fake_diary" && (
           <Button
             variant="contained"
             data-tutorial="submit"

@@ -75,6 +75,9 @@ TASK_FAKE_FRIEND_CHAT = "fake_friend_chat"
 TASK_HACKED_FRIEND = "hacked_friend"
 TASK_SAFE_JOB_SORT = "safe_job_sort"
 TASK_DROPPER_CHAT = "dropper_chat"
+TASK_FAKE_DIARY = "fake_diary"
+TASK_PRIZE_TRAP = "prize_trap"
+
 
 TASK_TYPES = {
     TASK_DRAGDROP: "Перетаскивание",
@@ -98,4 +101,6 @@ TASK_TYPES = {
     TASK_HACKED_FRIEND: "Взломанный друг",
     TASK_SAFE_JOB_SORT: "Биржа подработок",
     TASK_DROPPER_CHAT: "Подработка с переводами",
+    TASK_FAKE_DIARY: "Дневник-двойник",
+    TASK_PRIZE_TRAP: "Приз победителю",
 }

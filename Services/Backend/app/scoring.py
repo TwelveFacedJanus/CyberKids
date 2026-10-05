@@ -587,6 +587,64 @@ def score_dropper_chat(content: dict, answers: list[dict]) -> tuple[int, int, li
     ]
     return sum(1 for d in details if d["correct"]), len(details), details
 
+def _value(answers: list[dict], key: str):
+    return next((a.get("value") for a in answers if a.get("key") == key), None)
+ 
+ 
+def score_fake_diary(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """fake_diary: 4 пункта — адрес, улики на странице, решение, тест на адреса."""
+    r = _value(answers, "fake_diary_result")
+    if not r:
+        return 0, 4, [{"expected": "Пройти сценарий до конца", "chosen": "не пройдено", "correct": False}]
+ 
+    min_flags = content.get("minFlags", 4)
+    quiz_total = len(content.get("quiz", []))
+    quiz_min = content.get("quizMin", max(1, quiz_total - 1))
+    flags = len(r.get("flagsFound") or [])
+    quiz_correct = r.get("quizCorrect", 0)
+ 
+    items = [
+        ("Найти настоящий домен в адресе (с первой попытки)", "domain", "domain" if r.get("urlFirstCorrect") else "ошибся", bool(r.get("urlFirstCorrect"))),
+        ("Найти тревожные элементы страницы", f"минимум {min_flags}", f"{flags} найдено", flags >= min_flags),
+        ("Решение при ссылке из SMS (первая попытка)", "safe", r.get("firstOutcome") or "не выбрано", r.get("firstOutcome") == "safe"),
+        ("Отличить настоящий адрес от подделки", f"минимум {quiz_min} из {quiz_total}", f"{quiz_correct} из {quiz_total}", quiz_correct >= quiz_min),
+    ]
+    details = [
+        {"item_id": f"d{i + 1}", "item_text": t, "expected": e, "chosen": c, "correct": ok}
+        for i, (t, e, c, ok) in enumerate(items)
+    ]
+    return sum(1 for d in details if d["correct"]), len(details), details
+ 
+ 
+def score_prize_trap(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
+    """prize_trap: по пункту на каждый опасный запрос (верно = «не отправлять») + финальный вопрос."""
+    r = _value(answers, "prize_trap_result")
+    danger = [q for q in content.get("requests", []) if q.get("kind") == "danger"]
+    if not r:
+        return 0, len(danger) + 1, [{"expected": "Пройти сценарий до конца", "chosen": "не пройдено", "correct": False}]
+ 
+    decisions: dict[str, str] = r.get("decisions") or {}
+    details: list[dict] = []
+    for q in danger:
+        picked = decisions.get(q["id"])
+        details.append({
+            "item_id": q["id"],
+            "item_text": q.get("label"),
+            "expected": "refuse",
+            "chosen": picked or "не дошёл",
+            "correct": picked == "refuse",
+        })
+    correct_final = next((o["id"] for o in content["finalQuestion"]["options"] if o.get("correct")), None)
+    details.append({
+        "item_id": "final",
+        "item_text": "Как поступить с самого начала",
+        "expected": correct_final,
+        "chosen": r.get("finalFirst") or "не выбрано",
+        "correct": r.get("finalFirst") == correct_final,
+    })
+    return sum(1 for d in details if d["correct"]), len(details), details
+
+
 
 def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
     answers = [a for a in answers if isinstance(a, dict)]
@@ -630,5 +688,9 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
         return score_safe_job_sort(content, answers)
     if task_type == constants.TASK_DROPPER_CHAT:
         return score_dropper_chat(content, answers)
+    if task_type == constants.TASK_FAKE_DIARY:
+        return score_fake_diary(content, answers)
+    if task_type == constants.TASK_PRIZE_TRAP:
+        return score_prize_trap(content, answers)
     return 0, 0, []
 

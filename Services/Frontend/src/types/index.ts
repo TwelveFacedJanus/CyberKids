@@ -19,6 +19,8 @@ export type TaskType =
   | 'hacked_friend'
   | 'safe_job_sort'
   | 'dropper_chat'
+  | 'fake_diary'
+  | 'prize_trap'
 
 export interface User {
   id: string
