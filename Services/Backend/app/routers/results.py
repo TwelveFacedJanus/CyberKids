@@ -1,12 +1,12 @@
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..database import results as results_col
-from ..database import tasks as tasks_col
-from ..dependencies import get_current_user
-from ..models import Result, Task, User
-from ..schemas import ResultOut, ResultSubmit
-from ..scoring import score_task
+from database import results as results_col
+from database import tasks as tasks_col
+from dependencies import get_current_user
+from models import Result, Task, User
+from schemas import ResultOut, ResultSubmit
+from scoring import score_task
 
 router = APIRouter(prefix="/api/results", tags=["results"])
 
@@ -34,7 +34,7 @@ async def submit_result(body: ResultSubmit, user: User = Depends(get_current_use
         "user_id": str(user.id),
         "task_id": str(task.id)
     })
-    
+
     # 🆕 Если есть — считаем разницу
     score_to_add = score
     if existing_result:
@@ -56,7 +56,7 @@ async def submit_result(body: ResultSubmit, user: User = Depends(get_current_use
         total_count=total,
         answers=details,
     )
-    
+
     # 🆕 Обновляем или вставляем
     if existing_result:
         await results_col.update_one(
@@ -67,7 +67,7 @@ async def submit_result(body: ResultSubmit, user: User = Depends(get_current_use
     else:
         inserted = await results_col.insert_one(result.model_dump(exclude={"id"}))
         result.id = str(inserted.inserted_id)
-    
+
     # 🆕 Возвращаем результат с информацией о добавленных очках
     return ResultOut(
         **result.model_dump(),

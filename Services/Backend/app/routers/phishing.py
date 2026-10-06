@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from ..database import phishing_catches as catches_col, tasks as tasks_col
-from ..database import results as results_col
-from ..dependencies import get_current_user
-from ..models import PhishingCatch, Result, Task, User
-from ..schemas import PhishingSubmit, PhishingResponse
-from ..security import hash_password
+from database import phishing_catches as catches_col, tasks as tasks_col
+from database import results as results_col
+from dependencies import get_current_user
+from models import PhishingCatch, Result, Task, User
+from schemas import PhishingSubmit, PhishingResponse
+from security import hash_password
 from bson import ObjectId
 
 router = APIRouter(prefix="/api/phishing", tags=["phishing"])

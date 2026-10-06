@@ -236,7 +236,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   const menuItems = [
     {
       label: "Главная",
-      icon: <SvgIcon component={HomeIcon} sx={{ fontSize: 22 }} />,
+      icon: <SvgIcon component={HomeIcon} sx={{ fontSize: 25 }} />,
       path: "/",
     },
     {
@@ -439,7 +439,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: isActive ? 700 : 600,
-                      fontSize: "0.9rem",
+                      fontSize: 15,
                       color: "inherit",
                       lineHeight: 1.3,
                     }}
@@ -504,7 +504,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               variant="body2"
               fontWeight={700}
               noWrap
-              sx={{ color: t.textColor, fontSize: "0.85rem" }}
+              sx={{ color: t.textColor, fontSize: 17}}
             >
               {user?.full_name || "Гость"}
             </Typography>
@@ -513,12 +513,11 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               direction="row"
               spacing={0.5}
               alignItems="center"
-              sx={{ mt: 0.25 }}
             >
               <StarIcon sx={{ fontSize: 14, color: "#FFCA28" }} />
               <Typography
                 variant="caption"
-                sx={{ color: t.mutedColor, fontWeight: 600 }}
+                sx={{ color: t.mutedColor, fontWeight: 600, fontSize: 16 }}
               >
                 {loadingScore ? (
                   <CircularProgress size={10} />

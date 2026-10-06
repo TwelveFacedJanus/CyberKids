@@ -1,6 +1,6 @@
 from typing import Any
 
-from app import constants
+import constants
 
 
 def _pick(answers: list[dict], key: Any, default: Any = None) -> Any:
@@ -137,16 +137,16 @@ def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[
     """
     # 🔧 Отладка
     print(f"[SCORING] Получены answers: {answers}")
-    
+
     # Получаем процент совпадений из ответа
     match_percentage = 0
     matched_words = []
-    
+
     for a in answers:
         key = a.get('key')
         value = a.get('value')
         print(f"[SCORING] a: key={key}, value={value}, type={type(value)}")
-        
+
         if key == 'ai_match_percentage':
             if isinstance(value, (int, float)):
                 match_percentage = int(value)
@@ -156,7 +156,7 @@ def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[
                 except:
                     match_percentage = 0
             print(f"[SCORING] match_percentage = {match_percentage}")
-            
+
         if key == 'ai_matched_words':
             if isinstance(value, list):
                 matched_words = value
@@ -167,7 +167,7 @@ def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[
                 except:
                     matched_words = [value] if value else []
             print(f"[SCORING] matched_words = {matched_words}")
-    
+
     # 🔧 ПОРОГИ ДЛЯ ЗВЁЗД (более щадящие)
     # 0-20% → 0 звёзд, 21-40% → 1 звезда, 41-70% → 2 звезды, 71-100% → 3 звезды
     if match_percentage >= 71:
@@ -182,11 +182,11 @@ def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[
     else:
         correct = 0
         stars_text = "☆"
-    
+
     print(f"[SCORING] Итог: match_percentage={match_percentage}, correct={correct}")
-    
+
     total = 3
-    
+
     details = [{
         "match_percentage": match_percentage,
         "matched_words": matched_words[:5] if matched_words else [],
@@ -194,7 +194,7 @@ def score_ai_prompt(content: dict, answers: list[dict]) -> tuple[int, int, list[
         "expected": f"Найдено ключевых слов: {match_percentage}%",
         "chosen": f"{stars_text} {match_percentage}% — найдено: {', '.join(matched_words[:3]) if matched_words else 'нет совпадений'}"
     }]
-    
+
     return correct, total, details
 
 def score_debug(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
@@ -215,7 +215,7 @@ def score_algorithm(content: dict, answers: list[dict]) -> tuple[int, int, list[
     total = len(items)
     correct = 0
     details = []
-    
+
     for i, item in enumerate(items):
         chosen = next((a.get('value') for a in answers if a.get('key') == item.get('id')), None)
         ok = chosen == i  # Правильный порядок — индекс соответствует позиции
@@ -228,7 +228,7 @@ def score_algorithm(content: dict, answers: list[dict]) -> tuple[int, int, list[
             "chosen": chosen,
             "correct": ok,
         })
-    
+
     return correct, total, details
 
 def score_phishing_site(content: dict, answers: list[dict]) -> tuple[int, int, list[dict]]:
@@ -276,4 +276,3 @@ def score_task(task_type: str, content: dict, answers: list[dict]) -> tuple[int,
     if task_type == constants.TASK_PHISHING_SITE:
         return score_phishing_site(content, answers)
     return 0, 0, []
-

@@ -179,7 +179,7 @@ export default function DashboardPage() {
           open={showIntro}
           onClose={handleIntroDone}
           onDontShowAgain={handleDontShowAgain}
-          title="Добро пожаловать в CyberKids!"
+          title="Добро пожаловать в CyberKids"
           description="Здесь ты научишься защищать себя в интернете — играя."
           emoji="🛡️"
           confirmLabel="Поехали!"
@@ -220,7 +220,7 @@ export default function DashboardPage() {
           <Typography variant="h4" fontWeight={800} sx={{ color: "#1A1A2E" }}>
             {greeting}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" sx={{ fontSize: 20, fontWeight: 600}}>
             Продолжай учиться и зарабатывать звёзды!
           </Typography>
         </Box>
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                 aria-hidden
                 sx={{
                   position: "absolute",
-                  right: 140,
+                  right: 190,
                   bottom: -30,
                   width: 140,
                   height: "auto",
@@ -267,7 +267,7 @@ export default function DashboardPage() {
               <Typography
                 variant="body2"
                 color="text.secondary"
-                sx={{ position: "relative", zIndex: 1 }}
+                sx={{ position: "relative", zIndex: 1, fontSize: 19, color: "#000", fontWeight: 700 }}
               >
                 ⭐ Звёзд
               </Typography>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                 sx={{
                   position: "absolute",
                   top: 10,
-                  right: 200,
+                  right: 250,
                   width: 100,
                   height: "auto",
                   opacity: 0.9,
@@ -313,7 +313,7 @@ export default function DashboardPage() {
               <Typography
                 variant="body2"
                 color="text.secondary"
-                sx={{ position: "relative", zIndex: 1 }}
+                sx={{ position: "relative", zIndex: 1, fontSize: 19, color: "#000", fontWeight: 700 }}
               >
                 📚 Заданий
               </Typography>
@@ -359,7 +359,7 @@ export default function DashboardPage() {
               <Typography
                 variant="body2"
                 color="text.secondary"
-                sx={{ position: "relative", zIndex: 1 }}
+                sx={{ position: "relative", zIndex: 1, fontSize: 19, color: "#000", fontWeight: 700 }}
               >
                 📈 Прогресс
               </Typography>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                   pointerEvents: "none",
                 }}
               />
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 , fontSize: 19, color: "#000", fontWeight: 700}}>
                 Серия: {Math.floor(Math.random() * 10)} дней
               </Typography>
             </Paper>
@@ -420,7 +420,7 @@ export default function DashboardPage() {
                   <TopicIcon sx={{ fontSize: 24 }} />
                 </Box>
                 <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" fontWeight={700}>
+                  <Typography variant="h6" fontWeight={700} fontSize={ 22 }>
                     {topicLabels[topic]}
                   </Typography>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -429,7 +429,7 @@ export default function DashboardPage() {
                       value={(completedInTopic / list.length) * 100}
                       sx={{ width: 120, height: 4, borderRadius: 2 }}
                     />
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary" fontSize={ 17 }>
                       {completedInTopic}/{list.length}
                     </Typography>
                   </Box>
@@ -605,6 +605,7 @@ export default function DashboardPage() {
                             <Typography
                               variant="h6"
                               fontWeight={700}
+                              fontSize={ 25 }
                               sx={{
                                 mb: 0.5,
                                 color: "#fff",
@@ -618,7 +619,8 @@ export default function DashboardPage() {
                             <Typography
                               variant="body2"
                               sx={{
-                                mb: 1.5,
+                                fontSize: 18,
+                                mb: 0,
                                 color: "rgba(255,255,255,0.85)",
                                 textShadow: "0 1px 4px rgba(0,0,0,0.6)",
                                 display: "-webkit-box",
@@ -636,24 +638,6 @@ export default function DashboardPage() {
                               flexWrap="wrap"
                               sx={{ gap: 1 }}
                             >
-                              <Chip
-                                label={`+${task.points} очков`}
-                                size="small"
-                                sx={{
-                                  bgcolor: "rgba(255,243,224,0.95)",
-                                  fontWeight: 600,
-                                  color: "#7C4DFF",
-                                }}
-                              />
-                              <Chip
-                                label={task.task_type}
-                                size="small"
-                                sx={{
-                                  bgcolor: "rgba(255,255,255,0.9)",
-                                  fontWeight: 600,
-                                  color: "#1A1A2E",
-                                }}
-                              />
                               {task.forbidden_groups &&
                                 task.forbidden_groups.length > 0 && (
                                   <Chip

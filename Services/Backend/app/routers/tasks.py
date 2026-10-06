@@ -2,11 +2,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 
-from ..database import tasks as tasks_col
-from ..dependencies import get_current_user
-from ..models import Task, User
-from ..schemas import TaskFullOut, TaskOut
-from app import constants
+from database import tasks as tasks_col
+from dependencies import get_current_user
+from models import Task, User
+from schemas import TaskFullOut, TaskOut
+import constants
 import base64
 from pathlib import Path
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
 def _task_out(t: Task) -> TaskOut:
     data = t.model_dump()
-    
+
     if not data.get("imageB64") and data.get("imagePath"):
         image_path = Path(data["imagePath"])
         if image_path.is_file():
@@ -35,7 +35,7 @@ def _task_out(t: Task) -> TaskOut:
                 data["imageB64"] = f"data:{mime};base64,{encoded}"
             except OSError:
                 data["imageB64"] = None
-    
+
     return TaskOut(**data)
 
 
@@ -46,10 +46,10 @@ async def list_tasks(user: User = Depends(get_current_user)):
         return [_task_out(Task(**t)) for t in tasks]
 
     enabled_filter = {"$or": [{"is_enabled": True}, {"is_enabled": {"$exists": False}}]}
-    
+
     # Фильтр по возрастной группе
     age_filter = {"age_groups": user.age_group}
-    
+
     # Фильтр по группам пользователя
     if user.groups:
         group_filter = {
@@ -60,9 +60,9 @@ async def list_tasks(user: User = Depends(get_current_user)):
         }
     else:
         group_filter = {}
-    
+
     query = {"$and": [age_filter, group_filter, enabled_filter]}
-    
+
     tasks = await tasks_col.find(query).sort("order", 1).to_list(1000)
     return [_task_out(Task(**t)) for t in tasks]
 
@@ -76,15 +76,15 @@ async def get_task(task_id: str, user: User = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Задание не найдено")
 
     task = Task(**doc)
-    
+
     # ✅ Если админ — пропускаем все проверки
     if constants.ROLE_ADMIN in user.roles:
         return TaskFullOut(**task.model_dump())
-    
+
     # Проверка возрастной группы
     if user.age_group not in task.age_groups:
         raise HTTPException(status_code=403, detail="Задание не доступно для вашей возрастной группы")
-    
+
     # Проверка групп
     if task.forbidden_groups:
         if any(g in user.groups for g in task.forbidden_groups):

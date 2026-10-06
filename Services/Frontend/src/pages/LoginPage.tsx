@@ -93,16 +93,13 @@ export default function LoginPage() {
           >
             <Security sx={{ fontSize: 88 }} />
             <Typography variant="h3" fontWeight={900} sx={{ mt: 2 }}>
-              CyberKids
+              Лаборатория Безопаности
             </Typography>
             <Typography variant="h6" sx={{ opacity: 0.95, mt: 1 }}>
               Безопасный интернет — это весело!
             </Typography>
-            <Typography sx={{ mt: 2, opacity: 0.85 }}>
+            <Typography  sx={{ mt: 2, opacity: 0.85, fontSize: 18.5, fontWeight: 700}}>
               Играй, решай задания и учись защищать себя и свои данные в сети.
-            </Typography>
-            <Typography sx={{ opacity: 0.4, fontSize: '12px', display: 'flex', justifyContent: 'right', mt: 4 }}>
-              Персонально для KiberOne г.Ишимбай
             </Typography>
           </Box>
 
@@ -113,7 +110,7 @@ export default function LoginPage() {
             <Typography variant="h4" fontWeight={900} gutterBottom textAlign="center" sx={{ color: 'primary.main' }}>
               Вход
             </Typography>
-            <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
+            <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3, fontSize: 20}}>
               Войди, чтобы продолжить приключение
             </Typography>
 
@@ -149,7 +146,7 @@ export default function LoginPage() {
               </Stack>
             </Box>
 
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 3, textAlign: 'center' }}>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 3, textAlign: 'center', fontSize: 15}}>
               Аккаунты создаёт только ваш учитель или родитель
             </Typography>
           </CardContent>

@@ -1,15 +1,15 @@
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
-from app import constants
-from ..database import results as results_col
-from ..database import tasks as tasks_col
-from ..database import users as users_col
-from ..database import groups as groups_col
-from ..database import quests as quests_col
-from ..database import phishing_catches as catches_col
-from ..dependencies import require_admin, require_full
-from ..models import Result, Task, User, Group
-from ..schemas import (
+import constants
+from database import results as results_col
+from database import tasks as tasks_col
+from database import users as users_col
+from database import groups as groups_col
+from database import quests as quests_col
+from database import phishing_catches as catches_col
+from dependencies import require_admin, require_full
+from models import Result, Task, User, Group
+from schemas import (
     ResetPassword,
     ResultDetailedOut,
     StatsOut,
@@ -19,7 +19,7 @@ from ..schemas import (
     UserUpdate,
     TaskOut,
 )
-from ..security import hash_password
+from security import hash_password
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
