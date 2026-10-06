@@ -1,0 +1,15 @@
+$kind: http-example
+request:
+  url: "{{host}}/api/v1/auth/sign_in"
+  method: POST
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    content-length: "18"
+    content-type: text/plain; charset=utf-8
+    date: Tue, 06 Oct 2026 17:49:36 GMT
+  body:
+    type: text
+    content: Content type error
+order: 1791308988459

@@ -1,0 +1,5 @@
+name: base
+values:
+  - key: host
+    value: ''
+color: 0

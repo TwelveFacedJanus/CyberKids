@@ -1,0 +1,5 @@
+$kind: http-request
+url: "{{host}}/api/v1/auth/me/sdfsdfsdfsdfsdf"
+method: GET
+examples: .resources/Get information about me.resources/examples
+order: 4501034890600200

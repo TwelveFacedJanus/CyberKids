@@ -1,0 +1,14 @@
+$kind: http-example
+request:
+  url: "{{host}}/dev/health"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-length: "13"
+    date: Tue, 06 Oct 2026 17:31:58 GMT
+  body:
+    type: text
+    content: Hello, World!
+order: 1791307940833

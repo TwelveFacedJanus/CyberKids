@@ -121,7 +121,8 @@ dist
 
 # FuseBox cache
 .fusebox/
-
+target
+Cargo.lock
 # DynamoDB Local files
 .dynamodb/
 

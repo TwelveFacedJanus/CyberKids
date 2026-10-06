@@ -1,0 +1,5 @@
+$kind: http-request
+url: "{{host}}/dev/health"
+method: GET
+examples: .resources/Health.resources/examples
+order: 1791307992406
