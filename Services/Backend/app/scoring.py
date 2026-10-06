@@ -1,6 +1,6 @@
 from typing import Any
 
-import constants
+from app import constants
 
 
 def _pick(answers: list[dict], key: Any, default: Any = None) -> Any:

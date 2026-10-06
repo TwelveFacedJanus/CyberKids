@@ -2,10 +2,10 @@ from datetime import datetime
 from fastapi import APIRouter, Depends
 from bson import ObjectId
 
-from database import quests as quests_col
-from dependencies import get_current_user
-from models import User
-from schemas import QuestProgressIn, QuestProgressOut
+from ..database import quests as quests_col
+from ..dependencies import get_current_user
+from ..models import User
+from ..schemas import QuestProgressIn, QuestProgressOut
 
 router = APIRouter(prefix="/api/quests", tags=["quests"])
 

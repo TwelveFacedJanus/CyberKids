@@ -1,7 +1,7 @@
 import asyncio
 
-from database import tasks
-from seed_tasks import SEED_TASKS
+from .database import tasks
+from .seed_tasks import SEED_TASKS
 
 
 async def seed_tasks_if_empty() -> None:
