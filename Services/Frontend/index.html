@@ -2,7 +2,7 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -10,6 +10,32 @@
       rel="stylesheet"
     />
     <title>CyberKids — Безопасный интернет</title>
+    <style>
+      /* Фиксация масштабирования - размеры в процентах */
+      * {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      @media (min-width: 1920px) {
+        html {
+          font-size: 18px;
+        }
+      }
+      @media (max-width: 1280px) {
+        html {
+          font-size: 14px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

@@ -1,38 +1,44 @@
 // theme.ts
 import { createTheme } from '@mui/material/styles'
 
+// Яркая детская палитра БЕЗ фиолетового/синего
 const palette = {
-  purple: '#7C4DFF',
-  violet: '#B388FF',
-  orange: '#FF7043',
-  yellow: '#FFCA28',
-  green: '#66BB6A',
-  blue: '#42A5F5',
-  pink: '#EC407A',
-  // Новые цвета для строгости
-  dark: '#1A1A2E',
-  grey: '#6B7280',
-  lightGrey: '#F3F4F6',
+  primary: '#FF6B35', // Яркий оранжевый
+  secondary: '#FFD23F', // Солнечный жёлтый
+  accent: '#00D9A3', // Мятный зелёный
+  success: '#6BCF7F', // Салатовый
+  warning: '#FF8C42', // Тёплый оранжевый
+  error: '#FF5252', // Яркий красный
+  pink: '#FF6B9D', // Розовый
+  coral: '#FF7F66', // Коралловый
+  lime: '#CDDC39', // Лаймовый
+  cyan: '#00E5FF', // Яркий голубой (не синий!)
+  orange: '#FF9800', // Апельсиновый
+  yellow: '#FFEB3B', // Лимонный
+  green: '#4CAF50', // Зелёный
+  red: '#F44336', // Красный
+  dark: '#2C3E50', // Тёмный для текста
+  grey: '#7F8C8D', // Серый
+  lightGrey: '#ECF0F1', // Светло-серый
   white: '#FFFFFF',
 }
 
 export const topicColors: Record<string, string> = {
-  phishing: palette.orange,
-  cyberbullying: palette.blue,
-  passwords: palette.yellow,
-  viruses: palette.green,
-  privacy: palette.purple,
-  safe: palette.pink,
-  gaming_scams: '#FF6B6B',
-  safety_test: '#00A651',
-  cyber_hero_test: '#005FF9',
-  digital_footprint: '#26C6DA',
-  //
-  fake_friends: '#EC407A',
-  ai_traps: '#7C4DFF',
-  easy_money: '#FFD54F',
-  school_trap: '#42A5F5',
-  cybersecurity: '#26A69A',
+  phishing: '#FF8C42',
+  cyberbullying: '#00E5FF',
+  passwords: '#FFD93F',
+  viruses: '#6BCF7F',
+  privacy: '#FF6B35',
+  safe: '#FF6B9D',
+  gaming_scams: '#FF6B35', // Оранжевый
+  safety_test: '#4CAF50',
+  cyber_hero_test: '#00E5FF',
+  digital_footprint: '#00D9A3', // Мятный
+  fake_friends: '#FF6B9D', // Розовый
+  ai_traps: '#FF9800', // Апельсиновый
+  easy_money: '#FFD23F', // Жёлтый
+  school_trap: '#00E5FF', // Голубой
+  cybersecurity: '#CDDC39', // Лаймовый
 }
 
 export const topicLabels: Record<string, string> = {
@@ -63,99 +69,109 @@ export const ageGroupLabels: Record<string, string> = {
 const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: { main: palette.purple, light: palette.violet },
-    secondary: { main: palette.pink },
-    success: { main: palette.green },
-    warning: { main: palette.yellow },
-    error: { main: palette.orange },
-    info: { main: palette.blue },
+    primary: { main: palette.primary },
+    secondary: { main: palette.secondary },
+    success: { main: palette.success },
+    warning: { main: palette.warning },
+    error: { main: palette.error },
+    info: { main: palette.cyan },
     background: {
-      default: '#F8F9FA', // Светлый, чистый фон
+      default: '#FFF9F0', // Тёплый кремовый фон
       paper: '#FFFFFF',
     },
     text: {
-      primary: '#1A1A2E',
-      secondary: '#6B7280',
+      primary: '#2C3E50',
+      secondary: '#7F8C8D',
     },
   },
   typography: {
-    fontFamily: '"Inter", "Nunito", "Segoe UI", sans-serif', // Inter для строгости, Nunito для детскости
-    h1: { fontWeight: 800, letterSpacing: '-0.02em' },
-    h2: { fontWeight: 800, letterSpacing: '-0.02em' },
-    h3: { fontWeight: 800, letterSpacing: '-0.02em' },
-    h4: { fontWeight: 700, letterSpacing: '-0.01em' },
-    h5: { fontWeight: 700 },
-    h6: { fontWeight: 700 },
-    body1: { fontWeight: 400, lineHeight: 1.6 },
-    body2: { fontWeight: 400, lineHeight: 1.5 },
-    button: { fontWeight: 600, textTransform: 'none', letterSpacing: '0.01em' },
+    fontFamily: '"Nunito", "Trebuchet MS", "Segoe UI", sans-serif',
+    // Крупные шрифты для детей
+    h1: { fontWeight: 900, letterSpacing: '-0.02em', fontSize: 'clamp(3rem, 5vw, 5rem)' },
+    h2: { fontWeight: 900, letterSpacing: '-0.02em', fontSize: 'clamp(2.5rem, 4vw, 4rem)' },
+    h3: { fontWeight: 800, letterSpacing: '-0.01em', fontSize: 'clamp(2rem, 3.5vw, 3.5rem)' },
+    h4: { fontWeight: 800, letterSpacing: '-0.01em', fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' },
+    h5: { fontWeight: 700, fontSize: 'clamp(1.5rem, 2.5vw, 2rem)' },
+    h6: { fontWeight: 700, fontSize: 'clamp(1.25rem, 2vw, 1.75rem)' },
+    body1: { fontWeight: 500, lineHeight: 1.7, fontSize: 'clamp(1.1rem, 1.35vw, 1.35rem)' },
+    body2: { fontWeight: 500, lineHeight: 1.6, fontSize: 'clamp(1rem, 1.15vw, 1.18rem)' },
+    button: { fontWeight: 800, textTransform: 'none', letterSpacing: '0.03em', fontSize: 'clamp(1.125rem, 1.5vw, 1.5rem)' },
   },
   shape: { borderRadius: 16 },
-shadows: [
-  'none',                                                       // 0
-  '0 1px 3px rgba(0,0,0,0.06)',                                 // 1
-  '0 4px 12px rgba(0,0,0,0.05)',                                // 2
-  '0 8px 24px rgba(0,0,0,0.08)',                                // 3
-  '0 12px 36px rgba(0,0,0,0.10)',                               // 4
-  '0 20px 48px rgba(0,0,0,0.12)',                               // 5
-  '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',     // 6
-  '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',   // 7
-  '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)', // 8
-  '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)', // 9
-  '0 24px 48px rgba(0,0,0,0.30), 0 20px 14px rgba(0,0,0,0.22)', // 10
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 11
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 12
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 13
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 14
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 15
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 16
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 17
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 18
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 19
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 20
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 21
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 22
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 23
-  '0 10px 20px rgba(0,0,0,0.10), 0 6px 6px rgba(0,0,0,0.10)',   // 24
-],
+  shadows: [
+    'none',
+    '0 1px 3px rgba(0,0,0,0.06)',
+    '0 4px 12px rgba(0,0,0,0.05)',
+    '0 8px 24px rgba(0,0,0,0.08)',
+    '0 12px 36px rgba(0,0,0,0.10)',
+    '0 20px 48px rgba(0,0,0,0.12)',
+    '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+    '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+    '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+    '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)',
+    '0 24px 48px rgba(0,0,0,0.30), 0 20px 14px rgba(0,0,0,0.22)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+    '0 10px 20px rgba(0,0,0,0.10)',
+  ],
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
           scrollBehavior: 'smooth',
-          backgroundColor: '#F8F9FA',
+          backgroundColor: '#FFF9F0',
+          color: '#2C3E50',
+        },
+        'button, input, textarea, select': {
+          font: 'inherit',
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 12, // Менее круглые, более строгие
-          boxShadow: '0 2px 8px rgba(124,77,255,0.12)',
-          padding: '10px 24px',
-          transition: 'all 0.2s ease',
+          borderRadius: 18,
+          boxShadow: '0 6px 20px rgba(255,107,53,0.25)',
+          padding: '13px 30px',
+          fontSize: 'clamp(1.05rem, 1.2vw, 1.25rem)',
+          fontWeight: 800,
+          transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
           '&:hover': {
-            boxShadow: '0 4px 16px rgba(124,77,255,0.20)',
-            transform: 'translateY(-2px)',
+            boxShadow: '0 12px 32px rgba(255,107,53,0.35)',
+            transform: 'translateY(-3px) scale(1.02)',
           },
           '&:active': {
-            transform: 'translateY(0)',
+            transform: 'translateY(-2px) scale(0.98)',
           },
         },
         containedPrimary: {
-          background: 'linear-gradient(135deg, #7C4DFF, #9C27B0)',
+          background: 'linear-gradient(135deg, #FF6B35, #FF8C42)',
+          fontWeight: 900,
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
-          transition: 'all 0.3s ease',
+          borderRadius: 32,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          border: '3px solid transparent',
           '&:hover': {
-            boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
-            transform: 'translateY(-4px)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            transform: 'translateY(-12px) scale(1.03) rotate(1deg)',
+            border: '3px solid #FFD23F',
           },
         },
       },
@@ -163,29 +179,17 @@ shadows: [
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
-        },
-        elevation1: {
-          boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
-        },
-        elevation2: {
-          boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+          borderRadius: 28,
+          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          fontWeight: 600,
+          borderRadius: 16,
+          fontWeight: 700,
+          fontSize: '1rem',
         },
       },
     },
@@ -193,14 +197,15 @@ shadows: [
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 12,
+            borderRadius: 20,
             backgroundColor: '#FFFFFF',
-            transition: 'all 0.2s ease',
+            fontSize: 'clamp(1.125rem, 1.25vw, 1.375rem)',
+            transition: 'all 0.3s ease',
             '&:hover': {
-              boxShadow: '0 2px 8px rgba(124,77,255,0.10)',
+              boxShadow: '0 4px 16px rgba(255,107,53,0.15)',
             },
             '&.Mui-focused': {
-              boxShadow: '0 4px 16px rgba(124,77,255,0.15)',
+              boxShadow: '0 6px 24px rgba(255,107,53,0.25)',
             },
           },
         },
@@ -209,22 +214,21 @@ shadows: [
     MuiAvatar: {
       styleOverrides: {
         root: {
-          borderWidth: 2,
-          borderStyle: 'solid',
-          borderColor: '#FFFFFF',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          border: '3px solid #FFFFFF',
         },
       },
     },
     MuiLinearProgress: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
-          backgroundColor: '#F1EBFF',
-          height: 8,
+          borderRadius: 12,
+          backgroundColor: '#FFE5D9',
+          height: 14,
         },
         bar: {
-          borderRadius: 4,
+          borderRadius: 12,
+          background: 'linear-gradient(90deg, #FF6B35, #FFD23F)',
         },
       },
     },

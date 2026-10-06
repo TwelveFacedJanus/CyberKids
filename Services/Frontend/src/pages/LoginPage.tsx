@@ -54,7 +54,7 @@ export default function LoginPage() {
         alignItems: 'center',
         justifyContent: 'center',
         p: { xs: 2, md: 4 },
-        background: 'linear-gradient(135deg, #7C4DFF 0%, #9C27B0 55%, #EC407A 100%)',
+         background: 'linear-gradient(135deg, #FFF1D6 0%, #FFD8C8 55%, #D8F5EE 100%)',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -86,7 +86,7 @@ export default function LoginPage() {
               flexDirection: 'column',
               justifyContent: 'center',
               p: 4,
-              background: 'linear-gradient(150deg, #7C4DFF, #EC407A)',
+               background: 'linear-gradient(150deg, #FF6B35, #FFD23F)',
               color: '#fff',
               borderRadius: 3,
             }}
@@ -101,7 +101,7 @@ export default function LoginPage() {
             <Typography sx={{ mt: 2, opacity: 0.85 }}>
               Играй, решай задания и учись защищать себя и свои данные в сети.
             </Typography>
-            <Typography sx={{ opacity: 0.4, fontSize: '12px', display: 'flex', justifyContent: 'right', mt: 4 }}>
+             <Typography sx={{ opacity: 0.65, fontSize: '0.9rem', display: 'flex', justifyContent: 'right', mt: 4 }}>
               Персонально для KiberOne г.Ишимбай
             </Typography>
           </Box>
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <Typography variant="h4" fontWeight={900} gutterBottom textAlign="center" sx={{ color: 'primary.main' }}>
               Вход
             </Typography>
-            <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
+             <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3, fontSize: "1.05rem" }}>
               Войди, чтобы продолжить приключение
             </Typography>
 
@@ -142,14 +142,14 @@ export default function LoginPage() {
                   size="large"
                   disabled={busy}
                   startIcon={<LockOpen />}
-                  sx={{ py: 1.6, fontSize: 18, background: 'linear-gradient(90deg, #7C4DFF, #EC407A)' }}
+                   sx={{ py: 1.8, fontSize: "1.2rem", background: 'linear-gradient(90deg, #FF6B35, #FFD23F)' }}
                 >
                   {busy ? 'Входим…' : 'Войти'}
                 </Button>
               </Stack>
             </Box>
 
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 3, textAlign: 'center' }}>
+             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 3, textAlign: 'center', fontSize: "0.95rem" }}>
               Аккаунты создаёт только ваш учитель или родитель
             </Typography>
           </CardContent>

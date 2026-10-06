@@ -6,10 +6,11 @@ import {
   type FormEvent,
   type CSSProperties,
 } from "react";
-import { Stack } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Layout from "../components/Layout";
 import { phishing } from "../api/client";
-import IntroModal from "../components/IntroModal";
 import PhishingReveal from "../components/PhishingReveal";
 import { useNavigate } from "react-router-dom";
 
@@ -73,11 +74,6 @@ function RobloxAuthInner() {
     setShowIntro(false);
   };
 
-  const handleDontShowAgain = () => {
-    localStorage.setItem("roblox_intro_disabled", "1");
-    setShowIntro(false);
-  };
-
   const handleRevealClose = () => {
     setShowReveal(false);
     setUsername("");
@@ -88,39 +84,7 @@ function RobloxAuthInner() {
 
   return (
     <>
-      <IntroModal
-        open={showIntro}
-        onClose={handleIntroDone}
-        onDontShowAgain={handleDontShowAgain}
-        title="Это симуляция Roblox"
-        description="Перед тобой учебная копия настоящего сайта Roblox. Она создана, чтобы ты научился распознавать подделки."
-        emoji="⚠️"
-        confirmLabel="Я понял"
-        accent="#E53935"
-      >
-        <Stack spacing={1.5}>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <span style={{ fontSize: 22 }}>🚫</span>
-            <span style={{ fontSize: 14, lineHeight: 1.6 }}>
-              <b>Не вводи настоящие логин и пароль</b> — только выдуманные
-            </span>
-          </div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <span style={{ fontSize: 22 }}>🔍</span>
-            <span style={{ fontSize: 14, lineHeight: 1.6 }}>
-              Посмотри на <b>адрес сайта</b> — настоящий Roblox живёт на{" "}
-              <code>roblox.com</code>, а не на <code>roblox/com</code>
-            </span>
-          </div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <span style={{ fontSize: 22 }}>💡</span>
-            <span style={{ fontSize: 14, lineHeight: 1.6 }}>
-              В конце ты увидишь, <b>что происходит с данными</b> на таких
-              сайтах
-            </span>
-          </div>
-        </Stack>
-      </IntroModal>
+      {showIntro && <RobloxIntroOverlay onClose={handleIntroDone} />}
 
       <PhishingReveal
         open={showReveal}
@@ -395,6 +359,235 @@ function RobloxAuthInner() {
         </footer>
       </div>
     </>
+  );
+}
+
+// Новый компонент для подсказок с навигацией
+function RobloxIntroOverlay({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState(0);
+
+  const steps = [
+    {
+      title: "Это симуляция Roblox",
+      text: "Перед тобой учебная копия настоящего сайта Roblox. Она создана, чтобы ты научился распознавать подделки.",
+      gradient: "linear-gradient(135deg, #FF6B9D 0%, #FF8C42 100%)",
+    },
+    {
+      title: "Будь внимателен!",
+      text: (
+        <>
+          <Box sx={{ mb: 2, fontSize: "1.125rem", lineHeight: 1.7 }}>
+            <Box component="span" sx={{ fontSize: "1.5rem", mr: 1 }}>
+              🚫
+            </Box>
+            <Box component="strong" sx={{ fontWeight: 800 }}>
+              Не вводи настоящие логин и пароль
+            </Box>{" "}
+            — только выдуманные
+          </Box>
+          <Box sx={{ mb: 2, fontSize: "1.125rem", lineHeight: 1.7 }}>
+            <Box component="span" sx={{ fontSize: "1.5rem", mr: 1 }}>
+              🔍
+            </Box>
+            Посмотри на{" "}
+            <Box component="strong" sx={{ fontWeight: 800 }}>
+              адрес сайта
+            </Box>{" "}
+            — настоящий Roblox живёт на{" "}
+            <Box
+              component="code"
+              sx={{
+                background: "rgba(255,255,255,0.3)",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                fontWeight: 700,
+                fontSize: "1.125rem",
+              }}
+            >
+              roblox.com
+            </Box>
+            , а не на{" "}
+            <Box
+              component="code"
+              sx={{
+                background: "rgba(255,255,255,0.3)",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                fontWeight: 700,
+                fontSize: "1.125rem",
+              }}
+            >
+              roblox/com
+            </Box>
+          </Box>
+          <Box sx={{ fontSize: "1.125rem", lineHeight: 1.7 }}>
+            <Box component="span" sx={{ fontSize: "1.5rem", mr: 1 }}>
+              💡
+            </Box>
+            В конце ты увидишь,{" "}
+            <Box component="strong" sx={{ fontWeight: 800 }}>
+              что происходит с данными
+            </Box>{" "}
+            на таких сайтах
+          </Box>
+        </>
+      ),
+      gradient: "linear-gradient(135deg, #00D9FF 0%, #A855F7 100%)",
+    },
+  ];
+
+  const current = steps[step];
+  const isLast = step === steps.length - 1;
+
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: '"Inter", "Nunito", sans-serif',
+      }}
+    >
+      {/* Затемнённый фон */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(15, 23, 42, 0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          animation: "fadeIn 0.5s ease both",
+        }}
+      />
+
+      {/* Карточка с подсказкой */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          width: "min(720px, calc(100vw - 48px))",
+          animation: "slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+          "@keyframes fadeIn": {
+            from: { opacity: 0 },
+            to: { opacity: 1 },
+          },
+          "@keyframes slideUp": {
+            "0%": { opacity: 0, transform: "translateY(40px) scale(0.9)" },
+            "100%": { opacity: 1, transform: "translateY(0) scale(1)" },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            background: current.gradient,
+            borderRadius: "32px",
+            padding: { xs: "36px 32px", md: "48px 40px" },
+            boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
+            color: "#FFFFFF",
+          }}
+        >
+          {/* Заголовок */}
+          <Box
+            sx={{
+              fontSize: { xs: "1.75rem", md: "2.125rem" },
+              fontWeight: 900,
+              mb: 3,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {current.title}
+          </Box>
+
+          {/* Текст */}
+          <Box
+            sx={{
+              fontSize: { xs: "1.125rem", md: "1.25rem" },
+              lineHeight: 1.7,
+              mb: 4,
+              fontWeight: 500,
+            }}
+          >
+            {current.text}
+          </Box>
+
+          {/* Прогресс */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.5,
+              mb: 4,
+              justifyContent: "center",
+            }}
+          >
+            {steps.map((_, i) => (
+              <Box
+                key={i}
+                sx={{
+                  width: i === step ? 40 : 12,
+                  height: 12,
+                  borderRadius: 6,
+                  background: i === step ? "#FFFFFF" : "rgba(255,255,255,0.35)",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+              />
+            ))}
+          </Box>
+
+          {/* Навигация */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 3,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {step > 0 && (
+              <IconButton
+                onClick={() => setStep((s) => s - 1)}
+                sx={{
+                  background: "rgba(255,255,255,0.25)",
+                  color: "#FFFFFF",
+                  width: 64,
+                  height: 64,
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  "&:hover": {
+                    background: "rgba(255,255,255,0.35)",
+                    transform: "scale(1.15)",
+                  },
+                }}
+                aria-label="Назад"
+              >
+                <ArrowBackIcon sx={{ fontSize: 32 }} />
+              </IconButton>
+            )}
+            <IconButton
+              onClick={() => (isLast ? onClose() : setStep((s) => s + 1))}
+              sx={{
+                background: "#FFFFFF",
+                color: step === 0 ? "#FF6B9D" : "#00D9FF",
+                width: 64,
+                height: 64,
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                "&:hover": {
+                  background: "#FFFFFF",
+                  transform: "scale(1.2)",
+                  boxShadow: "0 12px 32px rgba(0,0,0,0.4)",
+                },
+              }}
+              aria-label={isLast ? "Понятно" : "Дальше"}
+            >
+              <ArrowForwardIcon sx={{ fontSize: 32 }} />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

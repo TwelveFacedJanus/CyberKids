@@ -51,7 +51,7 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../api/client";
 import type { Result } from "../types";
 
-const SIDEBAR_WIDTH = 280;
+const SIDEBAR_WIDTH = 360;
 
 export type LayoutTheme = "default" | "kaspersky" | "mailru" | "alex";
 
@@ -85,55 +85,55 @@ const THEMES: Record<
 > = {
   default: {
     sidebarBg: "#FFFFFF",
-    sidebarBorder: "#F1F1F1",
-    logoBg: "linear-gradient(135deg, #7C4DFF, #EC407A)",
-    textColor: "#1A1A2E",
-    mutedColor: "#6B7280",
-    hoverBg: "#F1EBFF",
-    divider: "rgba(8, 8, 8, 0.08)",
-    activeBg: "linear-gradient(135deg, #7C4DFF, #EC407A)",
+    sidebarBorder: "#FFE5D9",
+    logoBg: "linear-gradient(135deg, #FF6B35, #FFD23F)",
+    textColor: "#2C3E50",
+    mutedColor: "#7F8C8D",
+    hoverBg: "#FFF9F0",
+    divider: "rgba(255,107,53,0.15)",
+    activeBg: "linear-gradient(135deg, #FF6B35, #FF8C42)",
     activeColor: "#FFFFFF",
-    activeGlow: "0 8px 24px rgba(124,77,255,0.35)",
-    pageBg: "#F8F9FA",
+    activeGlow: "0 8px 24px rgba(255,107,53,0.4)",
+    pageBg: "#FFF9F0",
   },
   kaspersky: {
     sidebarBg: "#00A651",
-    sidebarBorder: "rgba(255,255,255,0.15)",
-    logoBg: "rgba(255,255,255,0.25)",
+    sidebarBorder: "#00A651",
+    logoBg: "#FFFFFF",
     textColor: "#FFFFFF",
-    mutedColor: "rgba(255,255,255,0.8)",
-    hoverBg: "rgba(255,255,255,0.15)",
-    divider: "rgba(0, 196, 95, 0.4)",
-    activeBg: "rgba(255,255,255,0.25)",
-    activeColor: "#FFFFFF",
-    activeGlow: "0 8px 24px rgba(0,0,0,0.25)",
-    pageBg: "#F8F9FA",
-  },
-  mailru: {
-    sidebarBg: "rgb(8, 8, 8)",
-    sidebarBorder: "rgba(255,255,255,0.06)",
-    logoBg: "linear-gradient(135deg, #005FF9, #00A3FF)",
-    textColor: "#FFFFFF",
-    mutedColor: "rgba(255,255,255,0.5)",
-    hoverBg: "rgba(0, 95, 249, 0.15)",
-    divider: "rgba(49, 49, 49, 0.4)",
-    activeBg: "linear-gradient(135deg, #005FF9, #00A3FF)",
-    activeColor: "#FFFFFF",
-    activeGlow: "0 8px 24px rgba(0,95,249,0.5)",
-    pageBg: "#000000",
-  },
-  alex: {
-    sidebarBg: "linear-gradient(180deg, #FF6B35 0%, #F72585 100%)",
-    sidebarBorder: "rgba(255,255,255,0.15)",
-    logoBg: "rgba(255,255,255,0.25)",
-    textColor: "#FFFFFF",
-    mutedColor: "rgba(255,255,255,0.7)",
+    mutedColor: "rgba(255,255,255,0.75)",
     hoverBg: "rgba(255,255,255,0.15)",
     divider: "rgba(255,255,255,0.2)",
     activeBg: "rgba(255,255,255,0.25)",
     activeColor: "#FFFFFF",
-    activeGlow: "0 8px 24px rgba(0,0,0,0.25)",
-    pageBg: "#1A1A2E",
+    activeGlow: "0 4px 16px rgba(255,255,255,0.3)",
+    pageBg: "#FAFAFA",
+  },
+  mailru: {
+    sidebarBg: "#005FF9",
+    sidebarBorder: "#005FF9",
+    logoBg: "#FFFFFF",
+    textColor: "#FFFFFF",
+    mutedColor: "rgba(255,255,255,0.75)",
+    hoverBg: "rgba(255,255,255,0.15)",
+    divider: "rgba(255,255,255,0.2)",
+    activeBg: "rgba(255,255,255,0.25)",
+    activeColor: "#FFFFFF",
+    activeGlow: "0 4px 16px rgba(255,255,255,0.3)",
+    pageBg: "#F5F7FA",
+  },
+  alex: {
+    sidebarBg: "#1E1E2E",
+    sidebarBorder: "#2A2A3C",
+    logoBg: "linear-gradient(135deg, #FF6B35, #FFD23F)",
+    textColor: "#E0E0E0",
+    mutedColor: "#9CA3AF",
+    hoverBg: "#2A2A3C",
+    divider: "rgba(255,255,255,0.1)",
+    activeBg: "linear-gradient(135deg, #FF6B35, #FF8C42)",
+    activeColor: "#FFFFFF",
+    activeGlow: "0 8px 24px rgba(255,107,53,0.5)",
+    pageBg: "#121218",
   },
 };
 
@@ -166,7 +166,8 @@ function AnimatedBackground() {
           height: 480,
           top: "-10%",
           left: "-8%",
-          background: "radial-gradient(circle, #7C4DFF 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(244,91,53,.22) 0%, transparent 70%)",
           animation: "blobFloat1 18s ease-in-out infinite",
         },
         "& .blob-2": {
@@ -174,7 +175,8 @@ function AnimatedBackground() {
           height: 520,
           top: "30%",
           right: "-12%",
-          background: "radial-gradient(circle, #EC407A 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(255,212,71,.26) 0%, transparent 70%)",
           animation: "blobFloat2 22s ease-in-out infinite",
         },
         "& .blob-3": {
@@ -182,14 +184,15 @@ function AnimatedBackground() {
           height: 420,
           bottom: "-15%",
           left: "35%",
-          background: "radial-gradient(circle, #00A3FF 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(17,191,164,.2) 0%, transparent 70%)",
           animation: "blobFloat3 26s ease-in-out infinite",
         },
         "& .grid": {
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "radial-gradient(rgba(124,77,255,0.12) 1px, transparent 1px)",
+            "radial-gradient(rgba(244,91,53,0.08) 1px, transparent 1px)",
           backgroundSize: "28px 28px",
           maskImage:
             "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 80%)",
@@ -365,7 +368,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         sx={{
           width: SIDEBAR_WIDTH,
           flexShrink: 0,
-          backgroundColor: t.sidebarBg,
+          background: theme === "default" ? "#FFFDF8" : t.sidebarBg,
           display: "flex",
           flexDirection: "column",
           height: "100vh",
@@ -374,29 +377,30 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           left: 0,
           overflow: "hidden",
           zIndex: 10,
-          borderRight: `1px solid ${t.sidebarBorder}`,
+          borderRight: `3px solid ${theme === "default" ? "#FFE2D5" : t.sidebarBorder}`,
+          boxShadow:
+            theme === "default" ? "8px 0 30px rgba(244,91,53,.08)" : undefined,
           transition: "transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
           transform: sidebarOpen
             ? "translateX(0)"
             : `translateX(-${SIDEBAR_WIDTH}px)`,
         }}
       >
-        {/* ─── ЛОГОТИП ─── */}
+        {/* ─── БРЕНД НАВИГАЦИИ ─── */}
         <Box
           sx={{
             flexShrink: 0,
-            px: 3,
-            pt: 3,
-            pb: 2,
+            px: 2.5,
+            pt: 2.5,
+            pb: 2.25,
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            gap: 1.5,
+            borderBottom: "1px solid #FFE2D5",
           }}
         >
           <Box
-            component="img"
-            src="/logo.svg"
-            alt="CyberKids"
+            component="button"
             onClick={() => {
               const next = logoClicks + 1;
 
@@ -416,15 +420,57 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               navigate("/");
             }}
             sx={{
+              width: 80,
+              height: 80,
+              flexShrink: 0,
+              p: 0.75,
+              border: 0,
+              borderRadius: "18px",
+              background: "#FFF1D6",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               cursor: "pointer",
-              maxWidth: "100%",
-              maxHeight: 140,
-              objectFit: "contain",
-              userSelect: "none",
-              transition: "transform 0.3s ease",
-              "&:hover": { transform: "scale(1.03)" },
+              boxShadow: "0 6px 14px rgba(244,91,53,.16)",
+              transition: "transform .25s ease, box-shadow .25s ease",
+              "&:hover": {
+                transform: "rotate(-4deg) scale(1.06)",
+                boxShadow: "0 9px 18px rgba(244,91,53,.25)",
+              },
             }}
-          />
+          >
+            <Box
+              component="img"
+              src="/ui-icons/k1.png"
+              alt="CyberKids"
+              sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              sx={{
+                color: "#F45B35",
+                fontWeight: 900,
+                fontSize: "1.6rem",
+                lineHeight: 1,
+              }}
+            >
+              CyberKids
+            </Typography>
+            <Typography
+              sx={{
+                color: "#7F8C8D",
+                fontWeight: 800,
+                fontSize: ".9rem",
+                letterSpacing: ".06em",
+                mt: 0.65,
+                // whiteSpace: "nowrap",
+                lineHeight: 0.9,
+              }}
+            >
+              ЦИФРОВАЯ БЕЗОПАСНОСТЬ
+            </Typography>
+          </Box>
         </Box>
 
         {/* ТУМБЛЕР */}
@@ -434,9 +480,9 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               mx: 3,
               mb: 2,
               p: 1.5,
-              borderRadius: "12px",
-              backgroundColor: "rgba(124,77,255,0.08)",
-              border: "1px dashed #7C4DFF",
+              borderRadius: "16px",
+              backgroundColor: "#FFF1D6",
+              border: "1px solid #FFDFA8",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -448,7 +494,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               },
             }}
           >
-            <Typography fontSize={11} fontWeight={700} color="#7C4DFF">
+            <Typography fontSize={12} fontWeight={800} color="#D94726">
               Режим меню
             </Typography>
             <Box sx={{ display: "flex", gap: 0.5 }}>
@@ -456,13 +502,13 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                 onClick={() => setUseEmojiMenu(false)}
                 sx={{
                   px: 1,
-                  py: 0.4,
-                  borderRadius: "6px",
-                  fontSize: 11,
-                  fontWeight: 700,
+                  py: 0.55,
+                  borderRadius: "9px",
+                  fontSize: 12,
+                  fontWeight: 800,
                   cursor: "pointer",
-                  bgcolor: !useEmojiMenu ? "#7C4DFF" : "transparent",
-                  color: !useEmojiMenu ? "#fff" : "#7C4DFF",
+                  bgcolor: !useEmojiMenu ? "#F45B35" : "transparent",
+                  color: !useEmojiMenu ? "#fff" : "#D94726",
                 }}
               >
                 Иконки
@@ -471,13 +517,13 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                 onClick={() => setUseEmojiMenu(true)}
                 sx={{
                   px: 1,
-                  py: 0.4,
-                  borderRadius: "6px",
-                  fontSize: 11,
-                  fontWeight: 700,
+                  py: 0.55,
+                  borderRadius: "9px",
+                  fontSize: 12,
+                  fontWeight: 800,
                   cursor: "pointer",
-                  bgcolor: useEmojiMenu ? "#7C4DFF" : "transparent",
-                  color: useEmojiMenu ? "#fff" : "#7C4DFF",
+                  bgcolor: useEmojiMenu ? "#F45B35" : "transparent",
+                  color: useEmojiMenu ? "#fff" : "#D94726",
                 }}
               >
                 Эмодзи
@@ -493,7 +539,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
             minHeight: 0,
             overflowY: "auto",
             overflowX: "hidden",
-            px: 2,
+            px: 2.5,
             pb: 1,
             "&::-webkit-scrollbar": { width: 4 },
             "&::-webkit-scrollbar-thumb": {
@@ -507,15 +553,16 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
             sx={{
               display: "block",
               px: 1.5,
-              mb: 1,
+              mb: 1.5,
               color: t.mutedColor,
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              fontSize: 11,
+              fontSize: 14,
+              mt: 3,
             }}
           >
-            Меню
+            ТВОЙ МАРШРУТ
           </Typography>
 
           <List disablePadding>
@@ -543,31 +590,32 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                   onClick={() => navigate(path)}
                   sx={{
                     position: "relative",
-                    borderRadius: "12px",
-                    mb: 0.5,
-                    px: 1.5,
-                    py: 1.25,
+                    borderRadius: "18px",
+                    mb: 1,
+                    px: 1.75,
+                    py: 1.35,
                     minHeight: "auto",
                     gap: item.icon ? 1.5 : 0,
-                    background: isActive ? t.activeBg : "transparent",
+                    background: isActive ? t.activeBg : "#FFFDF8",
                     color: isActive ? t.activeColor : t.textColor,
                     boxShadow: isActive ? t.activeGlow : "none",
-                    transition: "all 0.2s ease",
+                    border: "none",
+                    transition: "all 0.25s ease",
                     "&:hover": {
                       background: isActive ? t.activeBg : t.hoverBg,
-                      transform: "translateX(3px)",
+                      transform: "translateX(5px) scale(1.01)",
                     },
                     "&::before": isActive
                       ? {
                           content: '""',
                           position: "absolute",
-                          left: -8,
+                          left: 0,
                           top: "50%",
                           transform: "translateY(-50%)",
-                          width: 4,
-                          height: 24,
-                          borderRadius: 2,
-                          background: t.activeColor,
+                          width: 5,
+                          height: 32,
+                          borderRadius: "0 4px 4px 0",
+                          background: "#FFFFFF",
                           opacity: 0.9,
                         }
                       : {},
@@ -577,15 +625,15 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        width: 22,
-                        height: 22,
+                        width: 28,
+                        height: 28,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "inherit",
                         "& svg": {
-                          width: 22,
-                          height: 22,
+                          width: 28,
+                          height: 28,
                           display: "block",
                         },
                       }}
@@ -598,7 +646,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: isActive ? 700 : 600,
-                      fontSize: "0.9rem",
+                      fontSize: "1rem",
                       color: "inherit",
                       lineHeight: 1.3,
                     }}
@@ -606,7 +654,7 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                   />
 
                   {isActive && (
-                    <ChevronRightIcon sx={{ fontSize: 18, opacity: 0.85 }} />
+                    <ChevronRightIcon sx={{ fontSize: 22, opacity: 0.85 }} />
                   )}
                 </ListItemButton>
               );
@@ -618,19 +666,19 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         <Box
           sx={{
             flexShrink: 0,
-            mx: 2,
-            mb: 2,
-            p: 1.5,
-            borderRadius: "14px",
-            backgroundColor: t.hoverBg,
-            border: `1px solid ${t.sidebarBorder}`,
+            mx: 2.5,
+            mb: 2.25,
+            p: 1.75,
+            borderRadius: "20px",
+            background: "#FFF1D6",
+            border: "1px solid #FFDFA8",
             display: "flex",
             alignItems: "center",
             gap: 1.5,
             transition: "all 0.2s ease",
             "&:hover": {
-              transform: "translateY(-2px)",
-              boxShadow: t.activeGlow,
+              transform: "translateY(-3px)",
+              boxShadow: "0 9px 20px rgba(244,91,53,.14)",
             },
           }}
         >
@@ -641,16 +689,16 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
             >
               <Avatar
                 sx={{
-                  width: 42,
-                  height: 42,
+                  width: 50,
+                  height: 50,
                   bgcolor:
                     theme === "mailru"
                       ? "#005FF9"
                       : theme === "kaspersky"
                         ? "rgba(255,255,255,0.3)"
-                        : "linear-gradient(135deg, #7C4DFF, #EC407A)",
-                  fontWeight: 700,
-                  fontSize: 17,
+                        : "linear-gradient(135deg, #FF6B35, #FFD23F)",
+                  fontWeight: 900,
+                  fontSize: 20,
                 }}
               >
                 {user?.full_name?.[0] || "?"}
@@ -663,21 +711,21 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               variant="body2"
               fontWeight={700}
               noWrap
-              sx={{ color: t.textColor, fontSize: "0.85rem" }}
+              sx={{ color: t.textColor, fontSize: "1rem" }}
             >
               {user?.full_name || "Гость"}
             </Typography>
 
             <Stack
               direction="row"
-              spacing={0.5}
+              spacing={0.75}
               alignItems="center"
-              sx={{ mt: 0.25 }}
+              sx={{ mt: 0.5 }}
             >
-              <StarIcon sx={{ fontSize: 14, color: "#FFCA28" }} />
+              <StarIcon sx={{ fontSize: 17, color: "#F4B400" }} />
               <Typography
                 variant="caption"
-                sx={{ color: t.mutedColor, fontWeight: 600 }}
+                sx={{ color: t.mutedColor, fontWeight: 700, fontSize: ".9rem" }}
               >
                 {loadingScore ? (
                   <CircularProgress size={10} />

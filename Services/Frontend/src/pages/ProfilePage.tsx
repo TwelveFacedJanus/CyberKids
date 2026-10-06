@@ -115,7 +115,7 @@ export default function ProfilePage() {
                 <Typography variant="h4" fontWeight={800} color="primary">
                   {completedTasks}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "1rem" }}>
                   заданий
                 </Typography>
               </Box>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
                 <Typography variant="h4" fontWeight={800} color="secondary">
                   {earned}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "1rem" }}>
                   очков
                 </Typography>
               </Box>
@@ -135,7 +135,7 @@ export default function ProfilePage() {
                 >
                   {Math.round((earned / totalPossible) * 100) || 0}%
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "1rem" }}>
                   прогресс
                 </Typography>
               </Box>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                           <Typography fontWeight={600}>
                             {topicLabels[r.topic] || r.topic}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "1rem" }}>
                             {r.task_title}
                           </Typography>
                         </Box>

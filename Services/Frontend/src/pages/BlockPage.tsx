@@ -15,6 +15,8 @@ import {
   Typography,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { api } from "../api/client";
@@ -62,6 +64,30 @@ const SPECIAL_CARDS: Record<
   ],
 };
 
+const TASK_TYPE_LABELS: Record<string, string> = {
+  quiz: "Викторина",
+  true_false: "Верно или нет",
+  scenario: "Ситуация",
+  dragdrop: "Распредели",
+  sort: "Сортировка",
+  drag3d: "3D-задание",
+  theory_cards: "Карточки знаний",
+  scam_banner: "Найди подвох",
+  scam_chat: "Разбор переписки",
+  scam_chain: "Цепочка решений",
+  scam_phishing: "Фишинг",
+  scam_defender: "Защитник",
+  quick_test: "Быстрый тест",
+  profile_builder: "Собери профиль",
+  photo_detective: "Фото-детектив",
+  fake_friend_chat: "Чат с другом",
+  hacked_friend: "Взломанный аккаунт",
+  safe_job_sort: "Проверка вакансий",
+  dropper_chat: "Чат-расследование",
+  prize_trap: "Конкурс-ловушка",
+  fake_diary: "Цифровой дневник",
+};
+
 export default function BlockPage() {
   const { topic } = useParams<{ topic: string }>();
   const navigate = useNavigate();
@@ -96,7 +122,7 @@ export default function BlockPage() {
 
   const completed = tasks.filter((t) => bestByTask.has(t.id)).length;
   const progress = tasks.length ? (completed / tasks.length) * 100 : 0;
-  const color = topicColors[topic || ""] || "#7C4DFF";
+  const color = topicColors[topic || ""] || "#FF6B35";
   const label = topicLabels[topic || ""] || topic || "";
 
   if (loading) {
@@ -118,7 +144,7 @@ export default function BlockPage() {
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/blocks")}
-          sx={{ mb: 3, color: "text.secondary" }}
+          sx={{ mb: 2, color: "#D94726", fontSize: "1.05rem", fontWeight: 800 }}
         >
           Все блоки
         </Button>
@@ -126,27 +152,28 @@ export default function BlockPage() {
         {/* Hero блока */}
         <Box
           sx={{
-            p: 4,
+            p: { xs: 2.5, md: 4 },
             mb: 4,
-            borderRadius: "24px",
-            background: `linear-gradient(135deg, ${color}22, ${color}08)`,
-            border: `2px solid ${color}40`,
+            borderRadius: "28px",
+            background: `linear-gradient(120deg, ${color}18, #FFFFFF 72%)`,
+            border: `3px solid ${color}40`,
             position: "relative",
             overflow: "hidden",
+            boxShadow: `0 14px 36px ${color}20`,
           }}
         >
           <Stack direction="row" spacing={3} alignItems="center">
             <Box
               sx={{
-                width: 88,
-                height: 88,
-                borderRadius: "22px",
+                 width: { xs: 76, md: 100 },
+                 height: { xs: 76, md: 100 },
+                 borderRadius: "28px",
                 background: `linear-gradient(135deg, ${color}, ${color}CC)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 46,
-                boxShadow: `0 12px 32px ${color}55`,
+                 fontSize: { xs: 38, md: 52 },
+                 boxShadow: `0 14px 34px ${color}55`,
                 flexShrink: 0,
               }}
             >
@@ -156,7 +183,7 @@ export default function BlockPage() {
               <Typography
                 variant="h3"
                 fontWeight={900}
-                sx={{ color: "#1A1A2E", mb: 0.5 }}
+                 sx={{ color: "#263238", mb: 0.75, fontSize: { xs: "2rem", md: "2.7rem" } }}
               >
                 {label}
               </Typography>
@@ -165,8 +192,8 @@ export default function BlockPage() {
                   variant="determinate"
                   value={progress}
                   sx={{
-                    width: 200,
-                    height: 8,
+                     width: { xs: 130, sm: 220 },
+                     height: 12,
                     borderRadius: 4,
                     backgroundColor: "#FFFFFF",
                     "& .MuiLinearProgress-bar": {
@@ -175,7 +202,7 @@ export default function BlockPage() {
                     },
                   }}
                 />
-                <Typography variant="body2" fontWeight={700}>
+                 <Typography variant="body2" fontWeight={800} sx={{ fontSize: { xs: ".95rem", md: "1.1rem" } }}>
                   {completed} / {tasks.length} пройдено
                 </Typography>
               </Stack>
@@ -208,38 +235,67 @@ export default function BlockPage() {
               <Grid item xs={12} sm={6} md={4} key={task.id}>
                 <Card
                   sx={{
-                    borderRadius: "20px",
-                    borderTop: `6px solid ${task.color || color}`,
+                    borderRadius: "28px",
+                    borderTop: `8px solid ${task.color || color}`,
                     cursor: "pointer",
-                    transition: "all 0.3s ease",
-                    animation: `cardIn 0.5s ease ${i * 0.08}s both`,
+                    transition: "all 0.35s cubic-bezier(.2,.8,.3,1)",
+                    animation: `cardIn 0.55s cubic-bezier(.2,.8,.3,1) ${i * 0.07}s both`,
+                    background: done ? "#F8FFFC" : "#FFFFFF",
+                    overflow: "hidden",
                     "@keyframes cardIn": {
                       "0%": { opacity: 0, transform: "translateY(20px)" },
                       "100%": { opacity: 1, transform: "translateY(0)" },
                     },
                     "&:hover": {
-                      transform: "translateY(-6px)",
-                      boxShadow: `0 20px 40px ${task.color || color}55`,
+                      transform: "translateY(-8px)",
+                      boxShadow: `0 22px 48px ${task.color || color}45`,
                     },
                   }}
                 >
                   <CardActionArea
                     onClick={() => navigate(`/task/${task.id}`)}
-                    sx={{ p: 3, height: "100%" }}
+                    sx={{ p: { xs: 2.5, md: 3 }, height: "100%" }}
                   >
-                    <Stack spacing={2}>
-                      {/* Звёзды */}
-                      <Stack direction="row" spacing={0.5}>
+                    <Stack spacing={2.25} sx={{ height: "100%" }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box
+                          sx={{
+                            width: 58,
+                            height: 58,
+                            borderRadius: "18px",
+                            bgcolor: `${task.color || color}18`,
+                            color: task.color || color,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: 30,
+                          }}
+                        >
+                          {task.emoji || "🎯"}
+                        </Box>
+                        {done ? (
+                          <Stack direction="row" spacing={0.6} alignItems="center" sx={{ color: "#079476", fontWeight: 800, fontSize: ".95rem" }}>
+                            <CheckCircleRoundedIcon sx={{ fontSize: 22 }} />
+                            Пройдено
+                          </Stack>
+                        ) : (
+                          <Typography sx={{ color: "#8A979D", fontWeight: 800, fontSize: ".95rem" }}>
+                            Задание {i + 1}
+                          </Typography>
+                        )}
+                      </Stack>
+
+                      <Stack direction="row" spacing={0.35}>
                         {[0, 1, 2].map((j) =>
                           j < stars ? (
                             <StarIcon
                               key={j}
-                              sx={{ fontSize: 22, color: "#FFCA28" }}
+                              sx={{ fontSize: 25, color: "#F4B400" }}
                             />
                           ) : (
                             <StarBorderIcon
                               key={j}
-                              sx={{ fontSize: 22, color: "#D1D5DB" }}
+                              sx={{ fontSize: 25, color: "#D9E0E0" }}
                             />
                           ),
                         )}
@@ -248,16 +304,17 @@ export default function BlockPage() {
                       <Typography
                         variant="h6"
                         fontWeight={800}
-                        sx={{ color: "#1A1A2E", lineHeight: 1.3 }}
+                        sx={{ color: "#263238", lineHeight: 1.25, fontSize: { xs: "1.35rem", md: "1.55rem" } }}
                       >
-                        {task.emoji} {task.title}
+                        {task.title}
                       </Typography>
 
                       <Typography
                         variant="body2"
                         color="text.secondary"
                         sx={{
-                          lineHeight: 1.55,
+                          lineHeight: 1.6,
+                          fontSize: { xs: "1rem", md: "1.08rem" },
                           display: "-webkit-box",
                           WebkitLineClamp: 3,
                           WebkitBoxOrient: "vertical",
@@ -270,19 +327,22 @@ export default function BlockPage() {
                       <Stack direction="row" spacing={1} flexWrap="wrap">
                         <Chip
                           label={`+${task.points} очков`}
-                          size="small"
                           sx={{
-                            bgcolor: "#FFF3E0",
+                            bgcolor: "#FFF1D6",
                             fontWeight: 700,
-                            color: "#7C4DFF",
+                            color: "#D94726",
+                            fontSize: ".95rem",
                           }}
                         />
                         <Chip
-                          label={task.task_type}
-                          size="small"
-                          sx={{ bgcolor: "#F1EBFF", fontWeight: 600 }}
+                          label={TASK_TYPE_LABELS[task.task_type] || "Интерактивное задание"}
+                          sx={{ bgcolor: "#ECF8F5", color: "#087F6D", fontWeight: 700, fontSize: ".9rem" }}
                         />
                       </Stack>
+                      <Box sx={{ mt: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", color: task.color || color, fontWeight: 900, fontSize: "1rem" }}>
+                        {done ? "Повторить" : "Начать задание"}
+                        <ArrowForwardRoundedIcon sx={{ fontSize: 24 }} />
+                      </Box>
                     </Stack>
                   </CardActionArea>
                 </Card>
@@ -319,33 +379,33 @@ function SpecialCard({
   return (
     <Card
       sx={{
-        borderRadius: "20px",
-        borderTop: "6px solid #7C4DFF", // ← акцентная полоса сверху
+        borderRadius: "28px",
+        borderTop: "8px solid #F45B35",
         cursor: "pointer",
-        transition: "all 0.3s ease",
+        transition: "all 0.35s cubic-bezier(.2,.8,.3,1)",
         position: "relative",
         overflow: "hidden",
         height: "100%",
-        background: "#FFFFFF",
-        // Лёгкий фиолетовый оттенок по углам — «спец», но не кричит
+        background: "linear-gradient(145deg, #FFF1D6, #FFFFFF)",
+        boxShadow: "0 14px 34px rgba(244,91,53,.18)",
         "&::before": {
           content: '""',
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(circle at 100% 0%, rgba(124,77,255,0.06), transparent 50%)",
+            "radial-gradient(circle at 100% 0%, rgba(255,210,71,0.2), transparent 52%)",
           pointerEvents: "none",
         },
         "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 20px 40px rgba(124,77,255,0.25)",
+          transform: "translateY(-8px)",
+          boxShadow: "0 24px 52px rgba(244,91,53,.3)",
         },
       }}
     >
       <CardActionArea
         onClick={() => navigate(path)}
         sx={{
-          p: 3,
+          p: { xs: 2.5, md: 3 },
           height: "100%",
           position: "relative",
           zIndex: 1,
@@ -364,10 +424,10 @@ function SpecialCard({
                 label={badge}
                 size="small"
                 sx={{
-                  bgcolor: "#F1EBFF",
-                  color: "#7C4DFF",
-                  fontWeight: 700,
-                  fontSize: 10,
+                   bgcolor: "#FFE2D5",
+                   color: "#D94726",
+                   fontWeight: 700,
+                   fontSize: ".85rem",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                 }}
@@ -377,10 +437,10 @@ function SpecialCard({
                 label="Интерактив"
                 size="small"
                 sx={{
-                  bgcolor: "#F1EBFF",
-                  color: "#7C4DFF",
-                  fontWeight: 700,
-                  fontSize: 10,
+                   bgcolor: "#FFE2D5",
+                   color: "#D94726",
+                   fontWeight: 700,
+                   fontSize: ".85rem",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                 }}
@@ -389,14 +449,15 @@ function SpecialCard({
 
             <Box
               sx={{
-                width: 36,
-                height: 36,
-                borderRadius: "10px",
-                background: "linear-gradient(135deg, #7C4DFF22, #7C4DFF08)",
+                 width: 58,
+                 height: 58,
+                 borderRadius: "18px",
+                 background: "#FFFFFF",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 20,
+                 fontSize: 32,
+                 boxShadow: "0 7px 16px rgba(244,91,53,.14)",
               }}
             >
               {emoji}
@@ -407,7 +468,7 @@ function SpecialCard({
           <Typography
             variant="h6"
             fontWeight={800}
-            sx={{ color: "#1A1A2E", lineHeight: 1.3 }}
+             sx={{ color: "#263238", lineHeight: 1.25, fontSize: { xs: "1.35rem", md: "1.55rem" } }}
           >
             {title}
           </Typography>
@@ -417,7 +478,8 @@ function SpecialCard({
             variant="body2"
             color="text.secondary"
             sx={{
-              lineHeight: 1.55,
+               lineHeight: 1.6,
+               fontSize: { xs: "1rem", md: "1.08rem" },
               display: "-webkit-box",
               WebkitLineClamp: 3,
               WebkitBoxOrient: "vertical",
@@ -433,15 +495,15 @@ function SpecialCard({
               label="Открыть"
               size="small"
               sx={{
-                bgcolor: "#FFF3E0",
+                bgcolor: "#FFFFFF",
                 fontWeight: 700,
-                color: "#7C4DFF",
+                color: "#D94726",
+                fontSize: ".95rem",
               }}
             />
             <Chip
-              label="спец"
-              size="small"
-              sx={{ bgcolor: "#F1EBFF", fontWeight: 600, color: "#7C4DFF" }}
+              label="интерактив"
+              sx={{ bgcolor: "#D8F5EE", fontWeight: 700, color: "#087F6D", fontSize: ".9rem" }}
             />
           </Stack>
         </Stack>

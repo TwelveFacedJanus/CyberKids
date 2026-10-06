@@ -1,5 +1,8 @@
 // src/components/TaskTutorial.tsx
 import { useEffect, useState } from "react";
+import { Box, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export interface TutorialStep {
   /** Текст в bubble */
@@ -24,16 +27,26 @@ interface Rect {
   h: number;
 }
 
+// Генератор ярких градиентов для фона
+const BRIGHT_GRADIENTS = [
+  "linear-gradient(135deg, #FF6B9D 0%, #FF8C42 100%)",
+  "linear-gradient(135deg, #00D9FF 0%, #A855F7 100%)",
+  "linear-gradient(135deg, #FFD93D 0%, #FF6B9D 100%)",
+  "linear-gradient(135deg, #A855F7 0%, #00D9FF 100%)",
+  "linear-gradient(135deg, #FF8C42 0%, #FFD93D 100%)",
+];
+
 export default function TaskTutorial({
   open,
   steps,
   onClose,
-  accent = "#7C4DFF",
+  accent = "#00D9FF",
 }: Props) {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
 
   const cur = steps[step];
+  const gradient = BRIGHT_GRADIENTS[step % BRIGHT_GRADIENTS.length];
 
   // Измеряем target при смене шага
   useEffect(() => {
@@ -64,15 +77,15 @@ export default function TaskTutorial({
 
   const isLast = step === steps.length - 1;
 
-  // Bubble фиксирован внизу по центру
+  // Bubble фиксирован по центру экрана
   const bubbleCenterX = window.innerWidth / 2;
-  const bubbleTop = window.innerHeight - 220;
+  const bubbleCenterY = window.innerHeight / 2;
 
   // Считаем путь стрелки: от bubble к target
   const arrowPath = targetRect
     ? computeArrowPath(
         bubbleCenterX,
-        bubbleTop,
+        bubbleCenterY,
         targetRect.x + targetRect.w / 2,
         targetRect.y + targetRect.h / 2,
         accent,
@@ -80,24 +93,23 @@ export default function TaskTutorial({
     : null;
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         position: "fixed",
         inset: 0,
         zIndex: 9998,
         fontFamily: '"Inter", "Nunito", sans-serif',
       }}
     >
-      {/* Затемнение (кликабельное — закрывает туториал) */}
-      <div
-        style={{
+      {/* Затемнение */}
+      <Box
+        sx={{
           position: "absolute",
           inset: 0,
-          background: "rgba(10, 10, 25, 0.6)",
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          animation: "fadeIn 0.4s ease both",
-          cursor: "pointer",
+          background: "rgba(15, 23, 42, 0.75)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          animation: "fadeIn 0.5s ease both",
         }}
         onClick={onClose}
       />
@@ -121,158 +133,152 @@ export default function TaskTutorial({
               viewBox="0 0 10 10"
               refX="9"
               refY="5"
-              markerWidth="6"
-              markerHeight="6"
+              markerWidth="8"
+              markerHeight="8"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill={accent} />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#FFFFFF" />
             </marker>
           </defs>
 
           {/* Изогнутая кривая */}
           <path
             d={arrowPath}
-            stroke={accent}
-            strokeWidth={4}
+            stroke="#FFFFFF"
+            strokeWidth={5}
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
             markerEnd="url(#tutorial-arrowhead)"
             style={{
-              filter: `drop-shadow(0 4px 16px ${accent}aa)`,
+              filter: "drop-shadow(0 6px 20px rgba(0,0,0,0.4))",
               strokeDasharray: 2000,
               strokeDashoffset: 2000,
-              animation: "drawArrow 0.8s ease 0.15s forwards",
+              animation: "drawArrow 1s ease 0.2s forwards",
             }}
           />
         </svg>
       )}
 
-      {/* Bubble — внизу по центру */}
-      <div
-        style={{
+      {/* Bubble — по центру экрана */}
+      <Box
+        sx={{
           position: "absolute",
           left: "50%",
-          top: bubbleTop,
-          transform: "translateX(-50%)",
-          width: "min(560px, calc(100vw - 32px))",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "min(680px, calc(100vw - 48px))",
           zIndex: 2,
-          animation: "bubbleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+          animation: "bubbleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both",
         }}
       >
-        <div
-          style={{
-            background: "#FFFFFF",
-            borderRadius: 24,
-            padding: "22px 26px",
-            boxShadow: `0 24px 64px rgba(0,0,0,0.4), 0 0 0 3px ${accent}`,
+        <Box
+          sx={{
+            background: gradient,
+            borderRadius: "32px",
+            padding: { xs: "32px 28px", md: "40px 36px" },
+            boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
             position: "relative",
+            color: "#FFFFFF",
           }}
         >
           {/* Номер шага */}
-          <div
-            style={{
-              fontSize: 11,
-              letterSpacing: "0.18em",
+          <Box
+            sx={{
+              fontSize: 36,
+              letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: accent,
-              fontWeight: 800,
-              marginBottom: 8,
+              color: "rgba(255,255,255,0.85)",
+              fontWeight: 900,
+              marginBottom: 2,
             }}
           >
             Шаг {step + 1} из {steps.length}
-          </div>
+          </Box>
 
           {/* Текст */}
-          <div
-            style={{
-              fontSize: 16,
-              lineHeight: 1.55,
-              color: "#1A1A2E",
-              fontWeight: 500,
+          <Box
+            sx={{
+              fontSize: { xs: "1.375rem", md: "1.625rem" },
+              lineHeight: 1.65,
+              color: "#FFFFFF",
+              fontWeight: 600,
+              mb: 3,
             }}
           >
             {cur.text}
-          </div>
+          </Box>
 
           {/* Прогресс-точки */}
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
-              gap: 6,
-              marginTop: 16,
-              marginBottom: 4,
+              gap: 1.5,
+              marginBottom: 3,
+              justifyContent: "center",
             }}
           >
             {steps.map((_, i) => (
-              <div
+              <Box
                 key={i}
-                style={{
-                  width: i === step ? 24 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  background: i === step ? accent : `${accent}44`,
-                  transition: "all 0.3s ease",
+                sx={{
+                  width: i === step ? 40 : 12,
+                  height: 12,
+                  borderRadius: 6,
+                  background: i === step ? "#FFFFFF" : "rgba(255,255,255,0.4)",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               />
             ))}
-          </div>
+          </Box>
 
-          {/* Кнопки */}
-          <div
-            style={{
+          {/* Кнопки навигации */}
+          <Box
+            sx={{
               display: "flex",
-              gap: 8,
-              justifyContent: "flex-end",
-              marginTop: 14,
+              gap: 3,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             {step > 0 && (
-              <button
+              <IconButton
                 onClick={() => setStep((s) => s - 1)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#6B7280",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  padding: "10px 14px",
-                  fontFamily: "inherit",
+                sx={{
+                  background: "rgba(255,255,255,0.25)",
+                  color: "#FFFFFF",
+                  width: 56,
+                  height: 56,
+                  transition: "all 0.3s",
+                  "&:hover": {
+                    background: "rgba(255,255,255,0.35)",
+                    transform: "scale(1.1)",
+                  },
                 }}
               >
-                ← Назад
-              </button>
+                <ArrowBackIcon sx={{ fontSize: 28 }} />
+              </IconButton>
             )}
-            <button
+            <IconButton
               onClick={() => (isLast ? onClose() : setStep((s) => s + 1))}
-              style={{
-                background: accent,
-                border: "none",
-                color: "#fff",
-                fontSize: 15,
-                fontWeight: 700,
-                cursor: "pointer",
-                padding: "10px 22px",
-                borderRadius: 12,
-                fontFamily: "inherit",
-                transition: "transform 0.15s",
-                boxShadow: `0 6px 20px ${accent}77`,
+              sx={{
+                background: "#FFFFFF",
+                color: gradient.includes("FF6B9D") ? "#FF6B9D" : "#00D9FF",
+                width: 56,
+                height: 56,
+                transition: "all 0.3s",
+                "&:hover": {
+                  background: "#FFFFFF",
+                  transform: "scale(1.15)",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+                },
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.transform =
-                  "translateY(-2px)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.transform =
-                  "translateY(0)")
-              }
             >
-              {isLast ? "Понятно!" : "Дальше →"}
-            </button>
-          </div>
-        </div>
-      </div>
+              <ArrowForwardIcon sx={{ fontSize: 28 }} />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
 
       <style>{`
         @keyframes fadeIn {
@@ -280,14 +286,14 @@ export default function TaskTutorial({
           to { opacity: 1; }
         }
         @keyframes bubbleIn {
-          0% { opacity: 0; transform: translateX(-50%) translateY(24px) scale(0.95); }
-          100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
         @keyframes drawArrow {
           to { stroke-dashoffset: 0; }
         }
       `}</style>
-    </div>
+    </Box>
   );
 }
 

@@ -514,7 +514,36 @@ export default function TaskPage() {
           accent={task.color || "#7C4DFF"}
         />
       )}
-      <Box sx={{ position: "relative", zIndex: 1 }}>
+      <Box
+        className="cyber-task-surface"
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          maxWidth: 1180,
+          width: "100%",
+          mx: "auto",
+          pb: 4,
+          "& .MuiTypography-body2": {
+            fontSize: "clamp(1rem, 1.15vw, 1.18rem) !important",
+          },
+          "& .MuiTypography-body1": {
+            fontSize: "clamp(1.05rem, 1.2vw, 1.25rem) !important",
+          },
+          "& .MuiTypography-caption": {
+            fontSize: "clamp(.95rem, 1.05vw, 1.08rem) !important",
+          },
+          "& .MuiTypography-overline": {
+            fontSize: "clamp(.9rem, 1vw, 1rem) !important",
+          },
+          "& [style*='font-size: 12px'], & [style*='font-size: 12.5px'], & [style*='font-size: 14px'], & [style*='font-size: 14.5px']": {
+            fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+          },
+          "& .MuiFormControlLabel-label, & .MuiInputBase-input, & .MuiFormHelperText-root": {
+            fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+          },
+          "& .MuiButton-root": { minHeight: 50 },
+        }}
+      >
         {result && stars >= 2 && <Confetti pieces={50} />}
 
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
@@ -528,7 +557,7 @@ export default function TaskPage() {
           >
             Все задания
           </Button>
-          <Typography color="text.secondary" sx={{ fontSize: 14 }}>
+            <Typography color="text.secondary" sx={{ fontSize: "1rem" }}>
             /
           </Typography>
           <Typography
@@ -549,11 +578,12 @@ export default function TaskPage() {
           task.task_type != "fake_diary" && (
             <Paper
               sx={{
-                p: 3,
+                 p: { xs: 2.5, md: 4 },
                 mb: 3,
-                borderLeft: `6px solid ${color}`,
+                 borderLeft: `8px solid ${color}`,
                 borderRadius: "20px",
-                background: "linear-gradient(135deg, #FFFFFF, #FAFAFF)",
+                 background: "linear-gradient(135deg, #FFFFFF, #FFF5EC)",
+                 boxShadow: "0 14px 34px rgba(244,91,53,.12)",
               }}
             >
               <Stack
@@ -563,8 +593,8 @@ export default function TaskPage() {
               >
                 <Box
                   sx={{
-                    width: 60,
-                    height: 60,
+                     width: 76,
+                     height: 76,
                     borderRadius: "16px",
                     background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
                     display: "flex",
@@ -574,17 +604,17 @@ export default function TaskPage() {
                     flexShrink: 0,
                   }}
                 >
-                  <TopicIcon sx={{ fontSize: 36 }} />
+                   <TopicIcon sx={{ fontSize: 42 }} />
                 </Box>
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography
                     variant="h4"
                     fontWeight={800}
-                    sx={{ mt: 1, color: "#1A1A2E" }}
+                     sx={{ mt: 1, color: "#263238", fontSize: { xs: "1.7rem", md: "2.2rem" } }}
                   >
                     {task.title}
                   </Typography>
-                  <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+                   <Typography color="text.secondary" sx={{ mt: 1, fontSize: { xs: "1rem", md: "1.15rem" } }}>
                     {task.description}
                   </Typography>
                 </Box>
@@ -1001,14 +1031,14 @@ function TaskContent({
             disabled={answers.length === 0 || submitting}
             onClick={onSubmit}
             sx={{
-              py: 1.8,
-              fontSize: 18,
+               py: 2,
+               fontSize: "clamp(1.05rem, 1.25vw, 1.25rem)",
               fontWeight: 700,
               borderRadius: "12px",
               background:
                 answers.length === 0
                   ? undefined
-                  : "linear-gradient(135deg, #7C4DFF, #9C27B0)",
+                   : "linear-gradient(135deg, #FF6B35, #FF8C42)",
             }}
           >
             {submitting ? (

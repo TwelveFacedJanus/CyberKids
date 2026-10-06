@@ -1,602 +1,554 @@
-// src/pages/WelcomePage.tsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { keyframes } from "@mui/system";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import Layout from "../components/Layout";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import RocketLaunchRoundedIcon from "@mui/icons-material/RocketLaunchRounded";
 
-/* ───────────── анимации ───────────── */
-const popIn = keyframes`
-  0% { transform: scale(0) rotate(-30deg); opacity: 0 }
-  60% { transform: scale(1.12) rotate(5deg); opacity: 1 }
-  100% { transform: scale(1) rotate(0) }`;
-const slideUp = keyframes`
-  0% { transform: translateY(30px); opacity: 0 }
-  100% { transform: translateY(0); opacity: 1 }`;
-const floatA = keyframes`0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}`;
-const floatB = keyframes`0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-30px)}`;
-const spin = keyframes`to { transform: rotate(360deg) }`;
-const wave = keyframes`to { transform: translateX(-100px) }`;
-const rise = keyframes`
-  0% { transform: translateY(0) scale(.6); opacity: 0 }
-  20% { opacity: .9 }
-  100% { transform: translateY(-70px) scale(1.1); opacity: 0 }`;
-const bob = keyframes`0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}`;
-const glow = keyframes`0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.9;transform:scale(1.08)}`;
-const shimmer = keyframes`to { background-position: 200% center }`;
-const ring = keyframes`0%{transform:scale(1);opacity:.55}100%{transform:scale(1.35);opacity:0}`;
-const shine = keyframes`0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(260%) skewX(-20deg)}`;
-const launch = keyframes`
-  0% { transform: translate(0,0) scale(1); opacity: 1 }
-  100% { transform: translate(140px,-220px) scale(1.4); opacity: 0 }`;
-const burst = keyframes`
-  0% { transform: translate(0,0) rotate(0) scale(1); opacity: 1 }
-  100% { transform: translate(var(--dx), var(--dy)) rotate(260deg) scale(.4); opacity: 0 }`;
-const dotPulse = keyframes`0%,100%{transform:scale(1)}50%{transform:scale(1.25)}`;
+const appear = keyframes`
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
 
-const rm = {
-  "@media (prefers-reduced-motion: reduce)": { animation: "none !important" },
+const enterFromRight = keyframes`
+  from { opacity: 0; transform: translateX(80px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const enterFromLeft = keyframes`
+  from { opacity: 0; transform: translateX(-80px); }
+  to { opacity: 1; transform: translateX(0); }
+`;
+
+const softFloat = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+`;
+
+const rocketAway = keyframes`
+  from { opacity: 1; transform: translate(0, 0) rotate(0); }
+  to { opacity: 0; transform: translate(180px, -220px) rotate(24deg); }
+`;
+
+const sparkAway = keyframes`
+  from { opacity: 1; transform: translate(0, 0) rotate(0); }
+  to { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--turn)); }
+`;
+
+const reduceMotion = {
+  "@media (prefers-reduced-motion: reduce)": {
+    animation: "none !important",
+    transition: "none !important",
+  },
 };
 
-/* ───────────── данные оформления ───────────── */
-const THREATS = ["🎣", "🔑", "💳", "🕵️", "🔗", "📱"];
-const PARTICLES = [
-  { x: "8%", y: "18%", s: 10, c: "#7C4DFF", d: 0 },
-  { x: "90%", y: "14%", s: 14, c: "#EC407A", d: 1.2 },
-  { x: "16%", y: "72%", s: 12, c: "#FFCA28", d: 2.1 },
-  { x: "82%", y: "66%", s: 9, c: "#7C4DFF", d: 0.6 },
-  { x: "50%", y: "6%", s: 8, c: "#EC407A", d: 1.8 },
-  { x: "70%", y: "88%", s: 13, c: "#FFCA28", d: 2.6 },
-  { x: "30%", y: "40%", s: 7, c: "#7C4DFF", d: 3.1 },
-  { x: "94%", y: "42%", s: 8, c: "#FFCA28", d: 0.9 },
-];
-const CONFETTI = Array.from({ length: 22 }, (_, i) => {
-  const a = (i / 22) * Math.PI * 2;
-  const r = 110 + (i % 3) * 45;
+const sparks = Array.from({ length: 24 }, (_, index) => {
+  const angle = (index / 24) * Math.PI * 2;
+  const distance = 80 + (index % 4) * 22;
   return {
-    dx: `${Math.round(Math.cos(a) * r)}px`,
-    dy: `${Math.round(Math.sin(a) * r)}px`,
-    c: ["#7C4DFF", "#EC407A", "#FFCA28", "#26C6DA"][i % 4],
-    round: i % 2 === 0,
+    dx: `${Math.cos(angle) * distance}px`,
+    dy: `${Math.sin(angle) * distance}px`,
+    turn: `${(index % 2 ? 1 : -1) * (180 + index * 8)}deg`,
+    color: ["#F45B35", "#FFD447", "#11BFA4", "#F28BA8"][index % 4],
   };
 });
-const HERO_SIZES = [
-  "clamp(170px, 28vh, 260px)",
-  "clamp(130px, 20vh, 190px)",
-  "clamp(110px, 17vh, 160px)",
-];
 
-/* ───────────── колба ───────────── */
-const FLASK =
-  "M84 12 V92 L28 190 Q18 212 40 222 H160 Q182 212 172 190 L116 92 V12 Z";
-
-function Flask() {
-  return (
-    <Box
-      component="svg"
-      viewBox="0 0 200 240"
-      sx={{
-        width: "100%",
-        height: "100%",
-        overflow: "visible",
-        animation: `${bob} 5s ease-in-out infinite`,
-        ...rm,
-      }}
-      aria-hidden
-    >
-      <defs>
-        <clipPath id="flaskClip">
-          <path d={FLASK} />
-        </clipPath>
-        <linearGradient id="liq" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#7C4DFF" />
-          <stop offset="0.6" stopColor="#EC407A" />
-          <stop offset="1" stopColor="#FFCA28" />
-        </linearGradient>
-      </defs>
-      <path d={FLASK} fill="rgba(255,255,255,.55)" />
-      <g clipPath="url(#flaskClip)">
-        <g style={{ animation: `${wave} 3.2s linear infinite` }}>
-          <path
-            opacity=".55"
-            fill="url(#liq)"
-            d="M0 138 Q25 126 50 138 T100 138 T150 138 T200 138 T250 138 T300 138 V260 H0 Z"
-          />
-        </g>
-        <g style={{ animation: `${wave} 2.2s linear infinite` }}>
-          <path
-            fill="url(#liq)"
-            d="M0 150 Q25 140 50 150 T100 150 T150 150 T200 150 T250 150 T300 150 V260 H0 Z"
-          />
-        </g>
-        {[
-          [70, 205, 0],
-          [105, 190, 0.8],
-          [135, 210, 1.5],
-          [90, 175, 2.2],
-          [120, 180, 0.4],
-        ].map(([x, y, d], i) => (
-          <circle
-            key={i}
-            cx={x}
-            cy={y}
-            r={4 + (i % 3)}
-            fill="#fff"
-            fillOpacity=".7"
-            style={{ animation: `${rise} 2.6s ${d}s ease-in infinite` }}
-          />
-        ))}
-      </g>
-      <path
-        d={FLASK}
-        fill="none"
-        stroke="#1A1A2E"
-        strokeOpacity=".85"
-        strokeWidth="5"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M76 12 H124"
-        stroke="#1A1A2E"
-        strokeOpacity=".85"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M96 30 V88"
-        stroke="#fff"
-        strokeOpacity=".8"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      {[0, 1, 2].map((i) => (
-        <circle
-          key={i}
-          cx={96 + i * 8}
-          cy="8"
-          r={4 - i * 0.6}
-          fill={["#7C4DFF", "#EC407A", "#FFCA28"][i]}
-          style={{ animation: `${rise} 2.4s ${i * 0.7}s ease-out infinite` }}
-        />
-      ))}
-    </Box>
-  );
-}
-
-function Hero({ step }: { step: number }) {
-  const size = HERO_SIZES[Math.min(step, 2)];
-  return (
-    <Box
-      sx={{
-        position: "relative",
-        width: size,
-        height: size,
-        my: 3,
-        transition:
-          "width .9s cubic-bezier(.4,0,.2,1), height .9s cubic-bezier(.4,0,.2,1)",
-        animation: `${popIn} .9s cubic-bezier(.34,1.4,.64,1) both`,
-        ...rm,
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          inset: "-20%",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(124,77,255,.4), rgba(236,64,122,.18) 55%, transparent 72%)",
-          animation: `${glow} 4s ease-in-out infinite`,
-          ...rm,
-        }}
-      />
-      {/* орбита угроз */}
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          animation: `${spin} 30s linear infinite`,
-          ...rm,
-        }}
-      >
-        {THREATS.map((t, i) => {
-          const a = (360 / THREATS.length) * i;
-          const counter = keyframes`from{transform:rotate(${-a}deg)}to{transform:rotate(${-a - 360}deg)}`;
-          return (
-            <Box
-              key={t}
-              sx={{
-                position: "absolute",
-                inset: 0,
-                transform: `rotate(${a}deg)`,
-              }}
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "-12%",
-                  left: "50%",
-                  ml: "-0.7em",
-                  fontSize: "clamp(20px, 3.4vh, 32px)",
-                  lineHeight: 1,
-                  display: "inline-block",
-                  animation: `${counter} 30s linear infinite`,
-                  filter: "drop-shadow(0 6px 10px rgba(26,26,46,.25))",
-                  ...rm,
-                }}
-              >
-                {t}
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          inset: "6% 14% 0",
-          filter: "drop-shadow(0 18px 30px rgba(124,77,255,.35))",
-        }}
-      >
-        <Flask />
-      </Box>
-    </Box>
-  );
-}
-
-/* ───────────── страница ───────────── */
 export default function WelcomePage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const [stage, setStage] = useState(0);
   const [launching, setLaunching] = useState(false);
-  const timer = useRef<number>();
+  const [burstOrigin, setBurstOrigin] = useState({ x: 0, y: 0 });
+  const startRef = useRef<HTMLButtonElement>(null);
+  const timerRef = useRef<number>();
 
-  // Автоматический переход между экранами
   useEffect(() => {
-    if (step >= 2) return;
-    const t = setTimeout(() => setStep((s) => s + 1), 4000);
-    return () => clearTimeout(t);
-  }, [step]);
+    if (stage >= 3 || launching) return;
+    const timer = window.setTimeout(
+      () => setStage((current) => current + 1),
+      4200,
+    );
+    return () => window.clearTimeout(timer);
+  }, [stage, launching]);
 
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  useEffect(() => {
+    return () => window.clearTimeout(timerRef.current);
+  }, []);
 
   const start = () => {
-    if (launching) return;
+    if (!startRef.current || launching) return;
+    const rect = startRef.current.getBoundingClientRect();
+    setBurstOrigin({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
     setLaunching(true);
-    timer.current = window.setTimeout(() => navigate("/blocks"), 850);
+    timerRef.current = window.setTimeout(() => navigate("/blocks"), 1100);
   };
 
   return (
-    <Layout>
+    <Box
+      sx={{
+        width: "100vw",
+        height: "100dvh",
+        minHeight: 560,
+        overflow: "hidden",
+        position: "relative",
+        bgcolor: "#FFF8EC",
+        color: "#263238",
+        fontFamily: '"Nunito", "Segoe UI", sans-serif',
+      }}
+    >
+      {/* Flat shapes keep the page playful without the usual AI-style blob background. */}
       <Box
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          overflow: "hidden",
-          px: 3,
-          py: 4,
-          background:
-            "linear-gradient(160deg, #F7F3FF 0%, #FFF3F8 55%, #FFF9E6 100%)",
+          position: "absolute",
+          top: "8%",
+          left: "3%",
+          width: 16,
+          height: 16,
+          bgcolor: "#F45B35",
+          transform: "rotate(18deg)",
+          ...reduceMotion,
+          animation: `${softFloat} 4s ease-in-out infinite`,
         }}
-      >
-        {/* лабораторная «миллиметровка» */}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          top: "18%",
+          right: "6%",
+          width: 24,
+          height: 24,
+          borderRadius: "50%",
+          bgcolor: "#FFD447",
+          ...reduceMotion,
+          animation: `${softFloat} 5s ease-in-out .3s infinite`,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "13%",
+          left: "7%",
+          width: 22,
+          height: 22,
+          borderRadius: "50%",
+          bgcolor: "#11BFA4",
+          ...reduceMotion,
+          animation: `${softFloat} 4.5s ease-in-out .6s infinite`,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "18%",
+          right: "4%",
+          width: 18,
+          height: 18,
+          bgcolor: "#F28BA8",
+          transform: "rotate(45deg)",
+          ...reduceMotion,
+          animation: `${softFloat} 5.5s ease-in-out .5s infinite`,
+        }}
+      />
+
+      {launching && (
         <Box
           sx={{
-            position: "absolute",
+            position: "fixed",
             inset: 0,
+            zIndex: 20,
             pointerEvents: "none",
-            backgroundImage:
-              "radial-gradient(rgba(124,77,255,.18) 1.3px, transparent 1.3px)",
-            backgroundSize: "28px 28px",
-            maskImage:
-              "radial-gradient(ellipse at center, #000 30%, transparent 78%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse at center, #000 30%, transparent 78%)",
           }}
-        />
-
-        {/* блобы */}
-        <Box
-          sx={{
-            position: "absolute",
-            width: 600,
-            height: 600,
-            borderRadius: "50%",
-            top: "-20%",
-            left: "-15%",
-            background:
-              "radial-gradient(circle, rgba(124,77,255,0.35) 0%, transparent 70%)",
-            filter: "blur(80px)",
-            pointerEvents: "none",
-            animation: `${floatA} 12s ease-in-out infinite`,
-            ...rm,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            width: 500,
-            height: 500,
-            borderRadius: "50%",
-            bottom: "-20%",
-            right: "-15%",
-            background:
-              "radial-gradient(circle, rgba(236,64,122,0.35) 0%, transparent 70%)",
-            filter: "blur(80px)",
-            pointerEvents: "none",
-            animation: `${floatB} 14s ease-in-out infinite`,
-            ...rm,
-          }}
-        />
-
-        {/* частицы */}
-        {PARTICLES.map((p, i) => (
-          <Box
-            key={i}
+        >
+          <RocketLaunchRoundedIcon
             sx={{
               position: "absolute",
-              left: p.x,
-              top: p.y,
-              width: p.s,
-              height: p.s,
-              borderRadius: i % 2 ? "3px" : "50%",
-              bgcolor: p.c,
-              opacity: 0.5,
-              pointerEvents: "none",
-              animation: `${bob} ${5 + (i % 3)}s ${p.d}s ease-in-out infinite`,
-              ...rm,
+              left: burstOrigin.x,
+              top: burstOrigin.y,
+              fontSize: 54,
+              color: "#F45B35",
+              animation: `${rocketAway} 1.1s cubic-bezier(.2,.8,.3,1) forwards`,
+              ...reduceMotion,
+            }}
+          />
+          {sparks.map((spark, index) => (
+            <Box
+              key={index}
+              sx={{
+                position: "absolute",
+                left: burstOrigin.x,
+                top: burstOrigin.y,
+                width: index % 2 ? 10 : 7,
+                height: index % 2 ? 7 : 10,
+                borderRadius: index % 3 ? 2 : "50%",
+                bgcolor: spark.color,
+                "--dx": spark.dx,
+                "--dy": spark.dy,
+                "--turn": spark.turn,
+                animation: `${sparkAway} .9s cubic-bezier(.2,.8,.3,1) ${index * 14}ms forwards`,
+                ...reduceMotion,
+              }}
+            />
+          ))}
+        </Box>
+      )}
+
+      <Stack
+        sx={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          zIndex: 1,
+          px: { xs: "5vw", sm: "6vw", lg: "8vw" },
+          pt: { xs: "5vh", md: "7vh" },
+          pb: { xs: "9vh", md: "7vh" },
+          boxSizing: "border-box",
+        }}
+        justifyContent="space-between"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 1.5, md: 2.5 },
+            animation: `${appear} .7s ease both`,
+            ...reduceMotion,
+          }}
+        >
+          <Box
+            component="img"
+            src="/ui-icons/k1.png"
+            alt="CyberKids"
+            sx={{
+              width: { xs: 54, md: 76 },
+              height: { xs: 54, md: 76 },
+              objectFit: "contain",
+              animation: `${softFloat} 4s ease-in-out infinite`,
+              ...reduceMotion,
+            }}
+          />
+          <Box>
+            <Typography
+              sx={{
+                fontSize: { xs: "1.35rem", sm: "1.8rem", md: "2.25rem" },
+                fontWeight: 900,
+                lineHeight: 1,
+                color: "#F45B35",
+              }}
+            >
+              CyberKids
+            </Typography>
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: { xs: ".8rem", sm: "1rem", md: "1.15rem" },
+                fontWeight: 800,
+                letterSpacing: ".04em",
+                color: "#52616B",
+              }}
+            >
+              ЛАБОРАТОРИЯ ЦИФРОВОЙ БЕЗОПАСНОСТИ
+            </Typography>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "repeat(12, 1fr)" },
+            gap: { xs: 2, md: 3 },
+            alignItems: "center",
+            minHeight: 0,
+            flex: 1,
+            py: { xs: 2, md: 3 },
+          }}
+        >
+          <Box
+            sx={{
+              gridColumn: { md: "span 5" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              animation: `${appear} .75s ease .15s both`,
+              ...reduceMotion,
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: "clamp(2rem, 8vw, 3rem)",
+                  sm: "clamp(2.5rem, 5vw, 4.4rem)",
+                },
+                fontWeight: 900,
+                lineHeight: 0.98,
+                letterSpacing: "-.035em",
+                color: "#263238",
+                maxWidth: 600,
+              }}
+            >
+              Интернет — это навык.
+              <Box component="span" sx={{ display: "block", color: "#F45B35" }}>
+                Прокачай его!
+              </Box>
+            </Typography>
+            <Typography
+              sx={{
+                mt: { xs: 2, md: 3 },
+                maxWidth: 520,
+                fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+                lineHeight: 1.5,
+                color: "#52616B",
+                fontWeight: 600,
+              }}
+            >
+              Разбирай реальные цифровые ловушки, принимай решения и становись
+              увереннее в сети.
+            </Typography>
+            <Box
+              sx={{
+                mt: { xs: 2, md: 3 },
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "#11A58D",
+                fontWeight: 800,
+                fontSize: { xs: ".9rem", md: "1.05rem" },
+              }}
+            >
+              <CheckCircleRoundedIcon /> Без скучных лекций
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              gridColumn: { md: "span 7" },
+              minWidth: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+            }}
+          >
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={{ xs: 1.5, md: 2.5 }}
+              sx={{ width: "100%", maxWidth: 900 }}
+            >
+              <Box
+                sx={{
+                  flex: 1,
+                  p: { xs: 2, md: 3 },
+                  minHeight: { xs: 105, sm: 210 },
+                  borderRadius: "24px",
+                  bgcolor: "#FFE2D8",
+                  border: "3px solid #F45B35",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  animation:
+                    stage >= 1 ? `${enterFromRight} .7s ease both` : "none",
+                  opacity: stage >= 1 ? 1 : 0,
+                  ...reduceMotion,
+                }}
+              >
+                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
+                  🎯
+                </Typography>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontWeight: 900,
+                      color: "#D94726",
+                    }}
+                  >
+                    Замечай ловушки
+                  </Typography>
+                  <Typography
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                      mt: 1,
+                      fontSize: "1rem",
+                      lineHeight: 1.35,
+                      color: "#52616B",
+                    }}
+                  >
+                    Фишинг, обман в играх и подозрительные сообщения.
+                  </Typography>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  p: { xs: 2, md: 3 },
+                  minHeight: { xs: 105, sm: 210 },
+                  borderRadius: "24px",
+                  bgcolor: "#FFF0B8",
+                  border: "3px solid #E5B923",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  animation:
+                    stage >= 2 ? `${enterFromRight} .7s ease both` : "none",
+                  opacity: stage >= 2 ? 1 : 0,
+                  ...reduceMotion,
+                }}
+              >
+                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
+                  ⭐
+                </Typography>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontWeight: 900,
+                      color: "#9A7412",
+                    }}
+                  >
+                    Выбирай умно
+                  </Typography>
+                  <Typography
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                      mt: 1,
+                      fontSize: "1rem",
+                      lineHeight: 1.35,
+                      color: "#52616B",
+                    }}
+                  >
+                    Тренируй внимательность в коротких интерактивных заданиях.
+                  </Typography>
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  p: { xs: 2, md: 3 },
+                  minHeight: { xs: 105, sm: 210 },
+                  borderRadius: "24px",
+                  bgcolor: "#D8F5EE",
+                  border: "3px solid #11BFA4",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  animation:
+                    stage >= 3 ? `${enterFromLeft} .7s ease both` : "none",
+                  opacity: stage >= 3 ? 1 : 0,
+                  ...reduceMotion,
+                }}
+              >
+                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
+                  🚀
+                </Typography>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontWeight: 900,
+                      color: "#078B77",
+                    }}
+                  >
+                    Действуй смело
+                  </Typography>
+                  <Typography
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                      mt: 1,
+                      fontSize: "1rem",
+                      lineHeight: 1.35,
+                      color: "#52616B",
+                    }}
+                  >
+                    Собери знания и отправляйся в первый блок.
+                  </Typography>
+                </Box>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            minHeight: { xs: 48, md: 64 },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {stage >= 3 ? (
+            <Button
+              ref={startRef}
+              onClick={start}
+              disabled={launching}
+              endIcon={<ArrowForwardRoundedIcon />}
+              sx={{
+                px: { xs: 3, md: 5 },
+                py: { xs: 1.3, md: 1.8 },
+                borderRadius: "18px",
+                bgcolor: "#F45B35",
+                color: "#FFF",
+                fontSize: { xs: "1rem", md: "1.25rem" },
+                fontWeight: 900,
+                boxShadow: "0 10px 24px rgba(244,91,53,.28)",
+                "&:hover": {
+                  bgcolor: "#D94726",
+                  transform: "translateY(-3px)",
+                },
+                ...reduceMotion,
+              }}
+            >
+              Начать тренировку
+            </Button>
+          ) : (
+            <Typography
+              sx={{
+                color: "#81909A",
+                fontWeight: 700,
+                fontSize: { xs: ".85rem", md: "1rem" },
+              }}
+            >
+              Собираем маршрут обучения...
+            </Typography>
+          )}
+        </Box>
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={1.25}
+        sx={{
+          position: "fixed",
+          left: "50%",
+          bottom: { xs: 14, md: 22 },
+          transform: "translateX(-50%)",
+          zIndex: 5,
+        }}
+      >
+        {[0, 1, 2, 3].map((index) => (
+          <Box
+            key={index}
+            component="button"
+            aria-label={`Этап ${index + 1}`}
+            onClick={() => setStage(index)}
+            // disabled={index > stage}
+            sx={{
+              width: index === stage ? 42 : 12,
+              height: 12,
+              p: 0,
+              border: 0,
+              borderRadius: 8,
+              bgcolor: index <= stage ? "#F45B35" : "#D7CFC5",
+              cursor: index <= stage ? "pointer" : "default",
+              transition: "width .35s ease, background-color .35s ease",
+              "&:hover": index <= stage ? { bgcolor: "#D94726" } : {},
+              ...reduceMotion,
             }}
           />
         ))}
-
-        <Stack
-          spacing={3.5}
-          alignItems="center"
-          sx={{
-            maxWidth: 900,
-            textAlign: "center",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          {/* Экран 1 — заставка */}
-          <Hero step={step} />
-
-          <Typography
-            variant="h2"
-            fontWeight={900}
-            sx={{
-              fontSize: { xs: 28, sm: 40, md: 52 },
-              lineHeight: 1.15,
-              letterSpacing: "-0.02em",
-              background:
-                "linear-gradient(135deg, #7C4DFF 0%, #EC407A 45%, #FFCA28 80%, #7C4DFF 100%)",
-              backgroundSize: "200% auto",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              animation: `${slideUp} .7s ease .2s both, ${shimmer} 7s linear 1s infinite`,
-              ...rm,
-            }}
-          >
-            Добро пожаловать в «Лабораторию цифровой безопасности»!
-          </Typography>
-
-          {/* Экран 2 — суть */}
-          {step >= 1 && (
-            <Stack
-              spacing={2}
-              sx={{
-                p: { xs: 2.5, md: 4 },
-                borderRadius: "28px",
-                position: "relative",
-                overflow: "hidden",
-                bgcolor: "rgba(255,255,255,.66)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
-                border: "1.5px solid rgba(255,255,255,.9)",
-                boxShadow: "0 24px 60px rgba(124,77,255,.18)",
-                animation: `${slideUp} .7s ease both`,
-                ...rm,
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 6,
-                  background:
-                    "linear-gradient(180deg, #7C4DFF, #EC407A, #FFCA28)",
-                },
-              }}
-            >
-              <Typography
-                variant="h5"
-                fontWeight={700}
-                sx={{ color: "#1A1A2E", lineHeight: 1.5 }}
-              >
-                Сегодня тебе предстоит занятие на{" "}
-                <Box
-                  component="span"
-                  sx={{
-                    color: "#7C4DFF",
-                    fontWeight: 800,
-                    background:
-                      "linear-gradient(transparent 62%, rgba(124,77,255,.2) 0)",
-                    px: 0.5,
-                  }}
-                >
-                  «Тренажёре цифровых угроз»
-                </Box>
-                .
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "text.secondary",
-                  fontSize: 18,
-                  lineHeight: 1.7,
-                  maxWidth: 700,
-                }}
-              >
-                Перед тобой появятся задания, благодаря которым ты научишься
-                выявлять мошеннические схемы.
-              </Typography>
-            </Stack>
-          )}
-
-          {/* Экран 3 — призыв */}
-          {step >= 2 && (
-            <Stack
-              spacing={3}
-              alignItems="center"
-              sx={{ animation: `${slideUp} .7s ease both`, mt: 2, ...rm }}
-            >
-              <Typography
-                variant="h4"
-                fontWeight={800}
-                sx={{ color: "#1A1A2E" }}
-              >
-                Ну что, ты готов? Тогда жми на старт!
-              </Typography>
-
-              <Box sx={{ position: "relative" }}>
-                {!launching && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      inset: 0,
-                      borderRadius: "20px",
-                      border: "3px solid #7C4DFF",
-                      pointerEvents: "none",
-                      animation: `${ring} 1.8s ease-out infinite`,
-                      ...rm,
-                    }}
-                  />
-                )}
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={start}
-                  startIcon={
-                    <Box
-                      component="span"
-                      sx={{
-                        display: "inline-flex",
-                        animation: launching
-                          ? `${launch} .8s ease-in forwards`
-                          : `${bob} 1.6s ease-in-out infinite`,
-                        ...rm,
-                      }}
-                    >
-                      <RocketLaunchIcon />
-                    </Box>
-                  }
-                  sx={{
-                    position: "relative",
-                    overflow: "hidden",
-                    py: 2.5,
-                    px: { xs: 5, sm: 8 },
-                    fontSize: 22,
-                    fontWeight: 900,
-                    borderRadius: "20px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    background: "linear-gradient(135deg, #7C4DFF, #EC407A)",
-                    boxShadow: "0 12px 40px rgba(124,77,255,0.45)",
-                    transition: "all .25s ease",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      bottom: 0,
-                      width: "30%",
-                      background:
-                        "linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent)",
-                      animation: `${shine} 3.2s ease-in-out infinite`,
-                      ...rm,
-                    },
-                    "&:hover": {
-                      transform: "translateY(-4px) scale(1.03)",
-                      boxShadow: "0 20px 60px rgba(124,77,255,0.6)",
-                      background: "linear-gradient(135deg, #7C4DFF, #EC407A)",
-                    },
-                    "&:active": { transform: "translateY(-2px) scale(1.01)" },
-                    "&:focus-visible": {
-                      outline: "3px solid #FFCA28",
-                      outlineOffset: 3,
-                    },
-                  }}
-                >
-                  Старт
-                </Button>
-                {launching && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "50%",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {CONFETTI.map((p, i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          position: "absolute",
-                          width: 10,
-                          height: p.round ? 10 : 6,
-                          borderRadius: p.round ? "50%" : "2px",
-                          bgcolor: p.c,
-                          "--dx": p.dx,
-                          "--dy": p.dy,
-                          animation: `${burst} .9s cubic-bezier(.2,.8,.3,1) forwards`,
-                          ...rm,
-                        }}
-                      />
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            </Stack>
-          )}
-
-          {/* индикатор экранов */}
-          <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-            {[0, 1, 2].map((i) => (
-              <Box
-                key={i}
-                component="button"
-                aria-label={`Экран ${i + 1}`}
-                disabled={i <= step}
-                onClick={() => setStep(i)}
-                sx={{
-                  p: 0,
-                  border: 0,
-                  height: 8,
-                  borderRadius: 4,
-                  cursor: i > step ? "pointer" : "default",
-                  width: i === step ? 28 : 8,
-                  bgcolor: i <= step ? "#7C4DFF" : "rgba(124,77,255,.25)",
-                  transition: "all .4s",
-                  animation:
-                    i === step
-                      ? `${dotPulse} 2s ease-in-out infinite`
-                      : undefined,
-                  ...rm,
-                  "&:focus-visible": {
-                    outline: "2px solid #7C4DFF",
-                    outlineOffset: 3,
-                  },
-                }}
-              />
-            ))}
-          </Stack>
-        </Stack>
-      </Box>
-    </Layout>
+      </Stack>
+    </Box>
   );
 }
