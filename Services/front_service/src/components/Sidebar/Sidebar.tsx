@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useAuth } from "@/lib/context/AuthContext";
 import styles from "./Sidebar.module.css";
 
 type Props = {
@@ -26,6 +27,7 @@ export default function Sidebar({
   maxStars = 20,
 }: Props) {
   const [active, setActive] = useState("home");
+  const { logout } = useAuth();
   const progress = Math.min(100, Math.round((userStars / maxStars) * 100));
 
   return (
@@ -111,7 +113,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        <button className={styles.logout}>
+        <button className={styles.logout} onClick={logout}>
           <span className={styles.logoutIcon}>⏻</span>
           <span>Выйти</span>
         </button>

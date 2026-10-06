@@ -15,34 +15,54 @@
   opacity: 0;
   transform: translateY(16px);
   animation: cardIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  /* переменные для 3D-наклона */
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+
   transition:
     border-color 0.35s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.35s ease,
-    box-shadow 0.35s ease;
+    box-shadow 0.45s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 @keyframes cardIn {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+/* ===== Hover ===== */
 .card:hover {
-  border-color: rgba(0, 0, 0, 0.28);
-  background: rgba(255, 255, 255, 0.95);
-  transform: translateY(-6px);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.22);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  transform:
+    translateY(-6px)
+    perspective(1000px)
+    rotateX(var(--rx))
+    rotateY(var(--ry))
+    scale(1.015);
 }
 
-/* Мягкое свечение сверху при hover */
+/* ===== След за курсором ===== */
 .cardGlow {
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: 16px;
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(
-    circle at 50% 0%,
-    rgba(0, 0, 0, 0.06) 0%,
+    220px circle at var(--mx) var(--my),
+    rgba(0, 0, 0, 0.09),
     transparent 60%
   );
   transition: opacity 0.35s ease;
@@ -53,16 +73,81 @@
   opacity: 1;
 }
 
+/* ===== Бегущий блик ===== */
+.cardShine {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+}
+
+.card:hover .cardShine {
+  opacity: 1;
+  animation: cardShine 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cardShine {
+  from { left: -60%; }
+  to   { left: 130%; }
+}
+
+/* ===== Градиентная обводка при hover ===== */
+.cardBorder {
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  padding: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 0, 0, 0) 0deg,
+    rgba(0, 0, 0, 0.35) 90deg,
+    rgba(0, 0, 0, 0) 180deg,
+    rgba(0, 0, 0, 0.35) 270deg,
+    rgba(0, 0, 0, 0) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  transition: opacity 0.35s ease;
+  animation: borderSpin 40s linear infinite;
+  z-index: 1;
+}
+
+.card:hover .cardBorder {
+  opacity: 1;
+}
+
+@keyframes borderSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ===== Шапка ===== */
 .head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  position: relative;
+  z-index: 2;
 }
 
 .category {
-  font-size: 15px;
+  font-size: 17px;
   color: #555;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -70,31 +155,33 @@
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.03);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover .category {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
 }
 
 .level {
-  font-size: 15px;
+  font-size: 17px;
   text-transform: uppercase;
   letter-spacing: 1px;
   padding: 4px 12px;
   border-radius: 999px;
   border: 1px solid currentColor;
   font-weight: 600;
+  transition: transform 0.3s ease;
 }
 
-.easy {
-  color: #666;
+.card:hover .level {
+  transform: scale(1.05);
 }
 
-.medium {
-  color: #333;
-}
-
-.hard {
-  color: #111;
-  background: rgba(0, 0, 0, 0.06);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-}
+.easy   { color: #666; }
+.medium { color: #333; }
+.hard   { color: #111; background: rgba(0, 0, 0, 0.06); box-shadow: 0 0 12px rgba(0, 0, 0, 0.08); }
 
 /* ===== Заголовок и описание ===== */
 .title {
@@ -104,14 +191,28 @@
   line-height: 1.25;
   letter-spacing: 0.3px;
   color: #111;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.card:hover .title {
+  letter-spacing: 0.6px;
 }
 
 .description {
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.55;
   color: #666;
   flex: 1;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.card:hover .description {
+  color: #444;
 }
 
 /* ===== Звёзды ===== */
@@ -119,12 +220,15 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
 .star {
   font-size: 20px;
   line-height: 1;
   transition: transform 0.3s ease;
+  display: inline-block;
 }
 
 .starOn {
@@ -140,14 +244,17 @@
   animation: starPop 0.5s ease;
 }
 
+.card:hover .star:nth-child(2) { animation-delay: 0.08s; }
+.card:hover .star:nth-child(3) { animation-delay: 0.16s; }
+
 @keyframes starPop {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.35); }
-  100% { transform: scale(1); }
+  0%   { transform: scale(1) rotate(0); }
+  50%  { transform: scale(1.45) rotate(15deg); }
+  100% { transform: scale(1) rotate(0); }
 }
 
 .starsLabel {
-  font-size: 15px;
+  font-size: 17px;
   color: #888;
   margin-left: 4px;
   letter-spacing: 0.5px;
@@ -161,6 +268,13 @@
   gap: 12px;
   padding-top: 12px;
   border-top: 1px solid rgba(0, 0, 0, 0.07);
+  position: relative;
+  z-index: 2;
+  transition: border-color 0.3s ease;
+}
+
+.card:hover .footer {
+  border-top-color: rgba(0, 0, 0, 0.14);
 }
 
 .statusDone,
@@ -168,17 +282,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
 }
 
-.statusDone {
-  color: #111;
-}
-
-.statusOpen {
-  color: #888;
-}
+.statusDone { color: #111; }
+.statusOpen { color: #888; }
 
 .checkIcon {
   display: inline-flex;
@@ -191,9 +300,15 @@
   color: #fff;
   font-size: 12px;
   font-weight: 700;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .checkIcon {
+  transform: rotate(360deg) scale(1.1);
 }
 
 .openBtn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -202,30 +317,46 @@
   color: #111;
   border: 1px solid #111;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   font-family: inherit;
   letter-spacing: 0.5px;
   cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
   transition:
-    background 0.25s ease,
-    color 0.25s ease,
-    gap 0.25s ease;
+    color 0.3s ease,
+    gap 0.3s ease;
+}
+
+/* заливка снизу вверх */
+.openBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #111;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
 }
 
 .openBtn:hover {
-  background: #111;
   color: #fff;
   gap: 12px;
 }
 
+.openBtn:hover::before {
+  transform: scaleY(1);
+}
+
 .arrow {
   display: inline-block;
-  transition: transform 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .openBtn:hover .arrow {
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 /* ===== Решённая задача ===== */
@@ -234,16 +365,41 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+.done .title::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #111;
+  border-radius: 50%;
+  margin-left: 8px;
+  vertical-align: middle;
+  opacity: 0.5;
+  transition: transform 0.3s ease;
+}
+
+.done:hover .title::after {
+  transform: scale(1.6);
+}
+
 /* ===== Accessibility ===== */
 @media (prefers-reduced-motion: reduce) {
   .card,
+  .cardBorder,
+  .cardShine,
   .star,
-  .arrow {
+  .arrow,
+  .checkIcon,
+  .openBtn::before,
+  .done .title::after {
     animation: none !important;
     transition: none !important;
   }
   .card {
     opacity: 1;
+    transform: none;
+  }
+  .card:hover {
     transform: none;
   }
 }

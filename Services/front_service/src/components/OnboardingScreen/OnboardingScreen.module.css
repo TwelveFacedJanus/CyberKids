@@ -1,0 +1,588 @@
+/* ============ Экран-оверлей ============ */
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 32px 24px;
+  background: linear-gradient(160deg, #f7f3ff 0%, #fff3f8 55%, #fff9e6 100%);
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    rgba(124, 77, 255, 0.18) 1.3px,
+    transparent 1.3px
+  );
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    #000 30%,
+    transparent 78%
+  );
+}
+
+/* ============ Блобы ============ */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+}
+
+.blobA {
+  width: 600px;
+  height: 600px;
+  top: -20%;
+  left: -15%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 77, 255, 0.35) 0%,
+    transparent 70%
+  );
+  animation: floatA 12s ease-in-out infinite;
+}
+
+.blobB {
+  width: 500px;
+  height: 500px;
+  bottom: -20%;
+  right: -15%;
+  background: radial-gradient(
+    circle,
+    rgba(236, 64, 122, 0.35) 0%,
+    transparent 70%
+  );
+  animation: floatB 14s ease-in-out infinite;
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(40px, 30px); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-40px, -30px); }
+}
+
+/* ============ Частицы ============ */
+.particle {
+  position: absolute;
+  opacity: 0.5;
+  pointer-events: none;
+  animation-name: bob;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* ============ Стек контента ============ */
+.stack {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  touch-action: pan-y;
+}
+
+/* ============ Hero ============ */
+.hero {
+  position: relative;
+  margin: 4px 0;
+  transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: popIn 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60%  { transform: scale(1.12) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.heroGlow {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 77, 255, 0.4),
+    rgba(236, 64, 122, 0.18) 55%,
+    transparent 72%
+  );
+  animation: glow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 0.9;  transform: scale(1.08); }
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  animation: spin 30s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.orbitItem {
+  position: absolute;
+  inset: 0;
+}
+
+.orbitEmoji {
+  position: absolute;
+  top: -12%;
+  left: 50%;
+  margin-left: -0.7em;
+  font-size: clamp(20px, 3.4vh, 32px);
+  line-height: 1;
+  display: inline-block;
+  filter: drop-shadow(0 6px 10px rgba(26, 26, 46, 0.25));
+  animation: counterSpin 30s linear infinite;
+}
+
+@keyframes counterSpin {
+  from { transform: rotate(var(--counter-angle, 0deg)); }
+  to   { transform: rotate(var(--counter-angle-end, -360deg)); }
+}
+
+.flaskWrap {
+  position: absolute;
+  inset: 6% 14% 0;
+  filter: drop-shadow(0 18px 30px rgba(124, 77, 255, 0.35));
+}
+
+.flask {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: bob 5s ease-in-out infinite;
+}
+
+.wave1 { animation: wave 3.2s linear infinite; }
+.wave2 { animation: wave 2.2s linear infinite; }
+
+@keyframes wave {
+  to { transform: translateX(-100px); }
+}
+
+.bubble,
+.sparkle {
+  animation: rise 2.6s ease-in infinite;
+}
+
+@keyframes rise {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+  20%  { opacity: 0.9; }
+  100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+}
+
+/* ============ Видоискатель слайда ============ */
+.sliderViewport {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.slide {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+
+.slideInRight {
+  animation-name: slideInRight;
+}
+
+.slideInLeft {
+  animation-name: slideInLeft;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(60px) scale(0.98); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-60px) scale(0.98); }
+  to   { opacity: 1; transform: translateX(0)     scale(1); }
+}
+
+/* ============ Заголовок ============ */
+.title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    135deg,
+    #7c4dff 0%,
+    #ec407a 45%,
+    #ffca28 80%,
+    #7c4dff 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+/* ============ Карточка ============ */
+.card {
+  position: relative;
+  padding: 24px 32px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 24px 60px rgba(124, 77, 255, 0.18);
+  text-align: left;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, #7c4dff, #ec407a, #ffca28);
+}
+
+.cardTitle {
+  margin: 0 0 12px;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 700;
+  line-height: 1.5;
+  color: #1a1a2e;
+}
+
+.highlight {
+  color: #7c4dff;
+  font-weight: 800;
+  background: linear-gradient(transparent 62%, rgba(124, 77, 255, 0.2) 0);
+  padding: 0 3px;
+}
+
+.cardText {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #4b4b63;
+  max-width: 700px;
+}
+
+/* ============ CTA ============ */
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.ctaTitle {
+  margin: 0;
+  font-size: clamp(20px, 2.6vw, 28px);
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.btnWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.btnRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border: 3px solid #7c4dff;
+  pointer-events: none;
+  animation: ring 1.8s ease-out infinite;
+}
+
+@keyframes ring {
+  0%   { transform: scale(1);    opacity: 0.55; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.startBtn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 64px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7c4dff, #ec407a);
+  box-shadow: 0 12px 40px rgba(124, 77, 255, 0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.startBtn:disabled {
+  cursor: default;
+}
+
+.startBtn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0%         { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100%  { transform: translateX(260%)  skewX(-20deg); }
+}
+
+.startBtn:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 20px 60px rgba(124, 77, 255, 0.6);
+}
+
+.startBtn:active:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.startBtn:focus-visible {
+  outline: 3px solid #ffca28;
+  outline-offset: 3px;
+}
+
+.rocketIdle {
+  display: inline-flex;
+  animation: bob 1.6s ease-in-out infinite;
+}
+
+.rocketLaunching {
+  display: inline-flex;
+  animation: launch 0.8s ease-in forwards;
+}
+
+@keyframes launch {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(140px, -220px) scale(1.4); opacity: 0; }
+}
+
+/* ============ Конфетти ============ */
+.confetti {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  animation: burst 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes burst {
+  0% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) rotate(260deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* ============ Управление ============ */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.navArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #7c4dff;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(124, 77, 255, 0.35);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.navArrow:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #fff;
+  border-color: #7c4dff;
+  box-shadow: 0 8px 20px rgba(124, 77, 255, 0.25);
+}
+
+.navArrow:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.navArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.navArrow:focus-visible {
+  outline: 3px solid #ffca28;
+  outline-offset: 2px;
+}
+
+/* ============ Точки ============ */
+.dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  padding: 0;
+  border: 0;
+  height: 8px;
+  width: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: rgba(124, 77, 255, 0.25);
+  transition: width 0.4s ease, background 0.4s ease, transform 0.4s ease;
+}
+
+.dotPassed {
+  background: #7c4dff;
+}
+
+.dotActive {
+  width: 28px;
+  background: #7c4dff;
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+
+.dot:focus-visible {
+  outline: 2px solid #7c4dff;
+  outline-offset: 3px;
+}
+
+/* ============ Счётчик слайдов ============ */
+.counter {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: rgba(124, 77, 255, 0.7);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ============ Адаптив ============ */
+@media (max-width: 640px) {
+  .screen { padding: 20px 16px; }
+  .card   { padding: 20px; }
+  .startBtn { padding: 16px 40px; font-size: 18px; }
+  .orbitEmoji { font-size: 22px; }
+  .navArrow { width: 38px; height: 38px; font-size: 18px; }
+  .title { font-size: 24px; }
+  .counter { font-size: 11px; }
+}
+
+/* ============ Accessibility ============ */
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .heroGlow,
+  .orbit,
+  .orbitEmoji,
+  .flask,
+  .wave1,
+  .wave2,
+  .bubble,
+  .sparkle,
+  .blobA,
+  .blobB,
+  .particle,
+  .btnRing,
+  .rocketIdle,
+  .rocketLaunching,
+  .confettiPiece,
+  .dotActive,
+  .title,
+  .slideInRight,
+  .slideInLeft,
+  .startBtn::after {
+    animation: none !important;
+  }
+
+  .slide {
+    opacity: 1;
+    transform: none;
+  }
+}

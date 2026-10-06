@@ -284,3 +284,17 @@
   z-index: 1;
   pointer-events: none;
 }
+
+.error {
+  font-size: 17px;
+  color: #ff5c5c;
+  margin: -6px 0 0;
+  letter-spacing: 0.3px;
+  animation: errorShake 0.4s ease;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
