@@ -57,7 +57,7 @@ export default function FeedbackOverlay({
           <Icon sx={{ fontSize: 26, color, mt: 0.25, flexShrink: 0 }} />
           <Box sx={{ flexGrow: 1 }}>
             <Typography fontWeight={800} fontSize={15} color={color}>
-              {correct ? "✅ Верно!" : "🤔 Проверь ещё раз."}
+              {correct ? "Верно!" : "Проверь ещё раз."}
             </Typography>
             <Typography fontSize={13.5} sx={{ mt: 0.5, lineHeight: 1.5 }}>
               {explanation}

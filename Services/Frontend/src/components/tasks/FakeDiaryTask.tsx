@@ -125,7 +125,7 @@ function Spot({
 }) {
   const tappable = active && !st;
   return (
-    <Box sx={{ mb: 1.25 }}>
+    <Box sx={{ mb: { xs: 1.25, sm: 2 } }}>
       <Box
         role={tappable ? "button" : undefined}
         tabIndex={tappable ? 0 : undefined}
@@ -137,7 +137,7 @@ function Spot({
         }
         sx={{
           position: "relative",
-          borderRadius: "12px",
+          borderRadius: { xs: 1.5, sm: `4px` },
           transition: "outline-color .2s",
           outlineOffset: 3,
           outline:
@@ -186,6 +186,7 @@ function Spot({
             mt: 0.75,
             color: P.red,
             lineHeight: 1.4,
+            fontWeight: 700,
             animation: `${pop} .3s both`,
             ...rm,
           }}
@@ -497,11 +498,11 @@ export default function FakeDiaryTask({
             display: "inline-flex",
             gap: 1,
             px: 1.5,
-            py: 0.6,
+            py: { xs: 0.6, sm: 0.8 },
             borderRadius: 99,
             bgcolor: "#E7F8F1",
             color: "#0B7A59",
-            fontSize: 12.5,
+            fontSize: { xs: 16, sm: 20 },
             fontWeight: 700,
           }}
         >
@@ -517,7 +518,7 @@ export default function FakeDiaryTask({
             bgcolor: "#FFF1F1",
             color: P.red,
             fontWeight: 800,
-            fontSize: 13.5,
+            fontSize: { xs: 16, sm: 20 },
             display: "flex",
             gap: 1,
           }}
@@ -541,8 +542,11 @@ export default function FakeDiaryTask({
     if (h.kind === "link")
       return w(
         <Typography
-          fontSize={13}
-          sx={{ color: P.blue, textDecoration: "underline" }}
+          sx={{
+            color: P.blue,
+            textDecoration: "underline",
+            fontSize: { xs: 16, sm: 20 },
+          }}
         >
           {h.label}
         </Typography>,
@@ -550,8 +554,12 @@ export default function FakeDiaryTask({
     return w(
       <Box>
         <Typography
-          fontSize={12}
-          sx={{ color: P.dim, mb: 0.4, fontWeight: 600 }}
+          sx={{
+            color: P.dim,
+            mb: 0.4,
+            fontWeight: 600,
+            fontSize: { xs: 16, sm: 20 },
+          }}
         >
           {h.label}
         </Typography>
@@ -563,7 +571,7 @@ export default function FakeDiaryTask({
             border: "1.5px solid #D5DBEE",
             bgcolor: "#fff",
             color: "#A3ABC7",
-            fontSize: 14,
+            fontSize: { xs: 14, sm: 20 },
           }}
         >
           {h.hint}
@@ -609,13 +617,20 @@ export default function FakeDiaryTask({
             mt: 1,
           }}
         >
-          <Typography fontWeight={800} fontSize={15} sx={{ mb: 0.5 }}>
+          <Typography
+            fontWeight={800}
+            sx={{ mb: 0.5, fontSize: { xs: 16, sm: 20 } }}
+          >
             {c.pageTitle}
           </Typography>
           <Typography
-            fontSize={26}
             fontWeight={900}
-            sx={{ filter: "blur(7px)", userSelect: "none", mb: 1.5 }}
+            sx={{
+              filter: "blur(7px)",
+              userSelect: "none",
+              mb: 1.5,
+              fontSize: { xs: 20, sm: 26 },
+            }}
           >
             algebra: 5
           </Typography>
@@ -655,7 +670,7 @@ export default function FakeDiaryTask({
         border: "1.5px solid #D5DBEE",
         overflowX: "auto",
         whiteSpace: "nowrap",
-        fontSize: 13.5,
+        fontSize: 20,
         fontFamily: "ui-monospace, Menlo, monospace",
       }}
     >
@@ -764,8 +779,8 @@ export default function FakeDiaryTask({
         <Box
           sx={{
             mx: "auto",
-            width: 300,
-            height: 480,
+            width: "15vw",
+            height: "52vh",
             borderRadius: "38px",
             p: 1.2,
             bgcolor: "#0E1224",
@@ -854,7 +869,7 @@ export default function FakeDiaryTask({
 
       {/* ── браузер ── */}
       {showBrowser && (
-        <Box sx={{ maxWidth: 640, mx: "auto" }}>
+        <Box sx={{ maxWidth: { xs: "100%", sm: 840 }, mx: "auto" }}>
           <Box
             sx={{
               position: "relative",
@@ -930,7 +945,7 @@ export default function FakeDiaryTask({
                 </Typography>
                 {urlMsg && (
                   <Typography
-                    fontSize={13.5}
+                    fontSize={20}
                     sx={{
                       lineHeight: 1.5,
                       color: urlSolved ? "#0B7A59" : P.red,
@@ -947,6 +962,7 @@ export default function FakeDiaryTask({
                     onClick={() => setPhase("page")}
                     sx={{
                       justifyContent: "center",
+                      fontSize: 20,
                       animation: `${pop} .4s both`,
                       ...rm,
                     }}
@@ -966,7 +982,7 @@ export default function FakeDiaryTask({
                   <Btn
                     disabled={found < need}
                     onClick={finishSpot}
-                    sx={{ justifyContent: "center" }}
+                    sx={{ justifyContent: "center", fontSize: 20 }}
                   >
                     {found < need
                       ? `Найди ещё ${need - found}`
@@ -977,6 +993,7 @@ export default function FakeDiaryTask({
                     onClick={() => setPhase("decide")}
                     color={P.green}
                     sx={{
+                      fontSize: 20,
                       justifyContent: "center",
                       animation: `${pop} .4s both`,
                       ...rm,
@@ -989,11 +1006,14 @@ export default function FakeDiaryTask({
             )}
             {phase === "decide" && (
               <>
-                <Typography fontWeight={800} fontSize={14.5}>
-                  {c.decideQuestion}
-                </Typography>
+                <Typography fontWeight={800}>{c.decideQuestion}</Typography>
                 {opts.map((o) => (
-                  <Btn key={o.id} color="#3C4A7A" onClick={() => choose(o)}>
+                  <Btn
+                    key={o.id}
+                    color="#3C4A7A"
+                    onClick={() => choose(o)}
+                    sx={{ fontSize: 16 }}
+                  >
                     {o.label}
                     {tried.includes(o.id) ? "  · уже пробовал" : ""}
                   </Btn>
@@ -1022,7 +1042,7 @@ export default function FakeDiaryTask({
                       sx={{
                         display: "flex",
                         gap: 1.25,
-                        fontSize: 13.5,
+                        fontSize: 16,
                         lineHeight: 1.5,
                       }}
                     >
@@ -1048,7 +1068,7 @@ export default function FakeDiaryTask({
                 </Box>
                 <Btn
                   onClick={() => setPhase("quiz")}
-                  sx={{ width: "100%", justifyContent: "center" }}
+                  sx={{ width: "100%", justifyContent: "center", fontSize: 20 }}
                 >
                   Дальше: проверь свои навыки
                 </Btn>
@@ -1108,8 +1128,9 @@ export default function FakeDiaryTask({
                 <Box
                   sx={{
                     fontFamily: "ui-monospace, Menlo, monospace",
-                    fontSize: 14,
+                    fontSize: 18,
                     wordBreak: "break-all",
+                    fontWeight: 700,
                   }}
                 >
                   {a && at >= 0 ? (
@@ -1155,6 +1176,7 @@ export default function FakeDiaryTask({
                       mt: 1,
                       lineHeight: 1.5,
                       color: ok ? "#0B7A59" : P.red,
+                      fontWeight: 700,
                     }}
                   >
                     {ok ? "✅ Верно. " : "🤔 Не совсем. "}

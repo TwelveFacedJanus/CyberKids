@@ -139,12 +139,36 @@ export default function BlockPage() {
 
   return (
     <Layout>
-      <Box>
+      <Box
+        sx={{
+          "@media (min-width: 900px) and (max-height: 900px)": {
+            "& .task-mission-card": {
+              minHeight:
+                "clamp(230px, calc((100vh - 315px) / 2), 360px) !important",
+              "& .MuiCardActionArea-root": { p: "14px !important" },
+              "& .MuiStack-root": { gap: "10px" },
+              "& .mission-description": { WebkitLineClamp: 1 },
+            },
+            "& .special-mission-card": {
+              minHeight:
+                "clamp(230px, calc((100vh - 315px) / 2), 360px) !important",
+              "& .MuiCardActionArea-root": { p: "14px !important" },
+              "& .MuiStack-root": { gap: "10px" },
+            },
+          },
+        }}
+      >
         {/* Хлебные крошки */}
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate("/blocks")}
-          sx={{ mb: 2, color: "#D94726", fontSize: "1.05rem", fontWeight: 800 }}
+          sx={{
+            mb: 2,
+            color: "#070707",
+            fontSize: "1.05rem",
+            fontWeight: 800,
+            background: "#88f597",
+          }}
         >
           Все блоки
         </Button>
@@ -152,8 +176,8 @@ export default function BlockPage() {
         {/* Hero блока */}
         <Box
           sx={{
-            p: { xs: 2.5, md: 4 },
-            mb: 4,
+            p: { xs: 2, sm: "2.2vw", md: "1.8vw" },
+            mb: "clamp(16px, 2vh, 32px)",
             borderRadius: "28px",
             background: `linear-gradient(120deg, ${color}18, #FFFFFF 72%)`,
             border: `3px solid ${color}40`,
@@ -165,15 +189,15 @@ export default function BlockPage() {
           <Stack direction="row" spacing={3} alignItems="center">
             <Box
               sx={{
-                 width: { xs: 76, md: 100 },
-                 height: { xs: 76, md: 100 },
-                 borderRadius: "28px",
+                width: { xs: 76, md: 100 },
+                height: { xs: 76, md: 100 },
+                borderRadius: "28px",
                 background: `linear-gradient(135deg, ${color}, ${color}CC)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                 fontSize: { xs: 38, md: 52 },
-                 boxShadow: `0 14px 34px ${color}55`,
+                fontSize: { xs: 38, md: 52 },
+                boxShadow: `0 14px 34px ${color}55`,
                 flexShrink: 0,
               }}
             >
@@ -183,7 +207,11 @@ export default function BlockPage() {
               <Typography
                 variant="h3"
                 fontWeight={900}
-                 sx={{ color: "#263238", mb: 0.75, fontSize: { xs: "2rem", md: "2.7rem" } }}
+                sx={{
+                  color: "#263238",
+                  mb: 0.75,
+                  fontSize: { xs: "1.8rem", sm: "clamp(2rem, 3.1vw, 2.7rem)" },
+                }}
               >
                 {label}
               </Typography>
@@ -192,8 +220,8 @@ export default function BlockPage() {
                   variant="determinate"
                   value={progress}
                   sx={{
-                     width: { xs: 130, sm: 220 },
-                     height: 12,
+                    width: { xs: 130, sm: 220 },
+                    height: 12,
                     borderRadius: 4,
                     backgroundColor: "#FFFFFF",
                     "& .MuiLinearProgress-bar": {
@@ -202,7 +230,16 @@ export default function BlockPage() {
                     },
                   }}
                 />
-                 <Typography variant="body2" fontWeight={800} sx={{ fontSize: { xs: ".95rem", md: "1.1rem" } }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={800}
+                  sx={{
+                    fontSize: {
+                      xs: ".9rem",
+                      sm: "clamp(.9rem, 1.05vw, 1.1rem)",
+                    },
+                  }}
+                >
                   {completed} / {tasks.length} пройдено
                 </Typography>
               </Stack>
@@ -217,7 +254,11 @@ export default function BlockPage() {
         )}
 
         {/* Карточки заданий */}
-        <Grid container spacing={3}>
+        <Grid
+          container
+          spacing={{ xs: 2, sm: 2.5, lg: 3 }}
+          alignItems="stretch"
+        >
           {special.map((card, i) => (
             <Grid item xs={12} sm={6} md={4} key={card.path}>
               <SpecialCard {...card} />
@@ -234,14 +275,29 @@ export default function BlockPage() {
             return (
               <Grid item xs={12} sm={6} md={4} key={task.id}>
                 <Card
+                  className="task-mission-card"
                   sx={{
                     borderRadius: "28px",
                     borderTop: `8px solid ${task.color || color}`,
                     cursor: "pointer",
+                    minHeight: { xs: 300, sm: "clamp(250px, 27vh, 430px)" },
+                    height: "100%",
                     transition: "all 0.35s cubic-bezier(.2,.8,.3,1)",
                     animation: `cardIn 0.55s cubic-bezier(.2,.8,.3,1) ${i * 0.07}s both`,
                     background: done ? "#F8FFFC" : "#FFFFFF",
                     overflow: "hidden",
+                    position: "relative",
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      width: 130,
+                      height: 130,
+                      borderRadius: "50%",
+                      right: -45,
+                      top: 42,
+                      background: `${task.color || color}12`,
+                      transition: "transform .4s ease",
+                    },
                     "@keyframes cardIn": {
                       "0%": { opacity: 0, transform: "translateY(20px)" },
                       "100%": { opacity: 1, transform: "translateY(0)" },
@@ -249,53 +305,115 @@ export default function BlockPage() {
                     "&:hover": {
                       transform: "translateY(-8px)",
                       boxShadow: `0 22px 48px ${task.color || color}45`,
+                      "&::before": { transform: "scale(1.35)" },
                     },
                   }}
                 >
                   <CardActionArea
                     onClick={() => navigate(`/task/${task.id}`)}
-                    sx={{ p: { xs: 2.5, md: 3 }, height: "100%" }}
+                    sx={{
+                      p: { xs: 2, sm: "clamp(16px, 1.35vw, 24px)" },
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "stretch",
+                    }}
                   >
-                    <Stack spacing={2.25} sx={{ height: "100%" }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Stack
+                      spacing={2.25}
+                      sx={{
+                        height: "100%",
+                        width: "100%",
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Box
                           sx={{
-                            width: 58,
-                            height: 58,
+                            width: "clamp(44px, 4vw, 58px)",
+                            height: "clamp(44px, 4vw, 58px)",
                             borderRadius: "18px",
                             bgcolor: `${task.color || color}18`,
                             color: task.color || color,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: 30,
+                            fontSize: "clamp(24px, 2.1vw, 30px)",
                           }}
                         >
                           {task.emoji || "🎯"}
                         </Box>
                         {done ? (
-                          <Stack direction="row" spacing={0.6} alignItems="center" sx={{ color: "#079476", fontWeight: 800, fontSize: ".95rem" }}>
-                            <CheckCircleRoundedIcon sx={{ fontSize: 22 }} />
+                          <Stack
+                            direction="row"
+                            spacing={0.6}
+                            alignItems="center"
+                            sx={{
+                              color: "#079476",
+                              fontWeight: 800,
+                              fontSize: ".95rem",
+                            }}
+                          >
+                            <CheckCircleRoundedIcon
+                              sx={{ fontSize: "clamp(18px, 1.5vw, 22px)" }}
+                            />
                             Пройдено
                           </Stack>
                         ) : (
-                          <Typography sx={{ color: "#8A979D", fontWeight: 800, fontSize: ".95rem" }}>
+                          <Typography
+                            sx={{
+                              color: "#8A979D",
+                              fontWeight: 800,
+                              fontSize: ".95rem",
+                            }}
+                          >
                             Задание {i + 1}
                           </Typography>
                         )}
                       </Stack>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: task.color || color,
+                          fontWeight: 800,
+                          fontSize: ".9rem",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            bgcolor: task.color || color,
+                          }}
+                        />
+                        МИССИЯ {String(i + 1).padStart(2, "0")}
+                      </Box>
 
                       <Stack direction="row" spacing={0.35}>
                         {[0, 1, 2].map((j) =>
                           j < stars ? (
                             <StarIcon
                               key={j}
-                              sx={{ fontSize: 25, color: "#F4B400" }}
+                              sx={{
+                                fontSize: "clamp(19px, 1.7vw, 25px)",
+                                color: "#F4B400",
+                              }}
                             />
                           ) : (
                             <StarBorderIcon
                               key={j}
-                              sx={{ fontSize: 25, color: "#D9E0E0" }}
+                              sx={{
+                                fontSize: "clamp(19px, 1.7vw, 25px)",
+                                color: "#D9E0E0",
+                              }}
                             />
                           ),
                         )}
@@ -304,19 +422,30 @@ export default function BlockPage() {
                       <Typography
                         variant="h6"
                         fontWeight={800}
-                        sx={{ color: "#263238", lineHeight: 1.25, fontSize: { xs: "1.35rem", md: "1.55rem" } }}
+                        sx={{
+                          color: "#263238",
+                          lineHeight: 1.2,
+                          fontSize: {
+                            xs: "1.15rem",
+                            sm: "clamp(1.05rem, min(1.35vw, 2.5vh), 1.55rem)",
+                          },
+                        }}
                       >
                         {task.title}
                       </Typography>
 
                       <Typography
+                        className="mission-description"
                         variant="body2"
                         color="text.secondary"
                         sx={{
                           lineHeight: 1.6,
-                          fontSize: { xs: "1rem", md: "1.08rem" },
+                          fontSize: {
+                            xs: ".9rem",
+                            sm: "clamp(.86rem, min(.95vw, 2vh), 1.08rem)",
+                          },
                           display: "-webkit-box",
-                          WebkitLineClamp: 3,
+                          WebkitLineClamp: 2,
                           WebkitBoxOrient: "vertical",
                           overflow: "hidden",
                         }}
@@ -324,24 +453,51 @@ export default function BlockPage() {
                         {task.description}
                       </Typography>
 
-                      <Stack direction="row" spacing={1} flexWrap="wrap">
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        flexWrap="wrap"
+                        sx={{ minHeight: 42, alignContent: "flex-start" }}
+                      >
                         <Chip
                           label={`+${task.points} очков`}
                           sx={{
                             bgcolor: "#FFF1D6",
                             fontWeight: 700,
                             color: "#D94726",
-                            fontSize: ".95rem",
+                            fontSize: "clamp(.78rem, .85vw, .95rem)",
                           }}
                         />
                         <Chip
-                          label={TASK_TYPE_LABELS[task.task_type] || "Интерактивное задание"}
-                          sx={{ bgcolor: "#ECF8F5", color: "#087F6D", fontWeight: 700, fontSize: ".9rem" }}
+                          label={
+                            TASK_TYPE_LABELS[task.task_type] ||
+                            "Интерактивное задание"
+                          }
+                          sx={{
+                            bgcolor: "#ECF8F5",
+                            color: "#087F6D",
+                            fontWeight: 700,
+                            fontSize: "clamp(.75rem, .8vw, .9rem)",
+                          }}
                         />
                       </Stack>
-                      <Box sx={{ mt: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", color: task.color || color, fontWeight: 900, fontSize: "1rem" }}>
+                      <Box
+                        sx={{
+                          mt: "auto",
+                          pt: 1,
+                          borderTop: `1px solid ${task.color || color}25`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          color: task.color || color,
+                          fontWeight: 900,
+                          fontSize: "clamp(.86rem, .95vw, 1rem)",
+                        }}
+                      >
                         {done ? "Повторить" : "Начать задание"}
-                        <ArrowForwardRoundedIcon sx={{ fontSize: 24 }} />
+                        <ArrowForwardRoundedIcon
+                          sx={{ fontSize: "clamp(19px, 1.6vw, 24px)" }}
+                        />
                       </Box>
                     </Stack>
                   </CardActionArea>
@@ -378,14 +534,16 @@ function SpecialCard({
 
   return (
     <Card
+      className="special-mission-card"
       sx={{
         borderRadius: "28px",
         borderTop: "8px solid #F45B35",
+        minHeight: { xs: 300, sm: "clamp(280px, 29vh, 430px)" },
+        height: "100%",
         cursor: "pointer",
         transition: "all 0.35s cubic-bezier(.2,.8,.3,1)",
         position: "relative",
         overflow: "hidden",
-        height: "100%",
         background: "linear-gradient(145deg, #FFF1D6, #FFFFFF)",
         boxShadow: "0 14px 34px rgba(244,91,53,.18)",
         "&::before": {
@@ -407,11 +565,19 @@ function SpecialCard({
         sx={{
           p: { xs: 2.5, md: 3 },
           height: "100%",
+          display: "flex",
+          alignItems: "stretch",
           position: "relative",
           zIndex: 1,
         }}
       >
-        <Stack spacing={2}>
+        <Stack
+          spacing={2.25}
+          sx={{
+            width: "100%",
+            minHeight: { xs: 250, sm: "clamp(250px, 25vh, 370px)" },
+          }}
+        >
           {/* Верхняя строка: бейдж слева, эмодзи-иконка справа */}
           <Stack
             direction="row"
@@ -424,10 +590,10 @@ function SpecialCard({
                 label={badge}
                 size="small"
                 sx={{
-                   bgcolor: "#FFE2D5",
-                   color: "#D94726",
-                   fontWeight: 700,
-                   fontSize: ".85rem",
+                  bgcolor: "#FFE2D5",
+                  color: "#D94726",
+                  fontWeight: 700,
+                  fontSize: "clamp(.72rem, .8vw, .85rem)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                 }}
@@ -437,10 +603,10 @@ function SpecialCard({
                 label="Интерактив"
                 size="small"
                 sx={{
-                   bgcolor: "#FFE2D5",
-                   color: "#D94726",
-                   fontWeight: 700,
-                   fontSize: ".85rem",
+                  bgcolor: "#FFE2D5",
+                  color: "#D94726",
+                  fontWeight: 700,
+                  fontSize: "clamp(.72rem, .8vw, .85rem)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                 }}
@@ -449,15 +615,15 @@ function SpecialCard({
 
             <Box
               sx={{
-                 width: 58,
-                 height: 58,
-                 borderRadius: "18px",
-                 background: "#FFFFFF",
+                width: 58,
+                height: 58,
+                borderRadius: "18px",
+                background: "#FFFFFF",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                 fontSize: 32,
-                 boxShadow: "0 7px 16px rgba(244,91,53,.14)",
+                fontSize: 32,
+                boxShadow: "0 7px 16px rgba(244,91,53,.14)",
               }}
             >
               {emoji}
@@ -468,7 +634,14 @@ function SpecialCard({
           <Typography
             variant="h6"
             fontWeight={800}
-             sx={{ color: "#263238", lineHeight: 1.25, fontSize: { xs: "1.35rem", md: "1.55rem" } }}
+            sx={{
+              color: "#263238",
+              lineHeight: 1.25,
+              fontSize: {
+                xs: "1.15rem",
+                sm: "clamp(1.05rem, 1.35vw, 1.55rem)",
+              },
+            }}
           >
             {title}
           </Typography>
@@ -478,8 +651,8 @@ function SpecialCard({
             variant="body2"
             color="text.secondary"
             sx={{
-               lineHeight: 1.6,
-               fontSize: { xs: "1rem", md: "1.08rem" },
+              lineHeight: 1.6,
+              fontSize: { xs: ".9rem", sm: "clamp(.88rem, .95vw, 1.08rem)" },
               display: "-webkit-box",
               WebkitLineClamp: 3,
               WebkitBoxOrient: "vertical",
@@ -490,7 +663,12 @@ function SpecialCard({
           </Typography>
 
           {/* Нижняя строка с чипом, как у обычных заданий */}
-          <Stack direction="row" spacing={1} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={1}
+            flexWrap="wrap"
+            sx={{ mt: "auto" }}
+          >
             <Chip
               label="Открыть"
               size="small"
@@ -498,12 +676,17 @@ function SpecialCard({
                 bgcolor: "#FFFFFF",
                 fontWeight: 700,
                 color: "#D94726",
-                fontSize: ".95rem",
+                fontSize: "clamp(.78rem, .85vw, .95rem)",
               }}
             />
             <Chip
               label="интерактив"
-              sx={{ bgcolor: "#D8F5EE", fontWeight: 700, color: "#087F6D", fontSize: ".9rem" }}
+              sx={{
+                bgcolor: "#D8F5EE",
+                fontWeight: 700,
+                color: "#087F6D",
+                fontSize: "clamp(.75rem, .8vw, .9rem)",
+              }}
             />
           </Stack>
         </Stack>

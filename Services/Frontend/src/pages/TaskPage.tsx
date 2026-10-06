@@ -535,12 +535,14 @@ export default function TaskPage() {
           "& .MuiTypography-overline": {
             fontSize: "clamp(.9rem, 1vw, 1rem) !important",
           },
-          "& [style*='font-size: 12px'], & [style*='font-size: 12.5px'], & [style*='font-size: 14px'], & [style*='font-size: 14.5px']": {
-            fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
-          },
-          "& .MuiFormControlLabel-label, & .MuiInputBase-input, & .MuiFormHelperText-root": {
-            fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
-          },
+          "& [style*='font-size: 12px'], & [style*='font-size: 12.5px'], & [style*='font-size: 14px'], & [style*='font-size: 14.5px']":
+            {
+              fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+            },
+          "& .MuiFormControlLabel-label, & .MuiInputBase-input, & .MuiFormHelperText-root":
+            {
+              fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+            },
           "& .MuiButton-root": { minHeight: 50 },
         }}
       >
@@ -551,25 +553,29 @@ export default function TaskPage() {
             startIcon={<ArrowBack />}
             onClick={() => navigate("/")}
             sx={{
-              color: "text.secondary",
-              "&:hover": { color: "primary.main" },
+              color: "#fff",
+              backgroundColor: "#ff9305",
+              // "&:hover": { color: "#2e3b2d" },
             }}
           >
             Все задания
           </Button>
-            <Typography color="text.secondary" sx={{ fontSize: "1rem" }}>
+          <Typography
+            color="text.secondary"
+            sx={{ fontSize: "1rem", fontWeight: 600 }}
+          >
             /
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ fontWeight: 500 }}
+            sx={{ fontWeight: 600 }}
           >
             {task.title}
           </Typography>
         </Stack>
 
-        {task.task_type != "photo_detective" &&
+        {/* {task.task_type != "photo_detective" &&
           task.task_type != "fake_friend_chat" &&
           task.task_type != "hacked_friend" &&
           task.task_type != "safe_job_sort" &&
@@ -578,12 +584,12 @@ export default function TaskPage() {
           task.task_type != "fake_diary" && (
             <Paper
               sx={{
-                 p: { xs: 2.5, md: 4 },
+                p: { xs: 2.5, md: 4 },
                 mb: 3,
-                 borderLeft: `8px solid ${color}`,
+                borderLeft: `8px solid ${color}`,
                 borderRadius: "20px",
-                 background: "linear-gradient(135deg, #FFFFFF, #FFF5EC)",
-                 boxShadow: "0 14px 34px rgba(244,91,53,.12)",
+                background: "linear-gradient(135deg, #FFFFFF, #FFF5EC)",
+                boxShadow: "0 14px 34px rgba(244,91,53,.12)",
               }}
             >
               <Stack
@@ -593,8 +599,8 @@ export default function TaskPage() {
               >
                 <Box
                   sx={{
-                     width: 76,
-                     height: 76,
+                    width: 76,
+                    height: 76,
                     borderRadius: "16px",
                     background: `linear-gradient(135deg, ${color}, ${darkenHex(color)})`,
                     display: "flex",
@@ -604,23 +610,30 @@ export default function TaskPage() {
                     flexShrink: 0,
                   }}
                 >
-                   <TopicIcon sx={{ fontSize: 42 }} />
+                  <TopicIcon sx={{ fontSize: 42 }} />
                 </Box>
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography
                     variant="h4"
                     fontWeight={800}
-                     sx={{ mt: 1, color: "#263238", fontSize: { xs: "1.7rem", md: "2.2rem" } }}
+                    sx={{
+                      mt: 1,
+                      color: "#263238",
+                      fontSize: { xs: "1.7rem", md: "2.2rem" },
+                    }}
                   >
                     {task.title}
                   </Typography>
-                   <Typography color="text.secondary" sx={{ mt: 1, fontSize: { xs: "1rem", md: "1.15rem" } }}>
+                  <Typography
+                    color="text.secondary"
+                    sx={{ mt: 1, fontSize: { xs: "1rem", md: "1.15rem" } }}
+                  >
                     {task.description}
                   </Typography>
                 </Box>
               </Stack>
             </Paper>
-          )}
+          )} */}
 
         {result ? (
           <ResultCard
@@ -1031,14 +1044,14 @@ function TaskContent({
             disabled={answers.length === 0 || submitting}
             onClick={onSubmit}
             sx={{
-               py: 2,
-               fontSize: "clamp(1.05rem, 1.25vw, 1.25rem)",
+              py: 2,
+              fontSize: "clamp(1.05rem, 1.25vw, 1.25rem)",
               fontWeight: 700,
               borderRadius: "12px",
               background:
                 answers.length === 0
                   ? undefined
-                   : "linear-gradient(135deg, #FF6B35, #FF8C42)",
+                  : "linear-gradient(135deg, #FF6B35, #FF8C42)",
             }}
           >
             {submitting ? (

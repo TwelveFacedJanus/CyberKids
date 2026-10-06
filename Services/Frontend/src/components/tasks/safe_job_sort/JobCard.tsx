@@ -190,7 +190,7 @@ export default function JobCard({
                 sx={{
                   textTransform: "none",
                   fontWeight: 700,
-                  fontSize: 13,
+                  fontSize: 20,
                   color: "#6B7280",
                 }}
               >
@@ -257,7 +257,7 @@ export default function JobCard({
               py: 1.5,
               borderRadius: "12px",
               fontWeight: 800,
-              fontSize: 14,
+              fontSize: 20,
               bgcolor: "#22C55E",
               textTransform: "none",
               "&:hover": { bgcolor: "#16A34A" },
@@ -274,7 +274,7 @@ export default function JobCard({
               py: 1.5,
               borderRadius: "12px",
               fontWeight: 800,
-              fontSize: 14,
+              fontSize: 20,
               bgcolor: "#EF4444",
               textTransform: "none",
               "&:hover": { bgcolor: "#DC2626" },

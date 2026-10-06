@@ -451,11 +451,11 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
               sx={{
                 color: "#F45B35",
                 fontWeight: 900,
-                fontSize: "1.6rem",
+                fontSize: "1.5rem",
                 lineHeight: 1,
               }}
             >
-              CyberKids
+              ЛАБОРАТОРИЯ
             </Typography>
             <Typography
               sx={{
@@ -465,10 +465,10 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
                 letterSpacing: ".06em",
                 mt: 0.65,
                 // whiteSpace: "nowrap",
-                lineHeight: 0.9,
+                lineHeight: 1,
               }}
             >
-              ЦИФРОВАЯ БЕЗОПАСНОСТЬ
+              ЦИФРОВОЙ БЕЗОПАСНОСТИ
             </Typography>
           </Box>
         </Box>
