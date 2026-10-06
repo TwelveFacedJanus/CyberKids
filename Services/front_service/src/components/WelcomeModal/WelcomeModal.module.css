@@ -1,0 +1,85 @@
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #111;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.title { color: #111; }
+.text { color: #555; }
+
+.tag { color: #888; }
+.counter { color: #111; }
+
+.close {
+  color: #888;
+}
+.close:hover {
+  color: #111;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.dot { background: #ddd; }
+.dotActive { background: #111; }
+
+.ghost {
+  color: #666;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.ghost:hover {
+  border-color: #111;
+  color: #111;
+}
+
+.button {
+  background: #111;
+  color: #fff;
+  border: 1px solid #111;
+}
+.button:hover {
+  background: #fff;
+  color: #111;
+}
+
+.skipGlobal {
+  background: rgba(255, 255, 255, 0.85);
+  color: #666;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.skipGlobal:hover {
+  color: #111;
+  border-color: #111;
+  background: #fff;
+}
+
+.skipInline { color: #888; }
+.skipInline:hover { color: #111; }
+
+/* Прожектор — тень вокруг цели теперь белая */
+.spotlight {
+  box-shadow:
+    0 0 0 9999px rgba(255, 255, 255, 0.85),
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 0 32px rgba(0, 0, 0, 0.15);
+  animation: pulseLight 2s ease-in-out infinite;
+}
+
+@keyframes pulseLight {
+  0%, 100% {
+    box-shadow:
+      0 0 0 9999px rgba(255, 255, 255, 0.85),
+      0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 0 24px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 9999px rgba(255, 255, 255, 0.85),
+      0 0 0 1px rgba(0, 0, 0, 0.6),
+      0 0 40px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.fullDark {
+  background: rgba(255, 255, 255, 0.85);
+}

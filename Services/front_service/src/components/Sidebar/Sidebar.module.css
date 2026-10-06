@@ -1,0 +1,522 @@
+/* ===== Контейнер ===== */
+.sidebar {
+  position: relative;
+  z-index: 2;
+  width: 300px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #111;
+}
+
+/* Левая светящаяся полоса — теперь тёмная */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: linePulse 4s ease-in-out infinite;
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+/* ===== Логотип ===== */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: brandIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+@keyframes brandIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brandIcon {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shield {
+  width: 100%;
+  height: 100%;
+  color: #111;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.15));
+}
+
+.shieldPath {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: draw 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+
+.shieldCheck {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: draw 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.1s forwards;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.brandPulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.15) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: brandPulse 3s ease-in-out 1.6s infinite;
+  pointer-events: none;
+}
+
+@keyframes brandPulse {
+  0%, 100% { opacity: 0; transform: scale(0.9); }
+  50%      { opacity: 1; transform: scale(1.1); }
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brandLine1 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.brandLine2 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #111;
+  font-family: var(--font-tiny-f);
+}
+
+/* ===== Навигация ===== */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.nav::-webkit-scrollbar {
+  width: 4px;
+}
+.nav::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+}
+.nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.navBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px 12px 20px;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 17px;
+  font-family: inherit;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    padding-left 0.25s ease;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: slideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes slideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.navIndicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  background: #111;
+  border-radius: 0 2px 2px 0;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+}
+
+.navDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background 0.25s ease, transform 0.25s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.navLabel {
+  flex: 1;
+  line-height: 1.35;
+  transition: letter-spacing 0.25s ease;
+}
+
+.navChevron {
+  font-size: 18px;
+  line-height: 1;
+  color: #aaa;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.navShine {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.06) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+.navBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+  padding-left: 24px;
+}
+
+.navBtn:hover .navDot {
+  background: #111;
+  transform: scale(1.4);
+}
+
+.navBtn:hover .navChevron {
+  opacity: 1;
+  transform: translateX(0);
+  color: #111;
+}
+
+.navBtn:hover .navShine {
+  animation: shine 0.9s ease;
+}
+
+@keyframes shine {
+  from { left: -60%; }
+  to   { left: 130%; }
+}
+
+.active {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
+  padding-left: 24px;
+}
+
+.active .navIndicator {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.active .navDot {
+  background: #111;
+  transform: scale(1.4);
+}
+
+.active .navLabel {
+  letter-spacing: 0.3px;
+  font-weight: 600;
+}
+
+.active .navChevron {
+  opacity: 1;
+  transform: translateX(0);
+  color: #111;
+}
+
+/* ===== Низ ===== */
+.bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Профиль ===== */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatarWrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.avatarRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.55) 25%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.55) 75%,
+    transparent 100%
+  );
+  animation: ringSpin 6s linear infinite;
+}
+
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+.avatar {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.profile:hover .avatar {
+  transform: scale(1.06);
+}
+
+.status {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 10px;
+  height: 10px;
+  background: #111;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0); }
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.userName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #111;
+}
+
+.starsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  color: #666;
+}
+
+.starIcon {
+  color: #111;
+  font-size: 17px;
+  transition: transform 0.3s ease;
+}
+
+.profile:hover .starIcon {
+  transform: rotate(72deg) scale(1.15);
+}
+
+.starsValue {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-weight: 600;
+  color: #111;
+}
+
+.starsMax {
+  font-weight: 400;
+  color: #999;
+  font-size: 17px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #999 0%, #111 100%);
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== Выход ===== */
+.logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #666;
+  font-size: 17px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    color 0.25s ease,
+    background 0.25s ease,
+    letter-spacing 0.25s ease;
+  font-family: inherit;
+}
+
+.logoutIcon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.logout:hover {
+  border-color: #111;
+  color: #111;
+  background: rgba(0, 0, 0, 0.04);
+  letter-spacing: 0.5px;
+}
+
+.logout:hover .logoutIcon {
+  transform: translateX(3px);
+}
+
+/* ===== Адаптив ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 220px;
+    padding: 20px 14px;
+  }
+  .brandLine1,
+  .brandLine2 {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+  .userName { font-size: 16px; }
+  .navBtn {
+    font-size: 17px;
+    padding: 10px 10px 10px 16px;
+  }
+  .active,
+  .navBtn:hover {
+    padding-left: 18px;
+  }
+}
+
+/* ===== Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+  .avatarRing,
+  .status,
+  .sidebar::before,
+  .navBtn,
+  .navShine,
+  .brandPulse,
+  .shieldPath,
+  .shieldCheck {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+  .navBtn,
+  .brand,
+  .bottom {
+    opacity: 1;
+    transform: none;
+  }
+}
