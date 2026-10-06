@@ -1,0 +1,38 @@
+.trail {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 400px;        /* подгоните под желаемый размер */
+    height: auto;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.9;
+}
+
+.path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: drawPath 3s ease-in-out 1s forwards;
+}
+
+.trailzigzag {
+    position: fixed;
+    left: 0;
+    bottom: 50vh;
+    width: 400px;
+    height: auto;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.pathzigzag {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: drawPath 3s ease-in-out 1s forwards;
+}
+
+
+@keyframes drawPath {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
+}

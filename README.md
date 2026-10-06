@@ -1,6 +1,1 @@
-# Start dev mode
-
-```sh
-docker-compose -f docker-compose.dev.yml up -d
-```
-
+# Security-Laboratory

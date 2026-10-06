@@ -1,0 +1,25 @@
+.wrapper {
+    position: relative;
+    top: 15vh;
+    left: 45%;
+    rotate: -15deg;
+    z-index: 3;
+    pointer-events: none;
+    animation: levitate 6s ease-in-out infinite;
+}
+
+.security {
+    display: block;
+    width: 480px;
+    height: auto;
+    filter: drop-shadow(0 8px 16px rgba(163, 81, 57, 0.35));
+}
+
+@keyframes levitate {
+    0%, 100% {
+        transform: translateY(0) rotate(-3deg);
+    }
+    50% {
+        transform: translateY(-16px) rotate(3deg);
+    }
+}
