@@ -1,4 +1,3 @@
-// frontend/src/components/PhishingReveal.tsx
 import { useEffect, useMemo, useState } from "react";
 
 export interface PhishingRevealProps {
@@ -9,7 +8,78 @@ export interface PhishingRevealProps {
   onFinished?: () => void;
 }
 
-type Stage = "send" | "hijack" | "arrow" | "final";
+type RevealStage = "send" | "hijack" | "inspect" | "final";
+
+const colors = {
+  ink: "#203238",
+  muted: "#62737A",
+  cream: "#FFF8EC",
+  orange: "#F45B35",
+  yellow: "#FFD447",
+  mint: "#11BFA4",
+  cyan: "#48BFE3",
+  red: "#D94726",
+};
+
+const signs = [
+  {
+    number: "01",
+    icon: "🌐",
+    title: "Неправильный адрес",
+    text: "Настоящий Roblox живёт на roblox.com. В этой копии адрес написан иначе.",
+    color: colors.orange,
+  },
+  {
+    number: "02",
+    icon: "🔑",
+    title: "Просят пароль",
+    text: "Поддельная страница пытается получить данные, которые нельзя отдавать по чужой ссылке.",
+    color: colors.yellow,
+  },
+  {
+    number: "03",
+    icon: "🧩",
+    title: "Всё выглядит знакомо",
+    text: "Логотип и кнопки можно скопировать. Внешний вид ещё не доказывает, что сайт настоящий.",
+    color: colors.mint,
+  },
+  {
+    number: "04",
+    icon: "📤",
+    title: "Данные уходят",
+    text: "После нажатия Log In введённые данные отправляются владельцу подделки.",
+    color: colors.cyan,
+  },
+];
+
+const keyframes = `
+  @keyframes revealIn {
+    from { opacity: 0; transform: translateY(24px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes revealInRight {
+    from { opacity: 0; transform: translateX(42px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes dataPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 18px 50px rgba(244,91,53,.18); }
+    50% { transform: scale(1.025); box-shadow: 0 24px 70px rgba(244,91,53,.32); }
+  }
+  @keyframes routeDash {
+    to { stroke-dashoffset: -180; }
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: .3; transform: scale(1); }
+    50% { opacity: .65; transform: scale(1.08); }
+  }
+  @keyframes finalIn {
+    from { opacity: 0; transform: translateY(30px) scale(.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+`;
 
 export default function PhishingReveal({
   open,
@@ -18,671 +88,582 @@ export default function PhishingReveal({
   onClose,
   onFinished,
 }: PhishingRevealProps) {
-  const [stage, setStage] = useState<Stage>("send");
-  const [arrowStep, setArrowStep] = useState(0);
+  const [stage, setStage] = useState<RevealStage>("send");
+  const [activeSign, setActiveSign] = useState(0);
+  const maskedPassword = useMemo(() => password.replace(/./g, "•"), [password]);
 
   useEffect(() => {
     if (!open) return;
     setStage("send");
-    setArrowStep(0);
+    setActiveSign(0);
 
-    const t1 = setTimeout(() => setStage("hijack"), 3500);
-    const t2 = setTimeout(() => setStage("arrow"), 8000);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (stage !== "arrow") return;
-    const delays = [0, 5000, 10000, 15000];
-    const timers = delays.map((d, i) =>
-      setTimeout(() => setArrowStep(i + 1), d),
-    );
-    const finish = setTimeout(() => {
+    const hijackTimer = window.setTimeout(() => setStage("hijack"), 10000);
+    const inspectTimer = window.setTimeout(() => setStage("inspect"), 22500);
+    const finalTimer = window.setTimeout(() => {
       setStage("final");
       onFinished?.();
-    }, 22000);
+    }, 57000);
+
     return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(finish);
+      window.clearTimeout(hijackTimer);
+      window.clearTimeout(inspectTimer);
+      window.clearTimeout(finalTimer);
     };
-  }, [stage, onFinished]);
+  }, [open, onFinished]);
+
+  useEffect(() => {
+    if (stage !== "inspect") return;
+    const timer = window.setInterval(() => {
+      setActiveSign((current) =>
+        current < signs.length - 1 ? current + 1 : current,
+      );
+    }, 6000);
+    return () => window.clearInterval(timer);
+  }, [stage]);
 
   if (!open) return null;
 
-  const isFinal = stage === "final";
-
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        pointerEvents: "auto",
-        overflow: "hidden",
-        fontFamily: '"Builder Sans", "Inter", sans-serif',
-        animation: "screenFadeIn 0.7s ease both",
-      }}
-    >
-      {/* Затемнение с blur */}
+    <div style={styles.root}>
+      <style>{keyframes}</style>
+      <div style={styles.backdrop} />
       <div
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "rgba(8, 8, 15, 0.82)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          animation: "screenFadeIn 0.7s ease both",
+          ...styles.colorWash,
+          background:
+            stage === "final" ? "rgba(17,191,164,.1)" : "rgba(244,91,53,.1)",
         }}
       />
 
-      {/* Красная пульсирующая рамка */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          boxShadow: "inset 0 0 120px 20px rgba(229, 57, 53, 0.55)",
-          animation:
-            "frameGlowIn 1.2s ease-out both, pulseFrame 2.4s ease-in-out 1.2s infinite",
-          pointerEvents: "none",
-        }}
-      />
+      {stage === "final" ? (
+        <FinalPanel onClose={onClose} />
+      ) : (
+        <main style={styles.shell}>
+          <header style={styles.header}>
+            <div style={styles.eyebrow}>
+              <span
+                style={{
+                  ...styles.liveDot,
+                  background: stage === "hijack" ? colors.red : colors.orange,
+                }}
+              />
+              УЧЕБНАЯ СИМУЛЯЦИЯ · РАЗБОР СИТУАЦИИ
+            </div>
+            <div style={styles.stageTitle}>
+              {stage === "send" && "Смотрим, что происходит с данными"}
+              {stage === "hijack" && "Данные покинули страницу"}
+              {stage === "inspect" && "Разбираем подделку по признакам"}
+            </div>
+            <div style={styles.stageHint}>
+              {stage === "send" &&
+                "Ты нажал Log In — запусти анимацию и следи за маршрутом."}
+              {stage === "hijack" &&
+                "Теперь видно, почему нельзя вводить настоящие данные."}
+              {stage === "inspect" &&
+                `Признак ${activeSign + 1} из ${signs.length}`}
+            </div>
+          </header>
 
-      {/* Заголовок сверху */}
-      <div
-        style={{
-          position: "absolute",
-          top: 40,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          color: "#fff",
-          zIndex: 3,
-          padding: "0 20px",
-        }}
-      >
-        <StageText stage={stage} />
-      </div>
-
-      {/* Центральная визуализация */}
-      <DataFlight stage={stage} username={username} password={password} />
-
-      {/* Стрелки-подсказки */}
-      {stage === "arrow" && <ArrowOverlay step={arrowStep} />}
-
-      {/* Финальная плашка */}
-      {isFinal && <FinalPanel onClose={onClose} />}
-
-      {/* Keyframes */}
-      <style>{`
-        @keyframes screenFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes frameGlowIn {
-          0%   { box-shadow: inset 0 0 0 0 rgba(229,57,53,0); }
-          100% { box-shadow: inset 0 0 120px 20px rgba(229,57,53,0.55); }
-        }
-        @keyframes pulseFrame {
-          0%, 100% { box-shadow: inset 0 0 120px 20px rgba(229,57,53,0.55); }
-          50%      { box-shadow: inset 0 0 180px 40px rgba(229,57,53,0.85); }
-        }
-        @keyframes stageEnter {
-          0%   { opacity: 0; transform: translateY(24px); filter: blur(6px); }
-          100% { opacity: 1; transform: translateY(0);    filter: blur(0); }
-        }
-        @keyframes subtitleFade {
-          0%   { opacity: 0; letter-spacing: 0.45em; }
-          100% { opacity: 0.75; letter-spacing: 0.25em; }
-        }
-        @keyframes dataFly {
-          0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-          100% { transform: translate(calc(50vw - 40px), -50vh) scale(0.4) rotate(-12deg); opacity: 0; }
-        }
-        @keyframes envelope {
-          0%, 100% { transform: translate(-50%, -50%) rotate(-4deg); }
-          50%      { transform: translate(-50%, calc(-50% - 12px)) rotate(4deg); }
-        }
-        @keyframes moneyFall {
-          0%   { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
-          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-        }
-        @keyframes arrowPulse {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); }
-          50%      { transform: translate(-50%, -50%) scale(1.35); }
-        }
-        @keyframes arrowDotIn {
-          0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-          60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
-          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        @keyframes lineGrow {
-          0%   { transform: scaleX(0); opacity: 0; }
-          100% { transform: scaleX(1); opacity: 0.9; }
-        }
-        @keyframes lineGrowY {
-          0%   { transform: scaleY(0); opacity: 0; }
-          100% { transform: scaleY(1); opacity: 0.9; }
-        }
-        @keyframes labelIn {
-          0%   { opacity: 0; transform: translateY(10px) scale(0.95); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes stampIn {
-          0%   { transform: scale(3) rotate(-30deg); opacity: 0; }
-          60%  { transform: scale(0.9) rotate(-12deg); opacity: 1; }
-          100% { transform: scale(1) rotate(-12deg); opacity: 1; }
-        }
-        @keyframes finalPanelIn {
-          0%   { opacity: 0; transform: translateY(40px) scale(0.95); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes hackerLogIn {
-          0%   { opacity: 0; transform: translateX(30px); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-      `}</style>
+          {stage === "send" && (
+            <SendScene username={username} password={maskedPassword} />
+          )}
+          {stage === "hijack" && (
+            <HijackScene username={username} password={maskedPassword} />
+          )}
+          {stage === "inspect" && (
+            <InspectScene activeSign={activeSign} onSelect={setActiveSign} />
+          )}
+        </main>
+      )}
     </div>
   );
 }
 
-/* ============ ЗАГОЛОВОК СТАДИИ ============ */
-function StageText({ stage }: { stage: Stage }) {
-  const map: Record<Stage, { sub: string; title: string; key: string }> = {
-    send: {
-      sub: "Отправка данных...",
-      title: "Ты ввёл данные...",
-      key: "send",
-    },
-    hijack: {
-      sub: "⚠ Данные перехвачены",
-      title: "Они улетели мошеннику",
-      key: "hijack",
-    },
-    arrow: {
-      sub: "🔍 Что ты не заметил",
-      title: "Вот на что стоило смотреть",
-      key: "arrow",
-    },
-    final: { sub: "🎣 Фишинг", title: "Тебя обманули", key: "final" },
-  };
-  const cur = map[stage];
-
-  return (
-    <div
-      key={cur.key}
-      style={{
-        animation: "stageEnter 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) both",
-      }}
-    >
-      <div
-        style={{
-          fontSize: 13,
-          letterSpacing: "0.25em",
-          textTransform: "uppercase",
-          opacity: 0.75,
-          marginBottom: 12,
-          animation: "subtitleFade 0.9s ease both",
-        }}
-      >
-        {cur.sub}
-      </div>
-      <h1
-        style={{
-          margin: 0,
-          fontSize: "clamp(28px, 5vw, 52px)",
-          fontWeight: 900,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.15,
-          textShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}
-      >
-        {cur.title}
-      </h1>
-    </div>
-  );
-}
-
-/* ============ ВИЗУАЛИЗАЦИЯ ПОЛЁТА ДАННЫХ ============ */
-function DataFlight({
-  stage,
+function SendScene({
   username,
   password,
 }: {
-  stage: Stage;
   username: string;
   password: string;
 }) {
-  const maskedPassword = useMemo(() => password.replace(/./g, "•"), [password]);
-
-  if (stage !== "send" && stage !== "hijack") return null;
-
   return (
-    <>
-      {/* Карточка с данными */}
+    <section style={styles.scene}>
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          background: "#272930",
-          border: "1px solid rgba(255,255,255,0.12)",
-          borderRadius: 16,
-          padding: "24px 32px",
-          minWidth: 320,
-          boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
-          color: "#fff",
-          zIndex: 2,
-          animation:
-            stage === "send"
-              ? "stageEnter 0.7s ease both, envelope 3s ease-in-out 0.7s infinite"
-              : "dataFly 1.4s cubic-bezier(0.6, 0, 0.75, 0) forwards",
+          ...styles.dataCard,
+          animation: "dataPulse 3s ease-in-out infinite",
         }}
       >
-        <div
-          style={{
-            fontSize: 12,
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "#E53935",
-            fontWeight: 700,
-            marginBottom: 16,
-            textAlign: "center",
-          }}
-        >
-          📨 Твои данные
+        <div style={{ ...styles.cardLabel, color: colors.orange }}>
+          📨 Введённые данные
         </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div>
-            <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 2 }}>
-              Username
-            </div>
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                fontFamily: "monospace",
-                wordBreak: "break-all",
-              }}
-            >
-              {username || "—"}
-            </div>
-          </div>
-
-          <div>
-            <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 2 }}>
-              Password
-            </div>
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                fontFamily: "monospace",
-                letterSpacing: 1,
-              }}
-            >
-              {maskedPassword || "—"}
-            </div>
-          </div>
+        <div style={styles.dataRow}>
+          <span>Имя пользователя</span>
+          <b>{username || "—"}</b>
+        </div>
+        <div style={styles.dataRow}>
+          <span>Пароль</span>
+          <b>{password || "—"}</b>
+        </div>
+        <div style={styles.safeNote}>
+          Пока данные здесь — они ещё не отправлены.
         </div>
       </div>
+      <div style={styles.routeArea}>
+        <div style={{ ...styles.routeNode, background: colors.cyan }}>ТЫ</div>
+        <div style={styles.routeLine} />
+        <div style={{ ...styles.routeNode, background: colors.orange }}>
+          САЙТ
+        </div>
+        <div style={styles.routeCaption}>нажатие Log In запускает отправку</div>
+      </div>
+    </section>
+  );
+}
 
-      {/* Деньги */}
-      {stage === "hijack" && (
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div
-              key={i}
+function HijackScene({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) {
+  return (
+    <section style={styles.scene}>
+      <div style={styles.hijackGrid}>
+        <div style={styles.dataCard}>
+          <div style={{ ...styles.cardLabel, color: colors.red }}>
+            ⚠ Данные перехвачены
+          </div>
+          <div style={styles.dataRow}>
+            <span>Username</span>
+            <b>{username || "—"}</b>
+          </div>
+          <div style={styles.dataRow}>
+            <span>Password</span>
+            <b>{password || "—"}</b>
+          </div>
+        </div>
+        <div style={styles.transferArrow}>→</div>
+        <div style={styles.scamNode}>
+          <div style={{ fontSize: 44 }}>🎣</div>
+          <b>Мошеннический сервер</b>
+          <span>scam-node.ru</span>
+          <small>получает твой логин и пароль</small>
+        </div>
+      </div>
+      <div style={styles.warningStrip}>
+        <span>🚫</span>
+        <b>Это не вход в Roblox.</b>
+        <span>Это копия, которая собирает данные.</span>
+      </div>
+    </section>
+  );
+}
+
+function InspectScene({
+  activeSign,
+  onSelect,
+}: {
+  activeSign: number;
+  onSelect: (index: number) => void;
+}) {
+  const current = signs[activeSign];
+  return (
+    <section style={styles.inspectLayout}>
+      <div style={styles.fakeBrowser}>
+        <div style={styles.browserBar}>
+          <span style={{ background: "#FF6B6B" }} />
+          <span style={{ background: "#FFD447" }} />
+          <span style={{ background: "#11BFA4" }} />
+          <div style={styles.fakeAddress}>roblox/com/auth</div>
+        </div>
+        <div style={styles.fakePage}>
+          <div style={styles.fakeLogo}>ROBLOX</div>
+          <div style={styles.fakeInput} />
+          <div style={styles.fakeInput} />
+          <div style={styles.fakeLogin}>Log In</div>
+          <div style={styles.fakeAlert}>Подозрительная копия страницы</div>
+        </div>
+      </div>
+      <div style={styles.signPanel}>
+        <div style={{ ...styles.signIcon, background: current.color }}>
+          {current.icon}
+        </div>
+        <div style={styles.signNumber}>ПРИЗНАК {current.number}</div>
+        <h2 style={styles.signTitle}>{current.title}</h2>
+        <p style={styles.signText}>{current.text}</p>
+        <div style={styles.signNav}>
+          {signs.map((sign, index) => (
+            <button
+              key={sign.number}
+              onClick={() => onSelect(index)}
               style={{
-                position: "absolute",
-                left: `${(i * 41) % 100}%`,
-                top: "-10%",
-                fontSize: 20 + ((i * 7) % 14),
-                animation: `moneyFall ${1.8 + (i % 5) * 0.35}s linear ${
-                  (i % 8) * 0.12
-                }s infinite`,
+                ...styles.signDot,
+                background: index === activeSign ? sign.color : "#D9E2E3",
               }}
-            >
-              {["💸", "🪙", "💰", "🎮", "💎"][i % 5]}
-            </div>
+              aria-label={`Признак ${index + 1}`}
+            />
           ))}
         </div>
-      )}
-
-      {/* Логи сервера мошенника */}
-      {stage === "hijack" && (
-        <div
-          style={{
-            position: "absolute",
-            top: 120,
-            right: 60,
-            background: "#0D0D14",
-            border: "2px solid #E53935",
-            borderRadius: 12,
-            padding: "12px 18px",
-            color: "#E53935",
-            fontFamily: "monospace",
-            fontSize: 13,
-            fontWeight: 700,
-            zIndex: 3,
-            boxShadow: "0 0 60px rgba(229,57,53,0.6)",
-          }}
-        >
-          <div
-            style={{
-              opacity: 0.6,
-              marginBottom: 4,
-              animation: "hackerLogIn 0.5s ease 0s both",
-            }}
-          >
-            🖥 server: scam-node.ru
-          </div>
-          <div style={{ animation: "hackerLogIn 0.5s ease 0.4s both" }}>
-            ✔ получено: {username}
-          </div>
-          <div style={{ animation: "hackerLogIn 0.5s ease 0.8s both" }}>
-            ✔ получено: {maskedPassword}
-          </div>
-          <div
-            style={{
-              marginTop: 6,
-              color: "#ff8a80",
-              animation: "hackerLogIn 0.5s ease 1.2s both",
-            }}
-          >
-            ⏳ кража аккаунта...
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* ============ СТРЕЛКИ-ПОДСКАЗКИ ============ */
-interface ArrowDef {
-  x: number;
-  y: number;
-  text: string;
-  from: "top" | "bottom" | "left" | "right";
-}
-
-const ARROWS: ArrowDef[] = [
-  {
-    x: 0.5,
-    y: 0.06,
-    text: "Настоящий Roblox — на roblox.com. А тут — roblox/com/auth",
-    from: "top",
-  },
-  {
-    x: 0.5,
-    y: 0.5,
-    text: "Тебя торопят и просят данные — это классический приём фишеров",
-    from: "left",
-  },
-  {
-    x: 0.86,
-    y: 0.06,
-    text: "Кнопка «Sign Up» и меню ведут в никуда — настоящий сайт бы работал",
-    from: "right",
-  },
-  {
-    x: 0.5,
-    y: 0.95,
-    text: "Ни одного реального контакта в футере — только заглушки",
-    from: "bottom",
-  },
-];
-
-function ArrowOverlay({ step }: { step: number }) {
-  if (step === 0) return null;
-  return (
-    <>
-      {ARROWS.slice(0, step).map((a, i) => (
-        <Arrow key={i} def={a} index={i} />
-      ))}
-    </>
-  );
-}
-
-function Arrow({ def, index }: { def: ArrowDef; index: number }) {
-  const left = `${def.x * 100}%`;
-  const top = `${def.y * 100}%`;
-
-  const labelOffset = 20;
-  let labelPos: React.CSSProperties = {};
-  let lineStyle: React.CSSProperties = {};
-  let dotPos: React.CSSProperties = {};
-  let lineAnim = "lineGrow";
-
-  switch (def.from) {
-    case "top":
-      labelPos = {
-        left,
-        top: `calc(${top} + ${labelOffset}px)`,
-        transform: "translateX(-50%)",
-      };
-      lineStyle = {
-        left,
-        top: `calc(${top} - 8px)`,
-        width: 2,
-        height: 80,
-        transform: "translateX(-50%)",
-        transformOrigin: "top center",
-      };
-      dotPos = { left, top: `calc(${top} + 80px)` };
-      lineAnim = "lineGrowY";
-      break;
-    case "bottom":
-      labelPos = {
-        left,
-        top: `calc(${top} - ${labelOffset + 30}px)`,
-        transform: "translateX(-50%)",
-      };
-      lineStyle = {
-        left,
-        top: `calc(${top} - 80px)`,
-        width: 2,
-        height: 80,
-        transform: "translateX(-50%)",
-        transformOrigin: "bottom center",
-      };
-      dotPos = { left, top: `calc(${top} - 80px)` };
-      lineAnim = "lineGrowY";
-      break;
-    case "left":
-      labelPos = {
-        left: `calc(${left} + ${labelOffset}px)`,
-        top: `calc(${top} - 40px)`,
-      };
-      lineStyle = {
-        left: `calc(${left} - 60px)`,
-        top,
-        width: 60,
-        height: 2,
-        transformOrigin: "right center",
-      };
-      dotPos = { left: `calc(${left} - 60px)`, top };
-      break;
-    case "right":
-      labelPos = {
-        right: `calc(${(1 - def.x) * 100}% + ${labelOffset}px)`,
-        top: `calc(${top} - 40px)`,
-      };
-      lineStyle = {
-        left: `calc(${left} + 8px)`,
-        top,
-        width: 60,
-        height: 2,
-        transformOrigin: "left center",
-      };
-      dotPos = { left: `calc(${left} + 68px)`, top };
-      break;
-  }
-
-  return (
-    <>
-      {/* Точка */}
-      <div
-        style={{
-          position: "absolute",
-          width: 16,
-          height: 16,
-          borderRadius: "50%",
-          background: "#E53935",
-          border: "3px solid #fff",
-          transform: "translate(-50%, -50%)",
-          boxShadow: "0 0 0 8px rgba(229,57,53,0.35)",
-          zIndex: 4,
-          animation: `arrowDotIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0s both, arrowPulse 1.6s ease-in-out 0.5s infinite`,
-          ...dotPos,
-        }}
-      />
-
-      {/* Линия */}
-      <div
-        style={{
-          position: "absolute",
-          background: "#E53935",
-          opacity: 0.9,
-          zIndex: 4,
-          animation: `${lineAnim} 0.5s ease 0.15s both`,
-          ...lineStyle,
-        }}
-      />
-
-      {/* Подпись */}
-      <div
-        style={{
-          position: "absolute",
-          background: "#0D0D14",
-          border: "2px solid #E53935",
-          borderRadius: 10,
-          padding: "10px 16px",
-          color: "#fff",
-          fontSize: 14,
-          fontWeight: 600,
-          maxWidth: 320,
-          boxShadow: "0 12px 40px rgba(229,57,53,0.5)",
-          zIndex: 5,
-          animation: `labelIn 0.5s ease 0.35s both`,
-          ...labelPos,
-        }}
-      >
-        {def.text}
       </div>
-    </>
+    </section>
   );
 }
 
-/* ============ ФИНАЛЬНАЯ ПЛАШКА ============ */
 function FinalPanel({ onClose }: { onClose: () => void }) {
   return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
-        zIndex: 6,
-        animation: "screenFadeIn 0.6s ease both",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 640,
-          width: "100%",
-          background: "#14141C",
-          border: "2px solid #E53935",
-          borderRadius: 24,
-          padding: "40px 32px",
-          color: "#fff",
-          boxShadow: "0 40px 100px rgba(0,0,0,0.7)",
-          textAlign: "center",
-          animation: "finalPanelIn 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) both",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 72,
-            marginBottom: 8,
-            animation: "arrowPulse 2s ease-in-out infinite",
-          }}
-        >
-          🎣
-        </div>
-
-        <div
-          style={{
-            display: "inline-block",
-            border: "3px solid #E53935",
-            color: "#E53935",
-            padding: "6px 20px",
-            borderRadius: 8,
-            fontSize: 16,
-            fontWeight: 900,
-            letterSpacing: "0.2em",
-            marginBottom: 20,
-            animation: "stampIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both",
-          }}
-        >
-          ФИШИНГ
-        </div>
-
-        <h2
-          style={{
-            fontSize: 26,
-            fontWeight: 900,
-            margin: "0 0 12px",
-            lineHeight: 1.25,
-          }}
-        >
-          Твои данные улетели мошеннику
-        </h2>
-
-        <p
-          style={{
-            fontSize: 15,
-            lineHeight: 1.65,
-            opacity: 0.85,
-            margin: "0 0 24px",
-          }}
-        >
-          Настоящий Roblox никогда не попросит пароль на стороннем сайте. Всегда
-          проверяй адрес, не спеши и{" "}
-          <b>никогда не вводи данные по ссылке из чата</b>.
+    <section style={styles.finalWrap}>
+      <div style={styles.finalCard}>
+        <div style={styles.finalIcon}>🎣</div>
+        <div style={styles.finalTag}>ФИШИНГ</div>
+        <h1 style={styles.finalTitle}>Твои данные улетели мошеннику</h1>
+        <p style={styles.finalText}>
+          Настоящий Roblox никогда не попросит пароль на стороннем сайте.
+          Проверяй адрес, не спеши и не вводи данные по ссылке из чата.
         </p>
-
-        <button
-          onClick={onClose}
-          style={{
-            background: "#fff",
-            color: "#14141C",
-            border: "none",
-            borderRadius: 12,
-            padding: "14px 40px",
-            fontSize: 16,
-            fontWeight: 800,
-            cursor: "pointer",
-            fontFamily: "inherit",
-            transition: "transform 0.15s",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.transform =
-              "scale(1.05)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
-          }}
-        >
-          Я понял
+        <button onClick={onClose} style={styles.finalButton}>
+          Понятно
         </button>
       </div>
-    </div>
+    </section>
   );
 }
+
+const styles: Record<string, React.CSSProperties> = {
+  root: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 9999,
+    overflow: "hidden",
+    fontFamily: '"Nunito", "Segoe UI", sans-serif',
+    color: colors.ink,
+  },
+  backdrop: {
+    position: "absolute",
+    inset: 0,
+    background: "rgba(20,31,35,.9)",
+    backdropFilter: "blur(12px)",
+  },
+  colorWash: {
+    position: "absolute",
+    inset: 0,
+    opacity: 0.45,
+    animation: "glowPulse 3s ease-in-out infinite",
+  },
+  shell: {
+    position: "relative",
+    zIndex: 1,
+    width: "min(1180px, calc(100vw - 48px))",
+    height: "100%",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    padding: "28px 0",
+  },
+  header: {
+    textAlign: "center",
+    marginBottom: 24,
+    animation: "revealIn .6s ease both",
+  },
+  eyebrow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 9,
+    color: "#C5D4D5",
+    fontSize: 15,
+    fontWeight: 900,
+    letterSpacing: ".1em",
+  },
+  liveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    boxShadow: "0 0 0 5px rgba(244,91,53,.15)",
+  },
+  stageTitle: {
+    marginTop: 12,
+    color: "#FFFFFF",
+    fontSize: "clamp(1.7rem, 3vw, 2.7rem)",
+    fontWeight: 900,
+    lineHeight: 1.1,
+  },
+  stageHint: { marginTop: 9, color: "#B8C7C8", fontSize: 16, fontWeight: 600 },
+  scene: {
+    flex: "0 1 auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 28,
+    animation: "revealIn .7s ease both",
+  },
+  dataCard: {
+    width: "min(410px, 100%)",
+    padding: "24px 28px",
+    borderRadius: 24,
+    background: "#FFFFFF",
+    border: "3px solid #F45B35",
+    boxShadow: "0 18px 50px rgba(244,91,53,.18)",
+  },
+  cardLabel: {
+    fontSize: 16,
+    fontWeight: 900,
+    letterSpacing: ".04em",
+    marginBottom: 18,
+  },
+  dataRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 18,
+    padding: "12px 0",
+    borderBottom: "1px solid #E7EEEE",
+    fontSize: 16,
+  },
+  safeNote: {
+    marginTop: 16,
+    color: colors.muted,
+    fontSize: 16,
+    lineHeight: 1.4,
+  },
+  routeArea: {
+    display: "flex",
+    alignItems: "center",
+    gap: 18,
+    position: "relative",
+  },
+  routeNode: {
+    width: 66,
+    height: 66,
+    borderRadius: "50%",
+    display: "grid",
+    placeItems: "center",
+    color: "#fff",
+    fontWeight: 900,
+    fontSize: 14,
+    boxShadow: "0 10px 26px rgba(0,0,0,.25)",
+  },
+  routeLine: {
+    width: "clamp(100px, 18vw, 250px)",
+    borderTop: "4px dashed #FFD447",
+    animation: "routeDash 1.5s linear infinite",
+  },
+  routeCaption: {
+    position: "absolute",
+    top: 78,
+    left: "50%",
+    transform: "translateX(-50%)",
+    whiteSpace: "nowrap",
+    color: "#B8C7C8",
+    fontSize: 16,
+    fontWeight: 700,
+  },
+  hijackGrid: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0,1fr) 70px minmax(0,1fr)",
+    alignItems: "center",
+    gap: 18,
+    width: "100%",
+    maxWidth: 900,
+    animation: "revealIn .7s ease both",
+  },
+  transferArrow: {
+    color: colors.orange,
+    fontSize: 48,
+    textAlign: "center",
+    fontWeight: 900,
+  },
+  scamNode: {
+    minHeight: 210,
+    padding: 24,
+    borderRadius: 24,
+    background: "#1D2A2D",
+    border: "3px solid #F45B35",
+    color: "#FFFFFF",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    textAlign: "center",
+    boxShadow: "0 18px 50px rgba(244,91,53,.22)",
+  },
+  warningStrip: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    flexWrap: "wrap",
+    padding: "15px 22px",
+    borderRadius: 16,
+    background: "#FFF1D6",
+    color: colors.ink,
+    fontSize: 16,
+    boxShadow: "0 10px 30px rgba(0,0,0,.2)",
+  },
+  inspectLayout: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0,1.2fr) minmax(300px,.8fr)",
+    gap: 26,
+    alignItems: "center",
+    animation: "revealIn .7s ease both",
+  },
+  fakeBrowser: {
+    overflow: "hidden",
+    borderRadius: 22,
+    background: "#FFFFFF",
+    boxShadow: "0 22px 60px rgba(0,0,0,.3)",
+  },
+  browserBar: {
+    height: 48,
+    padding: "0 16px",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    background: "#EFF4F2",
+  },
+  fakeAddress: {
+    flex: 1,
+    marginLeft: 8,
+    padding: "8px 12px",
+    borderRadius: 8,
+    background: "#FFFFFF",
+    color: "#C62828",
+    fontFamily: "monospace",
+    fontSize: 16,
+    fontWeight: 800,
+  },
+  fakePage: {
+    minHeight: 290,
+    padding: 38,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+    background: "linear-gradient(145deg,#20252A,#343B40)",
+  },
+  fakeLogo: {
+    marginBottom: 8,
+    color: "#FFFFFF",
+    fontSize: 32,
+    fontWeight: 900,
+    letterSpacing: ".06em",
+  },
+  fakeInput: {
+    width: "min(330px,100%)",
+    height: 42,
+    borderRadius: 8,
+    background: "rgba(255,255,255,.1)",
+    border: "1px solid rgba(255,255,255,.18)",
+  },
+  fakeLogin: {
+    width: "min(330px,100%)",
+    padding: 12,
+    borderRadius: 8,
+    background: "#F45B35",
+    color: "#FFFFFF",
+    textAlign: "center",
+    fontWeight: 900,
+    fontSize: 18,
+  },
+  fakeAlert: {
+    marginTop: 12,
+    padding: "10px 14px",
+    borderRadius: 10,
+    background: "#FFE2D8",
+    color: "#C62828",
+    fontWeight: 800,
+    fontSize: 16,
+  },
+  signPanel: {
+    padding: 28,
+    borderRadius: 24,
+    background: "#FFFFFF",
+    boxShadow: "0 18px 50px rgba(0,0,0,.22)",
+    animation: "revealInRight .7s ease both",
+  },
+  signIcon: {
+    width: 66,
+    height: 66,
+    borderRadius: 20,
+    display: "grid",
+    placeItems: "center",
+    fontSize: 34,
+    marginBottom: 18,
+  },
+  signNumber: {
+    color: colors.muted,
+    fontSize: 14,
+    fontWeight: 900,
+    letterSpacing: ".12em",
+  },
+  signTitle: {
+    margin: "8px 0 12px",
+    color: colors.ink,
+    fontSize: "clamp(1.4rem, 2vw, 2rem)",
+    lineHeight: 1.15,
+  },
+  signText: { margin: 0, color: colors.muted, fontSize: 16, lineHeight: 1.55 },
+  signNav: { display: "flex", gap: 8, marginTop: 24 },
+  signDot: {
+    width: 34,
+    height: 10,
+    border: 0,
+    borderRadius: 8,
+    cursor: "pointer",
+    transition: "width .25s ease",
+  },
+  finalWrap: {
+    position: "relative",
+    zIndex: 2,
+    height: "100%",
+    display: "grid",
+    placeItems: "center",
+    padding: 20,
+  },
+  finalCard: {
+    width: "min(650px, 100%)",
+    padding: "42px 34px",
+    borderRadius: 28,
+    background: "#FFFFFF",
+    border: "4px solid #F45B35",
+    textAlign: "center",
+    boxShadow: "0 30px 90px rgba(0,0,0,.4)",
+    animation: "finalIn .7s cubic-bezier(.2,.8,.3,1) both",
+  },
+  finalIcon: { fontSize: 74, marginBottom: 10 },
+  finalTag: {
+    display: "inline-block",
+    padding: "7px 18px",
+    borderRadius: 10,
+    background: "#FFE2D8",
+    color: "#C62828",
+    fontSize: 15,
+    fontWeight: 900,
+    letterSpacing: ".16em",
+  },
+  finalTitle: {
+    margin: "18px 0 12px",
+    color: colors.ink,
+    fontSize: "clamp(1.7rem, 3vw, 2.5rem)",
+    lineHeight: 1.1,
+  },
+  finalText: {
+    margin: "0 auto 26px",
+    maxWidth: 540,
+    color: colors.muted,
+    fontSize: 17,
+    lineHeight: 1.6,
+  },
+  finalButton: {
+    border: 0,
+    borderRadius: 14,
+    padding: "14px 44px",
+    background: colors.orange,
+    color: "#FFFFFF",
+    fontFamily: "inherit",
+    fontSize: 18,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+};

@@ -369,8 +369,60 @@ function RobloxIntroOverlay({ onClose }: { onClose: () => void }) {
   const steps = [
     {
       title: "Это симуляция Roblox",
-      text: "Перед тобой учебная копия настоящего сайта Roblox. Она создана, чтобы ты научился распознавать подделки.",
-      gradient: "linear-gradient(135deg, #FF6B9D 0%, #FF8C42 100%)",
+      text: (
+        <Box>
+          <Box
+            sx={{
+              fontSize: { xs: "1.15rem", md: "1.65rem" },
+              lineHeight: 1.65,
+            }}
+          >
+            Перед тобой учебная копия настоящего сайта Roblox. Она создана,
+            чтобы ты научился распознавать подделки.
+          </Box>
+          <Box
+            sx={{
+              mt: 3,
+              p: 2,
+              borderRadius: "18px",
+              background: "rgba(255,255,255,.96)",
+              color: "#263238",
+              border: "3px solid #E53935",
+              boxShadow: "0 12px 30px rgba(90,20,20,.18)",
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              textAlign: "left",
+            }}
+          >
+            <Box sx={{ fontSize: "2.25rem", lineHeight: 1 }}>🚨</Box>
+            <Box>
+              <Box
+                sx={{
+                  color: "#C62828",
+                  fontSize: ".9rem",
+                  fontWeight: 900,
+                  letterSpacing: ".08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Главная мысль
+              </Box>
+              <Box
+                sx={{
+                  mt: 0.35,
+                  fontSize: { xs: "1.05rem", md: "1.2rem" },
+                  fontWeight: 900,
+                }}
+              >
+                Копия сайта может выглядеть знакомо, но всё равно быть
+                мошенничеством.
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      ),
+      gradient: "linear-gradient(135deg, #F45B35 0%, #FFD447 100%)",
     },
     {
       title: "Будь внимателен!",
@@ -434,7 +486,7 @@ function RobloxIntroOverlay({ onClose }: { onClose: () => void }) {
           </Box>
         </>
       ),
-      gradient: "linear-gradient(135deg, #00D9FF 0%, #A855F7 100%)",
+      gradient: "linear-gradient(135deg, #11BFA4 0%, #48BFE3 100%)",
     },
   ];
 
@@ -742,7 +794,7 @@ const styles: Record<string, CSSProperties> = {
   },
   card: {
     width: "100%",
-    maxWidth: 279,
+    maxWidth: 350,
     background: "#272930",
     color: "#fff",
     padding: "15px",
@@ -750,7 +802,7 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
   },
   title: {
-    fontSize: 26,
+    fontSize: 36,
     fontWeight: 800,
     margin: "0",
     color: "#fff",
@@ -767,14 +819,14 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: "column",
   },
   label: {
-    fontSize: 13,
+    fontSize: 18,
     fontWeight: 600,
     color: "#fff",
   },
   input: {
     width: "100%",
     padding: "5px 12px",
-    fontSize: 12,
+    fontSize: 18,
     border: "1px solid rgba(208, 217, 251,.12)",
     borderRadius: 8,
     outline: "none",
@@ -788,7 +840,7 @@ const styles: Record<string, CSSProperties> = {
     color: "#C0392B",
     padding: "10px 12px",
     borderRadius: 4,
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: 500,
   },
   button: {
@@ -799,7 +851,7 @@ const styles: Record<string, CSSProperties> = {
     color: "#f7f7f8",
     border: "1px solid #f7f7f8",
     borderRadius: 8,
-    fontSize: 12,
+    fontSize: 18,
     fontWeight: 600,
     fontFamily: FONT_STACK,
   },
@@ -812,7 +864,7 @@ const styles: Record<string, CSSProperties> = {
     color: "#f7f7f8",
     borderRadius: 8,
     border: "none",
-    fontSize: 12,
+    fontSize: 18,
     fontFamily: FONT_STACK,
     fontWeight: 500,
   },
@@ -823,7 +875,7 @@ const styles: Record<string, CSSProperties> = {
   },
   forgotLink: {
     color: "#f7f7f8",
-    fontSize: 12,
+    fontSize: 16,
     textDecoration: "none",
     fontWeight: 600,
   },

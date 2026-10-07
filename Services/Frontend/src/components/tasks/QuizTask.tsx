@@ -95,7 +95,7 @@ export default function QuizTask({
                 onClick={() => onChange(setAnswer(answers, q.id, i))}
                 sx={{
                   py: 1.8,
-                  fontSize: 16,
+                  fontSize: "clamp(1rem, 1.1vw, 1.15rem)",
                   fontWeight: 600,
                   borderRadius: "12px",
                   justifyContent: "flex-start",
@@ -125,7 +125,7 @@ export default function QuizTask({
                     mr: 2,
                     flexShrink: 0,
                     fontWeight: 700,
-                    fontSize: 14,
+                    fontSize: "clamp(1rem, 1.1vw, 1.15rem)",
                   }}
                 >
                   {String.fromCharCode(65 + i)}

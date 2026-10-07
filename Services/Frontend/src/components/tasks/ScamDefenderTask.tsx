@@ -207,7 +207,8 @@ export default function ScamDefenderTask({
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <Typography
-              fontSize={11}
+               className="task-copy"
+               fontSize={16}
               sx={{
                 opacity: 0.6,
                 letterSpacing: "0.15em",
@@ -216,11 +217,11 @@ export default function ScamDefenderTask({
             >
               Защита
             </Typography>
-            <Typography fontWeight={800} fontSize={16}>
+             <Typography className="task-heading" fontWeight={800} fontSize="1.25rem">
               {storyTitle}
             </Typography>
             {intro && (
-              <Typography fontSize={12.5} sx={{ opacity: 0.75, mt: 0.5 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ opacity: 0.75, mt: 0.5 }}>
                 {intro}
               </Typography>
             )}
@@ -235,10 +236,10 @@ export default function ScamDefenderTask({
               justifyContent="space-between"
               sx={{ mb: 0.5 }}
             >
-              <Typography fontSize={12} sx={{ opacity: 0.8 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ opacity: 0.8 }}>
                 🛡️ Щит аккаунта
               </Typography>
-              <Typography fontSize={12} fontWeight={800}>
+               <Typography className="task-copy" fontSize={16} fontWeight={800}>
                 {shieldPercent}%
               </Typography>
             </Stack>
@@ -349,7 +350,7 @@ export default function ScamDefenderTask({
                 mb: 3,
               }}
             >
-              <Typography fontSize={14.5} sx={{ lineHeight: 1.6 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ lineHeight: 1.6 }}>
                 {current.text}
               </Typography>
             </Paper>
@@ -421,7 +422,7 @@ export default function ScamDefenderTask({
                       {String.fromCharCode(65 + i)}
                     </Box>
                     <Box sx={{ flexGrow: 1 }}>
-                      <Typography fontSize={14.5} fontWeight={600}>
+                       <Typography className="task-copy" fontSize={16} fontWeight={600}>
                         {opt.text}
                       </Typography>
 
@@ -436,7 +437,7 @@ export default function ScamDefenderTask({
                           }}
                         >
                           <Typography
-                            fontSize={12.5}
+                             fontSize={16}
                             fontWeight={600}
                             color={isCorrect ? "#166534" : "#991B1B"}
                           >

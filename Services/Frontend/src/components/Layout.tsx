@@ -188,7 +188,7 @@ function AnimatedBackground() {
             "radial-gradient(circle, rgba(17,191,164,.2) 0%, transparent 70%)",
           animation: "blobFloat3 26s ease-in-out infinite",
         },
-        "& .grid": {
+         "& .grid": {
           position: "absolute",
           inset: 0,
           backgroundImage:
@@ -198,6 +198,64 @@ function AnimatedBackground() {
             "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 80%)",
           WebkitMaskImage:
             "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 80%)",
+        },
+        "& .shape": {
+          position: "absolute",
+          display: "block",
+          opacity: 0.58,
+          willChange: "transform",
+          animation: "shapeFloat 9s ease-in-out infinite",
+        },
+        "& .shape-circle": {
+          width: 18,
+          height: 18,
+          top: "18%",
+          left: "12%",
+          borderRadius: "50%",
+          background: "#F45B35",
+          boxShadow: "0 8px 20px rgba(244,91,53,.25)",
+        },
+        "& .shape-square": {
+          width: 22,
+          height: 22,
+          top: "28%",
+          right: "10%",
+          borderRadius: 6,
+          background: "#FFD447",
+          transform: "rotate(18deg)",
+          animationDelay: "-2s",
+          boxShadow: "0 8px 20px rgba(255,212,71,.3)",
+        },
+        "& .shape-diamond": {
+          width: 16,
+          height: 16,
+          bottom: "24%",
+          left: "22%",
+          borderRadius: 4,
+          background: "#11BFA4",
+          transform: "rotate(45deg)",
+          animationDelay: "-4s",
+          boxShadow: "0 8px 20px rgba(17,191,164,.25)",
+        },
+        "& .shape-ring": {
+          width: 34,
+          height: 34,
+          right: "22%",
+          bottom: "16%",
+          borderRadius: "50%",
+          border: "5px solid #F28BA8",
+          opacity: 0.45,
+          animationDelay: "-6s",
+        },
+        "& .shape-dot-cluster": {
+          width: 7,
+          height: 7,
+          top: "64%",
+          right: "7%",
+          borderRadius: "50%",
+          background: "#F45B35",
+          boxShadow: "14px -8px 0 #FFD447, 27px 4px 0 #11BFA4",
+          animationDelay: "-1s",
         },
 
         "@keyframes blobFloat1": {
@@ -214,8 +272,12 @@ function AnimatedBackground() {
           "0%, 100%": { transform: "translate(0, 0) scale(1)" },
           "50%": { transform: "translate(-80px, -120px) scale(1.1)" },
         },
+        "@keyframes shapeFloat": {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) rotate(0deg)" },
+          "50%": { transform: "translate3d(12px, -18px, 0) rotate(8deg)" },
+        },
         "@media (prefers-reduced-motion: reduce)": {
-          "& .blob": { animation: "none" },
+          "& .blob, & .shape": { animation: "none" },
         },
       }}
     >
@@ -223,6 +285,11 @@ function AnimatedBackground() {
       <Box className="blob blob-2" />
       <Box className="blob blob-3" />
       <Box className="grid" />
+      <Box className="shape shape-circle" />
+      <Box className="shape shape-square" />
+      <Box className="shape shape-diamond" />
+      <Box className="shape shape-ring" />
+      <Box className="shape shape-dot-cluster" />
     </Box>
   );
 }
@@ -860,8 +927,14 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           display: "flex",
           flexDirection: "column",
           position: "relative",
-          zIndex: 1,
-        }}
+           zIndex: 1,
+           "@media (min-width: 1200px) and (max-height: 1100px)": {
+             p: noPadding ? 0 : 2,
+           },
+           "@media (min-width: 1200px) and (max-height: 850px)": {
+             p: noPadding ? 0 : 1.5,
+           },
+         }}
       >
         <Box
           sx={{

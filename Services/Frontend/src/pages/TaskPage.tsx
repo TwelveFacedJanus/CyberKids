@@ -519,36 +519,74 @@ export default function TaskPage() {
         sx={{
           position: "relative",
           zIndex: 1,
-          maxWidth: 1180,
+          maxWidth: "min(1180px, calc(100vw - 48px))",
           width: "100%",
           mx: "auto",
           pb: 4,
+          minWidth: 0,
+          "& > *": { minWidth: 0 },
           "& .MuiTypography-body2": {
-            fontSize: "clamp(1rem, 1.15vw, 1.18rem) !important",
+            fontSize: "clamp(1rem, min(1.15vw, 2.1vh), 1.18rem) !important",
           },
           "& .MuiTypography-body1": {
-            fontSize: "clamp(1.05rem, 1.2vw, 1.25rem) !important",
+            fontSize: "clamp(1rem, min(1.2vw, 2.2vh), 1.25rem) !important",
           },
           "& .MuiTypography-caption": {
-            fontSize: "clamp(.95rem, 1.05vw, 1.08rem) !important",
+            fontSize: "clamp(1rem, min(1.05vw, 2vh), 1.08rem) !important",
           },
           "& .MuiTypography-overline": {
-            fontSize: "clamp(.9rem, 1vw, 1rem) !important",
+            fontSize: "clamp(1rem, min(1vw, 2vh), 1.08rem) !important",
+          },
+          "& .MuiTypography-root": {
+            fontSize: "clamp(1rem, min(1.1vw, 2.1vh), 1.18rem) !important",
+          },
+          "& .MuiTypography-h1, & .MuiTypography-h2, & .MuiTypography-h3, & .MuiTypography-h4, & .MuiTypography-h5, & .MuiTypography-h6": {
+            fontSize: "clamp(1.25rem, min(1.7vw, 3vh), 2.5rem) !important",
           },
           "& [style*='font-size: 12px'], & [style*='font-size: 12.5px'], & [style*='font-size: 14px'], & [style*='font-size: 14.5px']":
             {
-              fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+              fontSize: "clamp(1rem, min(1.1vw, 2.1vh), 1.15rem) !important",
             },
           "& .MuiFormControlLabel-label, & .MuiInputBase-input, & .MuiFormHelperText-root":
             {
-              fontSize: "clamp(1rem, 1.1vw, 1.15rem) !important",
+              fontSize: "clamp(1rem, min(1.1vw, 2.1vh), 1.15rem) !important",
             },
-          "& .MuiButton-root": { minHeight: 50 },
+          "& .MuiButton-root": {
+            minHeight: 50,
+            fontSize: "clamp(1rem, min(1.15vw, 2.1vh), 1.2rem) !important",
+          },
+          "& .MuiChip-label": {
+            fontSize: "clamp(1rem, min(1.05vw, 2vh), 1.1rem) !important",
+          },
+          "& .task-copy, & [data-task-copy='true']": {
+            fontSize: "clamp(1rem, min(1.1vw, 2.1vh), 1.18rem) !important",
+            lineHeight: 1.5,
+          },
+          "& .task-important, & [data-task-important='true']": {
+            fontSize: "clamp(1.125rem, min(1.25vw, 2.35vh), 1.3rem) !important",
+            lineHeight: 1.4,
+          },
+          "& .task-heading, & [data-task-heading='true']": {
+            fontSize: "clamp(1.25rem, min(1.5vw, 2.8vh), 1.75rem) !important",
+            lineHeight: 1.25,
+          },
+          "@media (min-width: 900px) and (max-height: 900px)": {
+            maxWidth: "min(1180px, calc(100vw - 40px))",
+            pb: 2,
+            "& .task-breadcrumbs": { mb: "12px !important" },
+            "& .task-content": { gap: "12px" },
+            "& .task-content > *": { marginBottom: "12px !important" },
+            "& .task-submit": { py: "12px !important" },
+          },
+          "@media (min-width: 1200px) and (max-height: 850px)": {
+            "& .task-breadcrumbs": { mb: "8px !important" },
+            "& .task-content > *": { marginBottom: "8px !important" },
+          },
         }}
       >
         {result && stars >= 2 && <Confetti pieces={50} />}
 
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
+        <Stack className="task-breadcrumbs" direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
           <Button
             startIcon={<ArrowBack />}
             onClick={() => navigate("/")}
@@ -1021,8 +1059,8 @@ function TaskContent({
   };
 
   return (
-    <Box>
-      <Box sx={{ mb: 3 }}>{renderTask()}</Box>
+    <Box className="task-content">
+      <Box sx={{ mb: "clamp(14px, 2vh, 24px)" }}>{renderTask()}</Box>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -1037,6 +1075,7 @@ function TaskContent({
         task.task_type !== "prize_trap" &&
         task.task_type !== "fake_diary" && (
           <Button
+            className="task-submit"
             variant="contained"
             data-tutorial="submit"
             size="large"

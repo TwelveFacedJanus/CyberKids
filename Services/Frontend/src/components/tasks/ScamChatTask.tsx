@@ -170,7 +170,7 @@ export default function ScamChatTask({
             bgcolor: "rgba(124,77,255,0.25)",
             color: "#B388FF",
             fontWeight: 700,
-            fontSize: 11,
+             fontSize: "1rem",
           }}
         />
       </Paper>
@@ -265,7 +265,7 @@ export default function ScamChatTask({
                         size="small"
                         sx={{
                           height: 18,
-                          fontSize: 10,
+                           fontSize: "1rem",
                           fontWeight: 700,
                           bgcolor: "#F1EBFF",
                         }}
@@ -430,7 +430,7 @@ export default function ScamChatTask({
           onClick={handleCheck}
           sx={{
             py: 1.8,
-            fontSize: 17,
+             fontSize: 18,
             fontWeight: 800,
             borderRadius: "14px",
             background:

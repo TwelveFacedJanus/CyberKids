@@ -336,7 +336,7 @@ export default function HackedFriendTask({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 320px" },
+             gridTemplateColumns: { xs: "1fr", lg: "minmax(0,1fr) clamp(240px, 24vw, 320px)" },
             gap: 2,
             alignItems: "start",
           }}
@@ -349,7 +349,7 @@ export default function HackedFriendTask({
                 p: 2,
                 borderRadius: "16px",
                 backgroundColor: "#F3F4F6",
-                height: 440,
+                 height: "clamp(360px, 58vh, 440px)",
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
@@ -950,7 +950,7 @@ function renderMessage(
               display: "flex",
               alignItems: "center",
               gap: 1.5,
-              minWidth: 260,
+               minWidth: "min(260px, 100%)",
               backgroundColor: "#fff",
               "&:hover": { backgroundColor: "#FAFAFA" },
             }}

@@ -290,7 +290,7 @@ export default function PrizeTrapTask({
         sx={{
           display: "grid",
           gap: 2,
-          gridTemplateColumns: { xs: "1fr", md: "minmax(0,1fr) 300px" },
+           gridTemplateColumns: { xs: "1fr", lg: "minmax(0,1fr) clamp(240px, 22vw, 300px)" },
         }}
       >
         {/* ───────── чат / финал ───────── */}
@@ -299,7 +299,7 @@ export default function PrizeTrapTask({
             <>
               <Box
                 sx={{
-                  height: { xs: 440, md: 520 },
+                   height: { xs: "clamp(380px, 58vh, 440px)", md: "clamp(400px, 58vh, 520px)" },
                   display: "flex",
                   flexDirection: "column",
                   bgcolor: "#fff",

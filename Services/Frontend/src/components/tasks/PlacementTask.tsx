@@ -68,7 +68,7 @@ export default function PlacementTask({
         onClick={() => setSelected(isSelected ? null : item.id)}
         sx={{
           width: mode === "columns" ? "100%" : "auto",
-          minWidth: 120,
+          minWidth: "min(120px, 28vw)",
           cursor: "grab",
           userSelect: "none",
           p: 1.5,
@@ -76,7 +76,7 @@ export default function PlacementTask({
           background: `linear-gradient(135deg, ${color}, ${color}DD)`,
           color: "#fff",
           fontWeight: 700,
-          fontSize: 14,
+          fontSize: "clamp(1rem, 1.1vw, 1.15rem)",
           boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
           border: isSelected ? "3px solid #1A1A2E" : "3px solid transparent",
           transform: isSelected ? "scale(1.05)" : "scale(1)",

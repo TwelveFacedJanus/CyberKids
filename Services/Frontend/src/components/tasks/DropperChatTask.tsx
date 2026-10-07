@@ -1140,7 +1140,7 @@ function Inner({ content, answers, onChange, onSubmit }: Props) {
           sx={{
             display: "grid",
             gap: 2,
-            gridTemplateColumns: { xs: "1fr", md: "250px minmax(0,1fr)" },
+             gridTemplateColumns: { xs: "1fr", lg: "clamp(190px, 22vw, 250px) minmax(0,1fr)" },
           }}
         >
           {/* ── левая панель ── */}

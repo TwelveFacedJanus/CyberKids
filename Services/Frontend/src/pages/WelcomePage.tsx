@@ -114,7 +114,7 @@ export default function WelcomePage() {
           animation: `${softFloat} 4s ease-in-out infinite`,
         }}
       />
-      <Box
+      {/* <Box
         sx={{
           position: "absolute",
           top: "18%",
@@ -126,7 +126,7 @@ export default function WelcomePage() {
           ...reduceMotion,
           animation: `${softFloat} 5s ease-in-out .3s infinite`,
         }}
-      />
+      /> */}
       <Box
         sx={{
           position: "absolute",
@@ -140,7 +140,7 @@ export default function WelcomePage() {
           animation: `${softFloat} 4.5s ease-in-out .6s infinite`,
         }}
       />
-      <Box
+      {/* <Box
         sx={{
           position: "absolute",
           bottom: "18%",
@@ -151,6 +151,205 @@ export default function WelcomePage() {
           transform: "rotate(45deg)",
           ...reduceMotion,
           animation: `${softFloat} 5.5s ease-in-out .5s infinite`,
+        }}
+      /> */}
+
+      {/* Дополнительная геометрия вокруг основного маршрута */}
+      {/* <Box
+        aria-hidden
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "absolute",
+          top: "8%",
+          left: "52%",
+          width: 280,
+          height: 230,
+          bgcolor: "#FFE2D8",
+          borderRadius: "38% 62% 48% 52% / 25% 32% 68% 75%",
+          // clipPath: "polygon(50% 2%, 100% 100%, 2% 100%)",
+          rotate: "-18deg",
+          opacity: 0.82,
+          pointerEvents: "none",
+          animation: `${softFloat} 6s ease-in-out -1.5s infinite`,
+          ...reduceMotion,
+        }}
+      /> */}
+      <Box
+        aria-hidden
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "absolute",
+          top: "8%",
+          left: "52%",
+          width: 280,
+          height: 230,
+          opacity: 0.9,
+          pointerEvents: "none",
+
+          animation: `${softFloat} 6.5s ease-in-out -3s infinite`,
+          ...reduceMotion,
+          "@media (min-width: 900px) and (max-height: 950px)": {
+            top: "6%",
+            left: "55%",
+            width: 190,
+            height: 150,
+          },
+        }}
+      >
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 213 182"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="
+              M 30 123
+              C 22 99, 40 86, 35 88
+              C 47 59, 67 35, 87 28
+              C 105 21, 121 29, 132 44
+              C 145 62, 151 91, 161 119
+              C 168 138, 169 149, 159 157
+              C 149 166, 132 166, 113 162
+              C 91 158, 67 147, 47 137
+              C 32 130, 21 119, 30 103
+              Z
+            "
+            fill="#FEE2D7"
+          />
+        </svg>
+      </Box>
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          top: "18%",
+          left: "40%",
+          width: { xs: 68, md: 92 },
+          height: { xs: 68, md: 92 },
+          borderRadius: "46% 54% 58% 42% / 48% 42% 58% 52%",
+          bgcolor: "#D8F5EE",
+          transform: "rotate(18deg)",
+          opacity: 0.82,
+          pointerEvents: "none",
+          animation: `${softFloat} 7s ease-in-out -2s infinite`,
+          ...reduceMotion,
+          "@media (min-width: 900px) and (max-height: 1100px)": {
+            width: 48,
+            height: 48,
+            top: "22%",
+            left: "43%",
+          },
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          top: -90,
+          right: -58,
+          width: { xs: 82, md: 420 },
+          height: { xs: 82, md: 420 },
+          borderRadius: "46% 54% 52% 42% / 48% 42% 52% 52%",
+          bgcolor: "#FFF0B8",
+          transform: "rotate(18deg)",
+          opacity: 0.82,
+          pointerEvents: "none",
+          animation: `${softFloat} 7s ease-in-out -2s infinite`,
+          "@media (min-width: 800px) and (max-height: 1100px)": {
+            right: -90,
+            top: -130,
+            width: 360,
+            height: 360,
+          },
+          ...reduceMotion,
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "absolute",
+          top: "60%",
+          right: "-162px",
+          width: 420,
+          height: 360,
+          bgcolor: "#D8F5EE",
+          // clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
+          borderRadius: "48% 52% 42% 58% / 32% 38% 62% 68%",
+          rotate: "180deg",
+          opacity: 0.78,
+          pointerEvents: "none",
+          animation: `${softFloat} 6.5s ease-in-out -3s infinite`,
+          ...reduceMotion,
+          "@media (min-width: 900px) and (max-height: 1100px)": {
+            top: "70%",
+            right: -140,
+            width: 280,
+            height: 230,
+          },
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "absolute",
+          left: "18%",
+          bottom: "-10%",
+          width: 360,
+          height: 360,
+          rotate: "24deg",
+          borderRadius: "31% 22% 32% 21% / 48% 32% 27% 27%",
+          bgcolor: "#D8F5EE",
+          opacity: 0.72,
+          pointerEvents: "none",
+          animation: `${softFloat} 6s ease-in-out -4s infinite`,
+          ...reduceMotion,
+          "@media (min-width: 900px) and (max-height: 1100px)": {
+            left: "14%",
+            bottom: -120,
+            width: 250,
+            height: 250,
+          },
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "absolute",
+          left: "73%",
+          bottom: "15%",
+          width: 64,
+          height: 64,
+          borderRadius: "46% 54% 58% 42% / 48% 42% 58% 52%",
+          bgcolor: "#FFF0B8",
+          opacity: 0.9,
+          pointerEvents: "none",
+          animation: `${softFloat} 4.5s ease-in-out -1s infinite`,
+          ...reduceMotion,
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          left: -82,
+          top: "22%",
+          width: 220,
+          height: 220,
+          borderRadius: "46% 54% 58% 42% / 48% 42% 58% 52%",
+          bgcolor: "#FFE2D8",
+          pointerEvents: "none",
+          animation: `${softFloat} 8s ease-in-out -2.5s infinite`,
+          ...reduceMotion,
+          "@media (min-width: 900px) and (max-height: 1100px)": {
+            left: -70,
+            top: "19%",
+            width: 160,
+            height: 160,
+          },
         }}
       />
 
@@ -223,8 +422,8 @@ export default function WelcomePage() {
             src="/ui-icons/k1.png"
             alt="CyberKids"
             sx={{
-              width: { xs: 54, md: 76 },
-              height: { xs: 54, md: 76 },
+              width: { xs: 54, md: 100 },
+              height: { xs: 54, md: 100 },
               objectFit: "contain",
               animation: `${softFloat} 4s ease-in-out infinite`,
               ...reduceMotion,
@@ -233,7 +432,7 @@ export default function WelcomePage() {
           <Box>
             <Typography
               sx={{
-                fontSize: { xs: "1.35rem", sm: "1.8rem", md: "2.25rem" },
+                fontSize: { xs: "1.65rem", sm: "2rem", md: "2.75rem" },
                 fontWeight: 900,
                 lineHeight: 1,
                 color: "#F45B35",
@@ -244,7 +443,7 @@ export default function WelcomePage() {
             <Typography
               sx={{
                 mt: 0.7,
-                fontSize: { xs: ".8rem", sm: "1rem", md: "1.15rem" },
+                fontSize: { xs: "1rem", sm: "1.2rem", md: "1.45rem" },
                 fontWeight: 800,
                 letterSpacing: ".04em",
                 color: "#52616B",
@@ -298,7 +497,7 @@ export default function WelcomePage() {
               sx={{
                 mt: { xs: 2, md: 3 },
                 maxWidth: 520,
-                fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+                fontSize: { xs: "1rem", sm: "1.2rem", md: "1.6rem" },
                 lineHeight: 1.5,
                 color: "#52616B",
                 fontWeight: 600,
@@ -335,16 +534,16 @@ export default function WelcomePage() {
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={{ xs: 1.5, md: 2.5 }}
-              sx={{ width: "100%", maxWidth: 900 }}
+              sx={{ width: "100%", maxWidth: 1000 }}
             >
               <Box
                 sx={{
                   flex: 1,
                   p: { xs: 2, md: 3 },
-                  minHeight: { xs: 105, sm: 210 },
+                  minHeight: { xs: 105, sm: 270 },
                   borderRadius: "24px",
                   bgcolor: "#FFE2D8",
-                  border: "3px solid #F45B35",
+                  // border: "3px solid #F45B35",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -354,13 +553,16 @@ export default function WelcomePage() {
                   ...reduceMotion,
                 }}
               >
-                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
-                  🎯
-                </Typography>
+                <Box
+                  component="img"
+                  src="/ui-icons/darts.png"
+                  alt="Darts"
+                  sx={{ width: "60%", height: "60%" }}
+                />
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontSize: { xs: "1rem", md: "1.6rem" },
                       fontWeight: 900,
                       color: "#D94726",
                     }}
@@ -371,7 +573,8 @@ export default function WelcomePage() {
                     sx={{
                       display: { xs: "none", sm: "block" },
                       mt: 1,
-                      fontSize: "1rem",
+                      fontSize: "1.2rem",
+                      fontWeight: 600,
                       lineHeight: 1.35,
                       color: "#52616B",
                     }}
@@ -384,10 +587,10 @@ export default function WelcomePage() {
                 sx={{
                   flex: 1,
                   p: { xs: 2, md: 3 },
-                  minHeight: { xs: 105, sm: 210 },
+                  minHeight: { xs: 105, sm: 270 },
                   borderRadius: "24px",
                   bgcolor: "#FFF0B8",
-                  border: "3px solid #E5B923",
+                  // border: "3px solid #E5B923",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -397,13 +600,18 @@ export default function WelcomePage() {
                   ...reduceMotion,
                 }}
               >
-                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
-                  ⭐
-                </Typography>
+                {/* <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}> */}
+                <Box
+                  component="img"
+                  src="/ui-icons/star.png"
+                  alt="Star"
+                  sx={{ width: "60%", height: "60%" }}
+                />
+                {/* </Typography> */}
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontSize: { xs: "1rem", md: "1.6rem" },
                       fontWeight: 900,
                       color: "#9A7412",
                     }}
@@ -414,7 +622,8 @@ export default function WelcomePage() {
                     sx={{
                       display: { xs: "none", sm: "block" },
                       mt: 1,
-                      fontSize: "1rem",
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
                       lineHeight: 1.35,
                       color: "#52616B",
                     }}
@@ -427,10 +636,10 @@ export default function WelcomePage() {
                 sx={{
                   flex: 1,
                   p: { xs: 2, md: 3 },
-                  minHeight: { xs: 105, sm: 210 },
+                  minHeight: { xs: 105, sm: 270 },
                   borderRadius: "24px",
                   bgcolor: "#D8F5EE",
-                  border: "3px solid #11BFA4",
+                  // border: "3px solid #11BFA4",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -440,13 +649,16 @@ export default function WelcomePage() {
                   ...reduceMotion,
                 }}
               >
-                <Typography sx={{ fontSize: { xs: "1.5rem", md: "2.3rem" } }}>
-                  🚀
-                </Typography>
+                <Box
+                  component="img"
+                  src="/ui-icons/rocket.png"
+                  alt="Rocket"
+                  sx={{ width: "60%", height: "60%", rotate: "45deg" }}
+                />
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: { xs: "1rem", md: "1.3rem" },
+                      fontSize: { xs: "1rem", md: "1.6rem" },
                       fontWeight: 900,
                       color: "#078B77",
                     }}
@@ -457,7 +669,8 @@ export default function WelcomePage() {
                     sx={{
                       display: { xs: "none", sm: "block" },
                       mt: 1,
-                      fontSize: "1rem",
+                      fontSize: "1.2rem",
+                      fontWeight: 600,
                       lineHeight: 1.35,
                       color: "#52616B",
                     }}

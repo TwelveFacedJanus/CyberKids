@@ -166,7 +166,7 @@ export default function TheoryCardsTask({
             borderRadius: "20px",
             px: 2,
             py: 0.5,
-            fontSize: 13,
+            fontSize: "1rem",
             fontWeight: 700,
             display: "flex",
             alignItems: "center",
@@ -196,7 +196,7 @@ export default function TheoryCardsTask({
               display: "flex",
               alignItems: "center",
               gap: 0.5,
-              fontSize: 13,
+              fontSize: "1rem",
               fontWeight: 700,
               zIndex: 1,
               boxShadow: "0 4px 12px rgba(34,197,94,0.3)",
@@ -254,7 +254,7 @@ export default function TheoryCardsTask({
                 sx={{
                   whiteSpace: "pre-wrap",
                   lineHeight: 1.8,
-                  fontSize: { xs: 15, md: 16 },
+                  fontSize: { xs: "1rem", md: "1.1rem" },
                 }}
               >
                 {currentCard.text}

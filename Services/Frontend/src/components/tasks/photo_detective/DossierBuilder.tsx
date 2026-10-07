@@ -56,7 +56,7 @@ const DossierBuilder: React.FC<DossierBuilderProps> = ({
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "clamp(520px, calc(100vh - 250px), 760px)",
 
         p: {
           xs: 2,

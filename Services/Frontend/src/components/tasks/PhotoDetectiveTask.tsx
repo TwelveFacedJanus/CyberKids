@@ -123,7 +123,7 @@ export default function PhotoDetectiveTask({
     <Box
       sx={{
         width: "100%",
-        minHeight: 650,
+         minHeight: "clamp(520px, calc(100vh - 260px), 650px)",
         position: "relative",
         overflow: "hidden",
         borderRadius: 1,
@@ -157,7 +157,7 @@ export default function PhotoDetectiveTask({
       {phase === "desktop" && (
         <Box
           sx={{
-            height: 680,
+             height: "clamp(520px, calc(100vh - 300px), 680px)",
             position: "relative",
           }}
         >
@@ -290,7 +290,7 @@ export default function PhotoDetectiveTask({
       {phase === "dossier" && (
         <Box
           sx={{
-            minHeight: 680,
+             minHeight: "clamp(520px, calc(100vh - 300px), 680px)",
             position: "relative",
           }}
         >
@@ -477,7 +477,7 @@ function PhotoPhase({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "minmax(0,1fr) 330px",
+           gridTemplateColumns: "minmax(0,1fr) clamp(240px, 28vw, 330px)",
           gap: 3,
         }}
       >
@@ -718,7 +718,7 @@ function CompletedScreen({
   return (
     <Box
       sx={{
-        minHeight: 650,
+         minHeight: "clamp(520px, calc(100vh - 260px), 650px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

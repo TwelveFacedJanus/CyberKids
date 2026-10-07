@@ -23,6 +23,7 @@ import { api } from "../api/client";
 import Layout from "../components/Layout";
 import { topicColors, topicLabels } from "../theme";
 import type { Result, Task } from "../types";
+import { BLOCKS } from "./BlocksPage";
 
 const SPECIAL_CARDS: Record<
   string,
@@ -124,6 +125,7 @@ export default function BlockPage() {
   const progress = tasks.length ? (completed / tasks.length) * 100 : 0;
   const color = topicColors[topic || ""] || "#FF6B35";
   const label = topicLabels[topic || ""] || topic || "";
+  const currentBlock = BLOCKS.find((b) => b.key === topic);
 
   if (loading) {
     return (
@@ -140,6 +142,7 @@ export default function BlockPage() {
   return (
     <Layout>
       <Box
+        className="block-page-shell"
         sx={{
           "@media (min-width: 900px) and (max-height: 900px)": {
             "& .task-mission-card": {
@@ -154,6 +157,30 @@ export default function BlockPage() {
                 "clamp(230px, calc((100vh - 315px) / 2), 360px) !important",
               "& .MuiCardActionArea-root": { p: "14px !important" },
               "& .MuiStack-root": { gap: "10px" },
+            },
+          },
+          "@media (min-width: 1200px) and (max-height: 1100px)": {
+            "& .block-task-grid > .MuiGrid-item": {
+              flexBasis: "25%",
+              maxWidth: "25%",
+            },
+            "& .block-task-card, & .special-mission-card": {
+              minHeight:
+                "clamp(220px, calc((100vh - 315px) / 2), 350px) !important",
+            },
+            "& .block-task-card .MuiCardActionArea-root, & .special-mission-card .MuiCardActionArea-root":
+              {
+                p: "14px !important",
+              },
+            "& .block-page-hero": {
+              p: "16px 22px !important",
+              mb: "14px !important",
+            },
+          },
+          "@media (min-width: 1200px) and (max-height: 850px)": {
+            "& .block-task-card, & .special-mission-card": {
+              minHeight:
+                "clamp(200px, calc((100vh - 270px) / 2), 310px) !important",
             },
           },
         }}
@@ -175,6 +202,7 @@ export default function BlockPage() {
 
         {/* Hero блока */}
         <Box
+          className="block-page-hero"
           sx={{
             p: { xs: 2, sm: "2.2vw", md: "1.8vw" },
             mb: "clamp(16px, 2vh, 32px)",
@@ -192,16 +220,29 @@ export default function BlockPage() {
                 width: { xs: 76, md: 100 },
                 height: { xs: 76, md: 100 },
                 borderRadius: "28px",
-                background: `linear-gradient(135deg, ${color}, ${color}CC)`,
+                background: `linear-gradient(135deg, ${color}59, ${color}82)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: { xs: 38, md: 52 },
                 boxShadow: `0 14px 34px ${color}55`,
                 flexShrink: 0,
+                overflow: "hidden",
               }}
             >
-              📚
+              {currentBlock ? (
+                <Box
+                  component="img"
+                  src={currentBlock.icon}
+                  alt={label}
+                  sx={{
+                    width: "82%",
+                    height: "82%",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                "📚"
+              )}
             </Box>
             <Box sx={{ flexGrow: 1 }}>
               <Typography
@@ -255,6 +296,7 @@ export default function BlockPage() {
 
         {/* Карточки заданий */}
         <Grid
+          className="block-task-grid"
           container
           spacing={{ xs: 2, sm: 2.5, lg: 3 }}
           alignItems="stretch"
@@ -275,7 +317,7 @@ export default function BlockPage() {
             return (
               <Grid item xs={12} sm={6} md={4} key={task.id}>
                 <Card
-                  className="task-mission-card"
+                  className="task-mission-card block-task-card"
                   sx={{
                     borderRadius: "28px",
                     borderTop: `8px solid ${task.color || color}`,
@@ -400,18 +442,26 @@ export default function BlockPage() {
                       <Stack direction="row" spacing={0.35}>
                         {[0, 1, 2].map((j) =>
                           j < stars ? (
-                            <StarIcon
+                            <Box
+                              component="img"
+                              src="/ui-icons/star.png"
                               key={j}
                               sx={{
                                 fontSize: "clamp(19px, 1.7vw, 25px)",
+                                width: "clamp(64px, 1.7vw, 25px)",
+                                height: "clamp(64px, 1.7vw, 25px)",
                                 color: "#F4B400",
                               }}
                             />
                           ) : (
-                            <StarBorderIcon
+                            <Box
+                              component="img"
+                              src="/ui-icons/unstar.png"
                               key={j}
                               sx={{
                                 fontSize: "clamp(19px, 1.7vw, 25px)",
+                                width: "clamp(64px, 1.7vw, 25px)",
+                                height: "clamp(64px, 1.7vw, 25px)",
                                 color: "#D9E0E0",
                               }}
                             />
@@ -453,7 +503,7 @@ export default function BlockPage() {
                         {task.description}
                       </Typography>
 
-                      <Stack
+                      {/* <Stack
                         direction="row"
                         spacing={1}
                         flexWrap="wrap"
@@ -480,7 +530,7 @@ export default function BlockPage() {
                             fontSize: "clamp(.75rem, .8vw, .9rem)",
                           }}
                         />
-                      </Stack>
+                      </Stack> */}
                       <Box
                         sx={{
                           mt: "auto",

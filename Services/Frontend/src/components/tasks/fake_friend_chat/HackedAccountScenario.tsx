@@ -345,7 +345,7 @@ export default function HackedAccountScenario({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 320px" },
+             gridTemplateColumns: { xs: "1fr", lg: "1fr 320px" },
             gap: 2,
             alignItems: "start",
           }}

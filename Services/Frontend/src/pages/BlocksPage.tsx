@@ -13,7 +13,7 @@ import Layout from "../components/Layout";
 import { topicColors, topicLabels } from "../theme";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
-const BLOCKS = [
+export const BLOCKS = [
   { key: "gaming_scams", icon: "/ui-icons/game_scams.png" },
   { key: "fake_friends", icon: "/ui-icons/fake_friends.png" },
   { key: "ai_traps", icon: "/ui-icons/ai_traps.png" },
@@ -119,6 +119,7 @@ export default function BlocksPage() {
                 textAlign: "center",
                 color: "#2C3E50",
                 maxWidth: 800,
+                fontWeight: 600,
               }}
             >
               7 увлекательных тем от игровых мошенничеств до ловушек с
@@ -182,10 +183,37 @@ export default function BlocksPage() {
                       },
                       "& .card-image": {
                         transform: "scale(1.1) rotate(-5deg)",
+                        filter: "brightness(1) invert(0) blur(0px) opacity(1)",
                       },
                     },
                   }}
                 >
+                  <Box
+                    component="img"
+                    src={b.icon}
+                    alt={label}
+                    className="card-image"
+                    sx={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: 420,
+                      height: 420,
+                      objectFit: "contain",
+                      filter: "brightness(1) invert(0) blur(5px) opacity(0.4)",
+                      transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    }}
+                    onError={(e) => {
+                      // Если картинка не загрузилась - показываем эмодзи
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = "none";
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div style="font-size: 80px;">🎮</div>`;
+                      }
+                    }}
+                  />
                   <CardActionArea
                     onClick={() => navigate(`/block/${b.key}`)}
                     sx={{ p: 4, height: "100%", position: "relative" }}
@@ -197,11 +225,11 @@ export default function BlocksPage() {
                           width: 140,
                           height: 140,
                           borderRadius: "28px",
-                          background: `linear-gradient(135deg, ${color}, ${color}DD)`,
+                          // background: `linear-gradient(135deg, ${color}, ${color}DD)`,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          boxShadow: `0 12px 32px ${color}60`,
+                          // boxShadow: `0 12px 32px ${color}60`,
                           position: "relative",
                           overflow: "hidden",
                           transition:
@@ -209,7 +237,7 @@ export default function BlocksPage() {
                         }}
                       >
                         {/* Если иконка существует */}
-                        <Box
+                        {/* <Box
                           component="img"
                           src={b.icon}
                           alt={label}
@@ -231,15 +259,16 @@ export default function BlocksPage() {
                               parent.innerHTML = `<div style="font-size: 80px;">🎮</div>`;
                             }
                           }}
-                        />
+                        /> */}
 
                         {/* Иконка воспроизведения */}
                         <Box
                           className="play-icon"
                           sx={{
                             position: "absolute",
-                            bottom: -10,
-                            right: -10,
+                            bottom: "50%",
+                            right: "50",
+                            transform: "translate(50%, 50%)",
                             width: 50,
                             height: 50,
                             borderRadius: "50%",

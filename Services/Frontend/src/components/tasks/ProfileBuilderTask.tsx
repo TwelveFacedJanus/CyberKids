@@ -184,7 +184,8 @@ export default function ProfileBuilderTask({
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <Typography
-              fontSize={11}
+               className="task-copy"
+               fontSize={16}
               sx={{
                 opacity: 0.6,
                 letterSpacing: "0.15em",
@@ -193,11 +194,11 @@ export default function ProfileBuilderTask({
             >
               Профиль
             </Typography>
-            <Typography fontWeight={800} fontSize={16}>
+             <Typography className="task-heading" fontWeight={800} fontSize="1.25rem">
               {storyTitle}
             </Typography>
             {intro && (
-              <Typography fontSize={12.5} sx={{ opacity: 0.75, mt: 0.5 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ opacity: 0.75, mt: 0.5 }}>
                 {intro}
               </Typography>
             )}
@@ -211,10 +212,10 @@ export default function ProfileBuilderTask({
               justifyContent="space-between"
               sx={{ mb: 0.5 }}
             >
-              <Typography fontSize={12} sx={{ opacity: 0.8 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ opacity: 0.8 }}>
                 🔒 Приватность профиля
               </Typography>
-              <Typography fontSize={12} fontWeight={800}>
+               <Typography className="task-copy" fontSize={16} fontWeight={800}>
                 {privacy}%
               </Typography>
             </Stack>
@@ -453,7 +454,7 @@ export default function ProfileBuilderTask({
                     >
                       <Stack direction="row" alignItems="center" spacing={1.5}>
                         <Typography
-                          fontSize={11}
+                       fontSize={16}
                           sx={{
                             textTransform: "uppercase",
                             letterSpacing: "0.1em",
@@ -466,7 +467,7 @@ export default function ProfileBuilderTask({
                           {field.label}
                         </Typography>
                         <Typography
-                          fontSize={14.5}
+                           fontSize={16}
                           fontWeight={700}
                           sx={{
                             color: isDone
@@ -540,7 +541,8 @@ export default function ProfileBuilderTask({
       {/* Подсказка про активное поле */}
       {phase === "build" && activeField && (
         <Typography
-          fontSize={12}
+             className="task-copy"
+             fontSize={16}
           color="text.secondary"
           sx={{ textAlign: "center" }}
         >
@@ -559,7 +561,7 @@ export default function ProfileBuilderTask({
           onClick={finish}
           sx={{
             py: 1.8,
-            fontSize: 17,
+             fontSize: 18,
             fontWeight: 800,
             borderRadius: "14px",
             background: "linear-gradient(135deg, #26C6DA, #7C4DFF)",

@@ -106,7 +106,7 @@ export default function ScenarioTask({
                       borderRadius: "12px",
                       cursor: "pointer",
                       fontWeight: 600,
-                      fontSize: 15,
+                      fontSize: "clamp(1rem, 1.1vw, 1.15rem)",
                       border: selected
                         ? `2px solid ${color}`
                         : "2px solid #F1F1F1",

@@ -760,7 +760,7 @@ export default function FakeDiaryTask({
               }}
             />
             <Typography
-              fontSize={11}
+               fontSize={16}
               sx={{
                 mt: 0.5,
                 fontWeight: i === stepIdx ? 800 : 500,
@@ -779,8 +779,8 @@ export default function FakeDiaryTask({
         <Box
           sx={{
             mx: "auto",
-            width: "15vw",
-            height: "52vh",
+             width: "min(280px, 24vw)",
+             height: "min(540px, calc(100vh - 280px))",
             borderRadius: "38px",
             p: 1.2,
             bgcolor: "#0E1224",
@@ -815,7 +815,7 @@ export default function FakeDiaryTask({
                   position: "absolute",
                   left: 10,
                   right: 10,
-                  top: 170,
+                   top: "clamp(110px, 16vh, 170px)",
                   textAlign: "left",
                   p: 1.5,
                   borderRadius: "18px",

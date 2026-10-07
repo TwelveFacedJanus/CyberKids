@@ -522,7 +522,7 @@ export default function PhysicsDrag3D({
         >
           <Icon sx={{ fontSize: 26 }} />
         </Box>
-        <Typography sx={{ fontWeight: 900, fontSize: 13, textAlign: "center" }}>
+        <Typography sx={{ fontWeight: 900, fontSize: 16, textAlign: "center" }}>
           {section.label}
         </Typography>
         <Box
@@ -544,7 +544,7 @@ export default function PhysicsDrag3D({
               sx={{
                 bgcolor: "#E0F2E9",
                 fontWeight: 700,
-                fontSize: 11,
+                fontSize: 16,
                 maxWidth: 130,
                 "& .MuiChip-label": {
                   overflow: "hidden",
@@ -567,7 +567,7 @@ export default function PhysicsDrag3D({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "200px 1fr 200px" },
+            gridTemplateColumns: { xs: "1fr", md: "clamp(150px, 18vw, 200px) minmax(0,1fr) clamp(150px, 18vw, 200px)" },
             gap: 2,
             alignItems: "start",
           }}
@@ -590,7 +590,7 @@ export default function PhysicsDrag3D({
               data-tutorial="tray"
               sx={{
                 p: 1.5,
-                minHeight: { xs: 540, md: 440 },
+                minHeight: { xs: "clamp(420px, 58vh, 540px)", md: "clamp(360px, 52vh, 440px)" },
                 background: "linear-gradient(150deg, #F1EBFF, #E8F5FF)",
                 border: "2px solid #D9C9FF",
                 display: "flex",
@@ -752,7 +752,7 @@ function cubeFaces(text: string, index: number) {
           <span
             style={{
               color: "#fff",
-              fontSize: "0.7rem",
+              fontSize: "1rem",
               fontWeight: 700,
               fontFamily: "sans-serif",
               textAlign: "center",

@@ -226,10 +226,10 @@ export default function SafeJobSortTask({
                 textAlign: "left",
               }}
             >
-              <Typography fontWeight={800} fontSize={14} sx={{ mb: 1 }}>
+               <Typography className="task-heading" fontWeight={800} fontSize={20} sx={{ mb: 1 }}>
                 💡 Главное правило:
               </Typography>
-              <Typography fontSize={13.5} sx={{ lineHeight: 1.6 }}>
+               <Typography className="task-copy" fontSize={16} sx={{ lineHeight: 1.6 }}>
                 {finalRule}
               </Typography>
             </Paper>
@@ -237,7 +237,8 @@ export default function SafeJobSortTask({
 
           {explainer && (
             <Typography
-              fontSize={13}
+               className="task-copy"
+               fontSize={16}
               sx={{
                 mb: 3,
                 maxWidth: 620,
@@ -371,7 +372,8 @@ export default function SafeJobSortTask({
         {/* Подсказка */}
         {!expanded && (
           <Typography
-            fontSize={12.5}
+               className="task-copy"
+               fontSize={16}
             color="text.secondary"
             sx={{ textAlign: "center" }}
           >
