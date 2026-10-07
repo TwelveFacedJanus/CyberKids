@@ -488,9 +488,9 @@ export default function WelcomePage() {
                 maxWidth: 600,
               }}
             >
-              Интернет — это навык.
+              Как не попасться на уловки
               <Box component="span" sx={{ display: "block", color: "#F45B35" }}>
-                Прокачай его!
+                интернет мошенников!
               </Box>
             </Typography>
             <Typography
