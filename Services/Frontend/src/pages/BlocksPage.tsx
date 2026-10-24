@@ -111,7 +111,7 @@ export default function BlocksPage() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Выбери своё приключение!
+              Выбери практическое задание!
             </Typography>
             <Typography
               variant="body1"

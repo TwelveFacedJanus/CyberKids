@@ -123,17 +123,17 @@ const THEMES: Record<
     pageBg: "#F5F7FA",
   },
   alex: {
-    sidebarBg: "#1E1E2E",
-    sidebarBorder: "#2A2A3C",
+    sidebarBg: "#FFFFFF",
+    sidebarBorder: "#FFE5D9",
     logoBg: "linear-gradient(135deg, #FF6B35, #FFD23F)",
-    textColor: "#E0E0E0",
-    mutedColor: "#9CA3AF",
-    hoverBg: "#2A2A3C",
-    divider: "rgba(255,255,255,0.1)",
+    textColor: "#2C3E50",
+    mutedColor: "#7F8C8D",
+    hoverBg: "#FFF9F0",
+    divider: "rgba(255,107,53,0.15)",
     activeBg: "linear-gradient(135deg, #FF6B35, #FF8C42)",
     activeColor: "#FFFFFF",
-    activeGlow: "0 8px 24px rgba(255,107,53,0.5)",
-    pageBg: "#121218",
+    activeGlow: "0 8px 24px rgba(255,107,53,0.4)",
+    pageBg: "#FFF9F0",
   },
 };
 
@@ -188,7 +188,7 @@ function AnimatedBackground() {
             "radial-gradient(circle, rgba(17,191,164,.2) 0%, transparent 70%)",
           animation: "blobFloat3 26s ease-in-out infinite",
         },
-         "& .grid": {
+        "& .grid": {
           position: "absolute",
           inset: 0,
           backgroundImage:
@@ -343,19 +343,9 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
   const MENU_ITEMS_EMOJI: MenuItem[] = [
     { label: "Главная", icon: <HomeIcon />, path: "/" },
     {
-      label: "Игровые мошенничества",
-      icon: <GamingIcon />,
-      path: "/block/gaming_scams",
-    },
-    {
       label: "Фальшивые друзья",
       icon: <FriendsIcon />,
       path: "/block/fake_friends",
-    },
-    {
-      label: "Ловушки с ИИ и дипфейками",
-      icon: <AIIcon />,
-      path: "/block/ai_traps",
     },
     { label: "Лёгкие деньги", icon: <MoneyIcon />, path: "/block/easy_money" },
     {
@@ -367,6 +357,16 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
       label: "Школьная ловушка",
       icon: <SchoolIcon />,
       path: "/block/school_trap",
+    },
+    {
+      label: "Ловушки с ИИ и дипфейками",
+      icon: <AIIcon />,
+      path: "/block/ai_traps",
+    },
+    {
+      label: "Игровые мошенничества",
+      icon: <GamingIcon />,
+      path: "/block/gaming_scams",
     },
     {
       label: "Кибербезопасность",
@@ -468,22 +468,8 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
         >
           <Box
             component="button"
+            aria-label="На главную"
             onClick={() => {
-              const next = logoClicks + 1;
-
-              if (next >= 5) {
-                setLogoClicks(0);
-                setShowSwitch(true);
-                if (switchTimerRef.current) {
-                  window.clearTimeout(switchTimerRef.current);
-                }
-                switchTimerRef.current = window.setTimeout(() => {
-                  setShowSwitch(false);
-                }, 30000);
-                return; // не переходим
-              }
-
-              setLogoClicks(next);
               navigate("/");
             }}
             sx={{
@@ -515,11 +501,39 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           </Box>
           <Box sx={{ minWidth: 0 }}>
             <Typography
+              component="button"
+              onClick={() => {
+                const next = logoClicks + 1;
+
+                if (next >= 5) {
+                  setLogoClicks(0);
+                  setShowSwitch(true);
+                  if (switchTimerRef.current) {
+                    window.clearTimeout(switchTimerRef.current);
+                  }
+                  switchTimerRef.current = window.setTimeout(() => {
+                    setShowSwitch(false);
+                  }, 30000);
+                  return; // не переходим
+                }
+
+                setLogoClicks(next);
+              }}
               sx={{
                 color: "#F45B35",
                 fontWeight: 900,
                 fontSize: "1.5rem",
                 lineHeight: 1,
+                border: 0,
+                p: 0,
+                // cursor: "pointer",
+                background: "transparent",
+                // font: "inherit",
+                transition: "all .2s ease",
+                // "&:hover": {
+                //   color: "#D94726",
+                //   transform: "scale(1.03)",
+                // },
               }}
             >
               ЛАБОРАТОРИЯ
@@ -927,14 +941,14 @@ export default function Layout({ children, theme = "default" }: LayoutProps) {
           display: "flex",
           flexDirection: "column",
           position: "relative",
-           zIndex: 1,
-           "@media (min-width: 1200px) and (max-height: 1100px)": {
-             p: noPadding ? 0 : 2,
-           },
-           "@media (min-width: 1200px) and (max-height: 850px)": {
-             p: noPadding ? 0 : 1.5,
-           },
-         }}
+          zIndex: 1,
+          "@media (min-width: 1200px) and (max-height: 1100px)": {
+            p: noPadding ? 0 : 2,
+          },
+          "@media (min-width: 1200px) and (max-height: 850px)": {
+            p: noPadding ? 0 : 1.5,
+          },
+        }}
       >
         <Box
           sx={{

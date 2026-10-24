@@ -1081,7 +1081,7 @@ function TaskContent({
             size="large"
             fullWidth
             disabled={answers.length === 0 || submitting}
-            onClick={onSubmit}
+            onClick={() => onSubmit()}
             sx={{
               py: 2,
               fontSize: "clamp(1.05rem, 1.25vw, 1.25rem)",

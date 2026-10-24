@@ -12,7 +12,7 @@ import type { Story, StoryOption, Choice } from "../types/messenger";
 const STORIES: Story[] = [andreyStory, mamaStory, vovaStory, fsbStory, class7Story];
 
 const DELAY_BETWEEN_MESSAGES = 1200;
-const DELAY_BEFORE_MODAL = 1500;
+const DELAY_BEFORE_MODAL = 8500;
 const DELAY_AFTER_CHOICE = 400;
 
 export function useStoryEngine() {
